@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.animation.AnticipateOvershootInterpolator;
 
+import com.saberrr.openchina.contact.Fiels;
 import com.saberrr.openchina.gloab.AppApplication;
+import com.saberrr.openchina.ui.activity.ShowActivity;
 
 import java.io.File;
 import java.util.Random;
@@ -56,14 +59,13 @@ public class Utils {
         // return 0;
     }
 
-/*
     public static void startFragment(Class clss, Bundle bundle) {
-        Intent intent = new Intent(AppApplication.appContext, DetailActivity.class);
+        Intent intent = new Intent(AppApplication.appContext, ShowActivity.class);
         intent.putExtra(Fiels.DtailActivity.BUNDLE, bundle);
         intent.putExtra(Fiels.DtailActivity.CLASSNAME, clss);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         AppApplication.appContext.startActivity(intent);
-    }*/
+    }
 
     public static void setiTemAnim(View view) {
         view.setScaleX(SCALE);
