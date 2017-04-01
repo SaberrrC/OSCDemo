@@ -60,13 +60,6 @@ public abstract class LoadPager extends FrameLayout {
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    //根据联网获取的状态 自动切换
-                    showViewDely(DELAY);
-                }
-            });
-            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
                     showViewDely(0);
                     mSwipeRefreshLayout.setRefreshing(false);
                 }

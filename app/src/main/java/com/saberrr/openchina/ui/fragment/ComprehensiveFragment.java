@@ -17,6 +17,7 @@ public class ComprehensiveFragment extends BaseFragment {
     public View createView() {
         TextView textView = new TextView(getContext());
         textView.setText("我是综合");
+        getFragmentManager();
         return textView;
     }
 

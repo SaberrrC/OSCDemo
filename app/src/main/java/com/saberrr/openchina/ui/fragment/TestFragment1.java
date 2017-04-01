@@ -63,6 +63,8 @@ public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.F
         objects.add(2);
         objects.add("string 2" + SystemClock.currentThreadTimeMillis());
         objects.add(3);
+        objects.add(3);
+        objects.add(3);
         objects.add(new Long(2L));
         objects.add(1);
         objects.add(new Long(1L));

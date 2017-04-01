@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
         // 得到fragment的个数
         int count = mFragmentArray.length;
         for (int i = 0; i < count; i++) {
+//            if (i == 2) {
+//                startActivity(new Intent(this,ShowActivity.class));
+//            }
             // 给每个Tab按钮设置图标、文字和内容
             TabHost.TabSpec tabSpec = mTabHost.newTabSpec(mTextArray[i]).setIndicator(getTabItemView(i));
             // 将Tab按钮添加进Tab选项卡中
