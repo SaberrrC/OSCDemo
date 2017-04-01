@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -36,13 +37,18 @@ public class ComprehensiveFragment extends BaseFragment {
     }
 
     private void init() {
-        String[]title = new String[]{"资讯","资讯","资讯","资讯"};
+        String[]title = new String[]{"资讯","博客","问答","活动"};
         datas.add(new FragmentInfo(new InformationFragment(),title[0]));
         datas.add(new FragmentInfo(new InformationFragment(),title[1]));
         datas.add(new FragmentInfo(new InformationFragment(),title[2]));
         datas.add(new FragmentInfo(new InformationFragment(),title[3]));
         mVpComprehen.setAdapter(new ComprehensiveAdapter(getFragmentManager(),datas));
         mTabComprehen.setupWithViewPager(mVpComprehen);
+        int normalColor = Color.parseColor("#9c9c9c");
+        int selectedColor = Color.parseColor("#188FE4");
+        mTabComprehen.setTabTextColors(normalColor,selectedColor);
+        mTabComprehen.setSelectedTabIndicatorColor(selectedColor);
+
     }
 
     @Override
