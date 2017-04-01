@@ -43,8 +43,6 @@ public class ComprehensiveFragment extends BaseFragment {
         datas.add(new FragmentInfo(new InformationFragment(),title[3]));
         mVpComprehen.setAdapter(new ComprehensiveAdapter(getFragmentManager(),datas));
         mTabComprehen.setupWithViewPager(mVpComprehen);
-
-
     }
 
     @Override
