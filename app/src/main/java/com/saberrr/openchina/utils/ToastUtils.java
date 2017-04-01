@@ -2,7 +2,8 @@ package com.saberrr.openchina.utils;
 
 import android.widget.Toast;
 
-import com.saberrr.gooleplay_my1.gloab.AppApplication;
+import com.saberrr.openchina.gloab.AppApplication;
+
 
 public class ToastUtils {
 
