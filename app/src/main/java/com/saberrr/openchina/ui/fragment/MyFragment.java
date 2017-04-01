@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.utils.ToastUtils;
 
 /**
@@ -40,6 +41,8 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.rl_offline:
                 ToastUtils.showToast("点击了登录");
+
+                ShowActivity.startFragment(LoginFragment.class , null);
                 break;
 
             case R.id.rl_my_msg:
