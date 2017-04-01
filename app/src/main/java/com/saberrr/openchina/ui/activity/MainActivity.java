@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.ui.fragment.FindFragment;
 import com.saberrr.openchina.ui.fragment.TestFragment1;
+import com.saberrr.openchina.ui.fragment.TestFragment2;
 
 public class MainActivity extends AppCompatActivity {
     private FragmentTabHost mTabHost;
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Class  mFragmentArray[] = {TestFragment1.class,
             TestFragment1.class,
-            TestFragment1.class,
+            TestFragment2.class,
             FindFragment.class,
             TestFragment1.class};
 //    private Class  mFragmentArray[] = {TestFragment1.class,

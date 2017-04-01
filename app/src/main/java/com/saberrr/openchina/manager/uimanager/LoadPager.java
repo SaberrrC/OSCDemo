@@ -100,12 +100,21 @@ public abstract class LoadPager extends FrameLayout {
                 throw new RuntimeException("必须传入布局");
             }
         }
-        if (mSwipeRefreshLayout == null) {
-            addView(mSuccessView);
-        } else {
+//        if (mSwipeRefreshLayout == null) {
+//            addView(mSuccessView);
+//        } else {
+//            mSwipeRefreshLayout.addView(mSuccessView);
+//            addView(mSwipeRefreshLayout);
+//        }
+        if (mAddRefresh) {
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            mSuccessView.setLayoutParams(layoutParams);
             mSwipeRefreshLayout.addView(mSuccessView);
             addView(mSwipeRefreshLayout);
+        } else {
+            addView(mSuccessView);
         }
+
         addView(mErrorView);
         addView(mLoadingView);
     }
@@ -158,11 +167,11 @@ public abstract class LoadPager extends FrameLayout {
                 mErrorView.setVisibility(View.VISIBLE);
                 break;
             case SUCCESS:
-                if (!mAddRefresh) {
+                if (mAddRefresh) {
+                    mSwipeRefreshLayout.setVisibility(View.VISIBLE);
                     mSuccessView.setVisibility(View.VISIBLE);
                 } else {
-                    mSwipeRefreshLayout.setVisibility(View.VISIBLE);
-
+                    mSuccessView.setVisibility(View.VISIBLE);
                 }
                 break;
         }
