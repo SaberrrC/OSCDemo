@@ -21,12 +21,13 @@ import java.util.List;
 
 public abstract class LoadPager extends FrameLayout {
 
-    public static final int                DELAY               = 500;//loading加载时间
+    public static final int                DELAY               = 0;//loading加载时间
     private            SwipeRefreshLayout mSwipeRefreshLayout = null;
     private View mErrorView;
     private View mLoadingView;
     private View mSuccessView;
     private LOADSTATE mLOADSTATE = LOADSTATE.LOADING;
+    private boolean mAddRefresh;
 
     private enum LOADSTATE {
         LOADING, ERROR, SUCCESS
@@ -50,7 +51,8 @@ public abstract class LoadPager extends FrameLayout {
     }
 
     private void init() {
-        if (addRefresh()) {
+        mAddRefresh = addRefresh();
+        if (mAddRefresh) {
             //需要刷新
             mSwipeRefreshLayout = new SwipeRefreshLayout(getContext());
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -59,18 +61,21 @@ public abstract class LoadPager extends FrameLayout {
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    mLOADSTATE = LOADSTATE.LOADING;
-                    //切换
-                    changView();
                     //根据联网获取的状态 自动切换
                     showViewDely(DELAY);
                 }
             });
-            addAllView(mSwipeRefreshLayout);
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    showViewDely(0);
+                }
+            });
+            addAllView();
         } else {
             //不需要
             mSwipeRefreshLayout = null;
-            addAllView(this);
+            addAllView();
         }
         //切换
         changView();
@@ -78,7 +83,7 @@ public abstract class LoadPager extends FrameLayout {
         showViewDely(DELAY);
     }
 
-    private void addAllView(ViewGroup viewGroup) {
+    private void addAllView() {
         if (mErrorView == null) {
             mErrorView = LayoutInflater.from(getContext()).inflate(R.layout.page_error, null, false);
             Button bt = (Button) mErrorView.findViewById(R.id.btn_reload);
@@ -102,9 +107,14 @@ public abstract class LoadPager extends FrameLayout {
                 throw new RuntimeException("必须传入布局");
             }
         }
-        viewGroup.addView(mErrorView);
-        viewGroup.addView(mSuccessView);
-        viewGroup.addView(mLoadingView);
+        if (mSwipeRefreshLayout == null) {
+            addView(mSuccessView);
+        } else {
+            mSwipeRefreshLayout.addView(mSuccessView);
+            addView(mSwipeRefreshLayout);
+        }
+        addView(mErrorView);
+        addView(mLoadingView);
     }
 
     protected abstract boolean addRefresh();
@@ -155,7 +165,11 @@ public abstract class LoadPager extends FrameLayout {
                 mErrorView.setVisibility(View.VISIBLE);
                 break;
             case SUCCESS:
-                mSuccessView.setVisibility(View.VISIBLE);
+                if (mSwipeRefreshLayout == null) {
+                    mSuccessView.setVisibility(View.VISIBLE);
+                } else {
+                    mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+                }
                 break;
         }
     }
