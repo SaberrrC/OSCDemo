@@ -29,13 +29,12 @@
     <string name="open">open</string>
     <string name="close">close</string>
     <string-array name="tab_names">
-        <item>首页</item>
+        <item>资讯</item>
         <!--<item>应用</item>
         <item>游戏</item>-->
-        <item>专题</item>
-        <item>推荐</item>
-        <item>分类</item>
-        <item>热门</item>
+        <item>博客</item>
+        <item>问答</item>
+        <item>活动</item>
     </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
