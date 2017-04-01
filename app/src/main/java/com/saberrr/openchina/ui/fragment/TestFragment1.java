@@ -1,5 +1,7 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.os.SystemClock;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,7 +19,9 @@ public class TestFragment1 extends BaseFragment {
     @Override
     public View createView() {
         TextView textView = new TextView(getContext());
-        textView.setText("test");
+        textView.setText(SystemClock.currentThreadTimeMillis() + "");
+        RecyclerView recyclerView = new RecyclerView(getContext());
+//        recyclerView.setAdapter(new FinalRecycleAdapter(new FinalRecycleAdapter(datas,));
         return textView;
     }
 
