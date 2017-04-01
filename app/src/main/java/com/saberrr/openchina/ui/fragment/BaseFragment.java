@@ -2,7 +2,6 @@ package com.saberrr.openchina.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import java.util.List;
  * Created by Saberrr on 2017-03-25.
  */
 
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends android.support.v4.app.Fragment {
 
     private LoadPager mLoadingPager;
     private boolean needRefresh = false;
@@ -47,6 +46,10 @@ public abstract class BaseFragment extends Fragment {
             }
         };
         return mLoadingPager;
+    }
+
+    public View creatViewFromId(int layoutId) {
+        return LayoutInflater.from(getContext()).inflate(layoutId, null, false);
     }
 
     /**

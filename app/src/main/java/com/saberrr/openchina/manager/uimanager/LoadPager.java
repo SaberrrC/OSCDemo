@@ -165,10 +165,11 @@ public abstract class LoadPager extends FrameLayout {
                 mErrorView.setVisibility(View.VISIBLE);
                 break;
             case SUCCESS:
-                if (mAddRefresh) {
+                if (!mAddRefresh) {
                     mSuccessView.setVisibility(View.VISIBLE);
                 } else {
                     mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+
                 }
                 break;
         }
