@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class TestFragment1 extends BaseFragment {
     @Override
     protected boolean needRefresh() {
-        return false;
+        return true;
     }
 
     @Override

@@ -22,12 +22,12 @@ import java.util.List;
 public abstract class LoadPager extends FrameLayout {
 
     public static final int                DELAY               = 0;//loading加载时间
-    private            SwipeRefreshLayout mSwipeRefreshLayout = null;
+    private             SwipeRefreshLayout mSwipeRefreshLayout = null;
     private View mErrorView;
     private View mLoadingView;
     private View mSuccessView;
-    private LOADSTATE mLOADSTATE = LOADSTATE.LOADING;
-    private boolean mAddRefresh;
+    private LOADSTATE mLOADSTATE  = LOADSTATE.LOADING;
+    private boolean   mAddRefresh = false; //是否需要下拉刷新
 
     private enum LOADSTATE {
         LOADING, ERROR, SUCCESS
@@ -57,7 +57,6 @@ public abstract class LoadPager extends FrameLayout {
             mSwipeRefreshLayout = new SwipeRefreshLayout(getContext());
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mSwipeRefreshLayout.setLayoutParams(layoutParams);
-            addView(mSwipeRefreshLayout);
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
@@ -69,6 +68,7 @@ public abstract class LoadPager extends FrameLayout {
                 @Override
                 public void onRefresh() {
                     showViewDely(0);
+                    mSwipeRefreshLayout.setRefreshing(false);
                 }
             });
             addAllView();
@@ -165,7 +165,7 @@ public abstract class LoadPager extends FrameLayout {
                 mErrorView.setVisibility(View.VISIBLE);
                 break;
             case SUCCESS:
-                if (mSwipeRefreshLayout == null) {
+                if (mAddRefresh) {
                     mSuccessView.setVisibility(View.VISIBLE);
                 } else {
                     mSwipeRefreshLayout.setVisibility(View.VISIBLE);

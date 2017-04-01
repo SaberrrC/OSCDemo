@@ -19,6 +19,8 @@ import java.util.List;
 public abstract class BaseFragment extends Fragment {
 
     private LoadPager mLoadingPager;
+    private boolean needRefresh = false;
+    private boolean mNeedRefresh;
 
     @Nullable
     @Override
@@ -29,7 +31,8 @@ public abstract class BaseFragment extends Fragment {
         mLoadingPager = new LoadPager(getContext()) {
             @Override
             protected boolean addRefresh() {
-                return needRefresh();
+                mNeedRefresh = needRefresh();
+                return mNeedRefresh;
             }
 
             @Override
