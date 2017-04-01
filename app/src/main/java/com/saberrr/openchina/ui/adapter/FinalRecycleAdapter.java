@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.saberrr.openchina.gloab.AppApplication;
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,13 +44,14 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
         Class key = mDatas.get(position).getClass();
         if (mClassIntegerHashMap.containsKey(key)) {
             return mClassIntegerHashMap.get(key);
+        } else {
+            throw new RuntimeException("未添加进Map！");
         }
-        return -1;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View headView = LayoutInflater.from(AppApplication.appContext).inflate(viewType, parent, false);
+        View headView = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
         ViewHolder holder = new ViewHolder(headView);
         return holder;
     }
