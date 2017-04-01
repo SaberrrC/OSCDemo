@@ -13,8 +13,9 @@ import com.saberrr.openchina.utils.ThreadUtils;
 
 import java.util.List;
 
+
 /**
- * Created by Saberrr on 2017-04-01.
+ * Created by Saberrr on 2017-03-25.
  */
 
 public abstract class LoadPager extends FrameLayout {
@@ -23,6 +24,11 @@ public abstract class LoadPager extends FrameLayout {
     private View mErrorView;
     private View mLoadingView;
     private View mSuccessView;
+    private LOADSTATE mLOADSTATE = LOADSTATE.LOADING;
+
+    private enum LOADSTATE {
+        LOADING, ERROR, SUCCESS
+    }
 
     public LoadPager(Context context) {
         this(context, null);
@@ -52,7 +58,7 @@ public abstract class LoadPager extends FrameLayout {
                     //切换
                     changView();
                     //根据联网获取的状态 自动切换
-                    showViewDely(800);
+                    showViewDely(DELAY);
                 }
             });
         }
@@ -71,11 +77,7 @@ public abstract class LoadPager extends FrameLayout {
         //切换
         changView();
         //根据联网获取的状态 自动切换
-        //        showView();
-    }
-
-    public void showView() {
-        showViewDely(500);
+        showViewDely(DELAY);
     }
 
     public void showViewDely(final int time) {
@@ -140,11 +142,6 @@ public abstract class LoadPager extends FrameLayout {
 
     public abstract View createSuccessView();
 
-    private LOADSTATE mLOADSTATE = LOADSTATE.LOADING;
-
     public abstract Object getNetData();
 
-    private enum LOADSTATE {
-        LOADING, ERROR, SUCCESS
-    }
 }

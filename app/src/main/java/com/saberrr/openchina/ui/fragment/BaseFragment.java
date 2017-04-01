@@ -43,6 +43,7 @@ public abstract class BaseFragment extends Fragment {
 
     public abstract View createView();
 
+    //获取数据调用该方法发
     public abstract Object getData();
 
     public void refreshData() {
