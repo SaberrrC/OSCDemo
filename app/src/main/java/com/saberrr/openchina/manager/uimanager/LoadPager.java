@@ -1,7 +1,6 @@
 package com.saberrr.openchina.manager.uimanager;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,16 +107,8 @@ public abstract class LoadPager extends FrameLayout {
                     return LOADSTATE.ERROR;
                 }
             } else {
-                if (object instanceof String) {
-                    String obj = (String) object;
-                    if (TextUtils.isEmpty(obj)) {
-                        return LOADSTATE.ERROR;
-                    } else {
-                        return LOADSTATE.SUCCESS;
-                    }
-                } else {
-                    return LOADSTATE.SUCCESS;
-                }
+                //不是集合
+                return LOADSTATE.SUCCESS;
             }
         }
     }
