@@ -1,6 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
-import android.support.annotation.NonNull;
+import android.os.SystemClock;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
@@ -23,9 +23,9 @@ public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.F
 
     private RecyclerView mRecyclerView;
 
-    private String[] mStrings = {"String1", "String2", "String3", "String4"};
-    private Integer[]    mIntt    = {1, 2, 3, 4};
-    private Long[]   mObjects = {1L, 2L, 3L, 4L};
+    private String[]  mStrings = {"String1", "String2", "String3", "String4"};
+    private Integer[] mIntt    = {1, 2, 3, 4};
+    private Long[]    mObjects = {1L, 2L, 3L, 4L};
 
     @Override
     protected boolean needRefresh() {
@@ -46,27 +46,26 @@ public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.F
     }
 
     private void setRecyclerView() {
-        List<Object> objects = initData();
+        List<Object> datas = initData();
         HashMap<Class, Integer> map = new HashMap<>();
         map.put(String.class, R.layout.layout_1);
         map.put(Integer.class, R.layout.layout_2);
         map.put(Long.class, R.layout.layout_3);
-        mRecyclerView.setAdapter(new FinalRecycleAdapter(objects, map, this));
+        mRecyclerView.setAdapter(new FinalRecycleAdapter(datas, map, this));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), OrientationHelper.VERTICAL, false));
     }
 
-    @NonNull
     private List<Object> initData() {
         List<Object> objects = new ArrayList<>();
-        for (String string : mStrings) {
-            objects.add(string);
-        }
-        for (int i : mIntt) {
-            objects.add(i);
-        }
-        for (long object : mObjects) {
-            objects.add(object);
-        }
+        objects.add("string " + SystemClock.currentThreadTimeMillis());
+        objects.add(new Long(3L));
+        objects.add("string 3" + SystemClock.currentThreadTimeMillis());
+        objects.add(2);
+        objects.add("string 2" + SystemClock.currentThreadTimeMillis());
+        objects.add(3);
+        objects.add(new Long(2L));
+        objects.add(1);
+        objects.add(new Long(1L));
         return objects;
     }
 

@@ -169,6 +169,7 @@ public abstract class LoadPager extends FrameLayout {
                     mSuccessView.setVisibility(View.VISIBLE);
                 } else {
                     mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+
                 }
                 break;
         }
