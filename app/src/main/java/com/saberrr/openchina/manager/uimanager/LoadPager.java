@@ -1,9 +1,11 @@
 package com.saberrr.openchina.manager.uimanager;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
@@ -19,7 +21,8 @@ import java.util.List;
 
 public abstract class LoadPager extends FrameLayout {
 
-    public static final int DELAY = 500;//loading加载时间
+    public static final int                DELAY               = 500;//loading加载时间
+    private            SwipeRefreshLayout mSwipeRefreshLayout = null;
     private View mErrorView;
     private View mLoadingView;
     private View mSuccessView;
@@ -47,6 +50,35 @@ public abstract class LoadPager extends FrameLayout {
     }
 
     private void init() {
+        if (needRefresh()) {
+            //需要刷新
+            mSwipeRefreshLayout = new SwipeRefreshLayout(getContext());
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            mSwipeRefreshLayout.setLayoutParams(layoutParams);
+            addView(mSwipeRefreshLayout);
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    mLOADSTATE = LOADSTATE.LOADING;
+                    //切换
+                    changView();
+                    //根据联网获取的状态 自动切换
+                    showViewDely(DELAY);
+                }
+            });
+            addAllView(mSwipeRefreshLayout);
+        } else {
+            //不需要
+            mSwipeRefreshLayout = null;
+            addAllView(this);
+        }
+        //切换
+        changView();
+        //根据联网获取的状态 自动切换
+        showViewDely(DELAY);
+    }
+
+    private void addAllView(ViewGroup viewGroup) {
         if (mErrorView == null) {
             mErrorView = LayoutInflater.from(getContext()).inflate(R.layout.page_error, null, false);
             Button bt = (Button) mErrorView.findViewById(R.id.btn_reload);
@@ -70,14 +102,12 @@ public abstract class LoadPager extends FrameLayout {
                 throw new RuntimeException("必须传入布局");
             }
         }
-        addView(mErrorView);
-        addView(mSuccessView);
-        addView(mLoadingView);
-        //切换
-        changView();
-        //根据联网获取的状态 自动切换
-        showViewDely(DELAY);
+        viewGroup.addView(mErrorView);
+        viewGroup.addView(mSuccessView);
+        viewGroup.addView(mLoadingView);
     }
+
+    protected abstract boolean needRefresh();
 
     public void showViewDely(final int time) {
         ThreadUtils.runSub(new Runnable() {
@@ -112,7 +142,6 @@ public abstract class LoadPager extends FrameLayout {
             }
         }
     }
-
 
     public void changView() {
         mErrorView.setVisibility(View.INVISIBLE);
