@@ -28,6 +28,11 @@ public abstract class BaseFragment extends Fragment {
         }
         mLoadingPager = new LoadPager(getContext()) {
             @Override
+            protected boolean addRefresh() {
+                return needRefresh();
+            }
+
+            @Override
             public View createSuccessView() {
                 View view = createView();
                 return view;
@@ -41,14 +46,17 @@ public abstract class BaseFragment extends Fragment {
         return mLoadingPager;
     }
 
+    /**
+     * 是否需要下拉刷新
+     *
+     * @return
+     */
+    protected abstract boolean needRefresh();
+
     public abstract View createView();
 
     //获取数据调用该方法发
     public abstract Object getData();
-
-    public void refreshData() {
-        mLoadingPager.showView();
-    }
 
     public <T> List<T> chechRefresh(List<T> showItems, List<T> datas) {
         if (showItems.size() <= 0) {

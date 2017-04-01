@@ -50,7 +50,7 @@ public abstract class LoadPager extends FrameLayout {
     }
 
     private void init() {
-        if (needRefresh()) {
+        if (addRefresh()) {
             //需要刷新
             mSwipeRefreshLayout = new SwipeRefreshLayout(getContext());
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -107,7 +107,7 @@ public abstract class LoadPager extends FrameLayout {
         viewGroup.addView(mLoadingView);
     }
 
-    protected abstract boolean needRefresh();
+    protected abstract boolean addRefresh();
 
     public void showViewDely(final int time) {
         ThreadUtils.runSub(new Runnable() {
