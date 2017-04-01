@@ -10,6 +10,8 @@
         android:background="#F6F6F6" />
 
     <TextView
+        android:id="@+id/openSoftware"
+        android:drawableRight="@mipmap/ic_arrow_right"
         android:background="#ffffff"
         android:gravity="center_vertical"
         android:drawableLeft="@mipmap/ic_discover_softwares"
@@ -26,6 +28,8 @@
         android:background="#F6F6F6" />
 
     <TextView
+
+        android:drawableRight="@mipmap/ic_arrow_right"
         android:background="#ffffff"
         android:gravity="center_vertical"
         android:drawableLeft="@mipmap/ic_discover_find"
@@ -36,13 +40,15 @@
         android:text="找人"
         android:textColor="#000000"
         android:textSize="18dp"
-        android:id="@+id/textView"/>
+        android:id="@+id/findUser"/>
     <View
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:background="#F6F6F6" />
 
     <TextView
+        android:id="@+id/scan"
+        android:drawableRight="@mipmap/ic_arrow_right"
         android:background="#ffffff"
         android:gravity="center_vertical"
         android:drawableLeft="@mipmap/ic_discover_scan"
@@ -59,6 +65,8 @@
         android:background="#F6F6F6" />
 
     <TextView
+        android:id="@+id/shake"
+        android:drawableRight="@mipmap/ic_arrow_right"
         android:background="#ffffff"
         android:gravity="center_vertical"
         android:drawableLeft="@mipmap/ic_discover_shake"
