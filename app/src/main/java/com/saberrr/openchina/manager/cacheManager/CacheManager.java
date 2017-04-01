@@ -2,8 +2,8 @@ package com.saberrr.openchina.manager.cacheManager;
 
 import android.os.Environment;
 
-import com.saberrr.gooleplay_my1.gloab.AppApplication;
-import com.saberrr.gooleplay_my1.utils.MD5Utils;
+import com.saberrr.openchina.gloab.AppApplication;
+import com.saberrr.openchina.utils.MD5Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
