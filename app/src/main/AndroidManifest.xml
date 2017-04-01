@@ -3,11 +3,11 @@
           package="com.saberrr.openchina">
 
     <application
+        android:name=".gloab.AppApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".gloab.AppApplication"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.activity.MainActivity">
             <intent-filter>
