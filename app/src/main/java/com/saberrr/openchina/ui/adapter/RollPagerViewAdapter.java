@@ -35,7 +35,8 @@ public class RollPagerViewAdapter extends PagerAdapter {
         View view = View.inflate(container.getContext(), R.layout.viewpager_item_information, null);
         mImageView = (ImageView) view.findViewById(R.id.iv_item_viewpager_information);
         mTextView = (TextView) view.findViewById(R.id.tv_item_viewpager_information);
-        container.addView(mImageView);
+        mImageView.setImageResource(R.mipmap.share_icon_qq);
+        mTextView.setText("我是都好好的呵呵哒");
         return mImageView;
     }
 
