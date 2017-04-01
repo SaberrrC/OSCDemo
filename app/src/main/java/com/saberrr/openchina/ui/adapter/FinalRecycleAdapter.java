@@ -17,13 +17,7 @@ import java.util.List;
  */
 
 public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapter.ViewHolder> {
-    private static final int TYPE_HEAD = 100;
-    private static final int TYPE_BODY = 101;
-    private static final int TYPE_FOOT = 102;
     private List<Object>            mDatas;
-    private int                     mHeadLayout;
-    private int                     mBodyLayout;
-    private int                     mFootLayout;
     private FinalAdapterListener    mMultiRecycleAdapter;
     private HashMap<Class, Integer> mClassIntegerHashMap;
 
