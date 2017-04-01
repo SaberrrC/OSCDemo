@@ -17,7 +17,16 @@ public class MainActivity extends AppCompatActivity {
     private FragmentTabHost mTabHost;
     private LayoutInflater  mLayoutInflater;
 
-    private Class  mFragmentArray[] = {TestFragment1.class, TestFragment1.class, TestFragment1.class, FindFragment.class, TestFragment1.class};
+    private Class  mFragmentArray[] = {TestFragment1.class,
+            TestFragment1.class,
+            TestFragment1.class,
+            FindFragment.class,
+            TestFragment1.class};
+//    private Class  mFragmentArray[] = {TestFragment1.class,
+//            TestFragment1.class,
+//            TestFragment1.class,
+//            FindFragment.class,
+//            TestFragment1.class};
     private String mTextArray[]     = {"首页", "消息", "好友", "搜索", "更多"};
     private int    mImageArray[]    = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
 
