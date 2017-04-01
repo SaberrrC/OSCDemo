@@ -46,10 +46,11 @@ public class ShowActivity extends AppCompatActivity {
         }
     }
 
-
     public static void startFragment(Class clss, Bundle bundle) {
         Intent intent = new Intent(AppApplication.appContext, ShowActivity.class);
-        intent.putExtra(Fiels.DtailActivity.BUNDLE, bundle);
+        if (bundle != null) {
+            intent.putExtra(Fiels.DtailActivity.BUNDLE, bundle);
+        }
         intent.putExtra(Fiels.DtailActivity.CLASSNAME, clss);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         AppApplication.appContext.startActivity(intent);
@@ -79,6 +80,4 @@ public class ShowActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 }

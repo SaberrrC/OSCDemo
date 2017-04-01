@@ -10,17 +10,17 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 /**
- * Created by Saberrr on 2017-04-01.
+ * Created by Saberrr on 2017-03-25.
  */
 
-public class NetManager {
-    private static NetManager sNetManager = new NetManager();
+public class NetMangager {
+    private static NetMangager sNetMangager = new NetMangager();
 
-    private NetManager() {
+    private NetMangager() {
     }
 
-    public static NetManager getInstance() {
-        return sNetManager;
+    public static synchronized NetMangager getInstance() {
+        return sNetMangager;
     }
 
     public String getJson(String url) {
@@ -56,5 +56,4 @@ public class NetManager {
             return null;
         }
     }
-
 }
