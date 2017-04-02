@@ -6,8 +6,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -34,11 +32,11 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
      * @TITLE_CHOOSE 右边文字 “选择”
      * @TITLE_PEOPLE “找人”专用
      */
-    private static final int TITLE_NONE    = 100;//右边没东西
-    private static final int TITLE_SEARCH  = 101;//右边搜索图标
-    private static final int TITLE_COMMENT = 102;//右边是评论数量
-    private static final int TITLE_CHOOSE  = 103;//右边文字 “选择”
-    private static final int TITLE_PEOPLE  = 104;//“找人”专用
+    public static final int TITLE_NONE    = 100;//右边没东西
+    public static final int TITLE_SEARCH  = 101;//右边搜索图标
+    public static final int TITLE_COMMENT = 102;//右边是评论数量
+    public static final int TITLE_SEND    = 103;//右边文字 “选择”
+    public static final int TITLE_PEOPLE  = 104;//“找人”专用
     private TextView   mTvRightToolbar;
     private SearchView mSearchView;
 
@@ -49,8 +47,8 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         ButterKnife.bind(this);
         Intent intent = getIntent();
         String title = intent.getStringExtra(Fiels.DtailActivity.TITLE);
-        intent.getStringExtra(Fiels.DtailActivity.TITLE);
         int title_icon = intent.getIntExtra(Fiels.DtailActivity.TOOBARICON, TITLE_NONE);
+        initToolbar();
         initToolBar(title, title_icon);
         try {
             Bundle bundle = intent.getBundleExtra(Fiels.DtailActivity.BUNDLE);
@@ -67,16 +65,25 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
 
     //设置toolbar
     public void initToolBar(String title, int title_icon) {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        mIvIconToolbar = (ImageView) findViewById(R.id.iv_icon_toolbar);
-        mTvTitleToolbar = (TextView) findViewById(R.id.tv_title_toolbar);
-        mTvRightToolbar = (TextView) findViewById(R.id.tv_right_toolbar);
         mToolbar.setTitle(title);
         setSupportActionBar(mToolbar);
-        //返回箭头
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //自带导航图标
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        mToolbar.setTitle(title);
         mIvIconToolbar.setVisibility(View.GONE);
         mTvTitleToolbar.setVisibility(View.GONE);
-        mSearchView.setVisibility(View.GONE);
+        if (mSearchView != null) {
+            mSearchView.setVisibility(View.GONE);
+        }
+
         switch (title_icon) {
             case TITLE_NONE:
                 break;
@@ -89,40 +96,48 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
                 mTvRightToolbar.setBackgroundResource(R.drawable.ic_menu_comment);
                 mTvRightToolbar.setText("数量");
                 break;
-            case TITLE_CHOOSE:
+            case TITLE_SEND:
+                mToolbar.setTitle("");
+                mIvIconToolbar.setVisibility(View.GONE);
+                mTvTitleToolbar.setVisibility(View.VISIBLE);
                 mTvRightToolbar.setVisibility(View.VISIBLE);
                 mTvRightToolbar.setBackgroundResource(0);
-                mTvRightToolbar.setText("数量");
+                mTvTitleToolbar.setText(title);
+                mTvRightToolbar.setText("发送");
+                mTvRightToolbar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ToastUtils.showToast("发送数据");
+                    }
+                });
                 break;
             case TITLE_PEOPLE:
                 mSearchView.setVisibility(View.VISIBLE);
                 break;
         }
-
-
-        mIvIconToolbar.setVisibility(View.VISIBLE);
-        mIvIconToolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToastUtils.showToast("搜索界面");
-            }
-        });
         //mTvTitleToolbar.setVisibility(View.GONE);
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_searviewu, menu);
-        MenuItem item = menu.findItem(R.id.search);
-        mSearchView = (SearchView) item.getActionView();
-        //设置提示文字
-        mSearchView.setQueryHint("请输入关键字");
-        //设置文字搜索监听
-        mSearchView.setOnQueryTextListener(this);
-        return true;
+    private void initToolbar() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        mIvIconToolbar = (ImageView) findViewById(R.id.iv_icon_toolbar);
+        mTvTitleToolbar = (TextView) findViewById(R.id.tv_title_toolbar);
+        mTvRightToolbar = (TextView) findViewById(R.id.tv_right_toolbar);
+
     }
 
+    //    @Override
+    //    public boolean onCreateOptionsMenu(Menu menu) {
+    //        getMenuInflater().inflate(R.menu.menu_searviewu, menu);
+    //        MenuItem item = menu.findItem(R.id.search);
+    //        mSearchView = (SearchView) item.getActionView();
+    //        //设置提示文字
+    //        mSearchView.setQueryHint("请输入关键字");
+    //        //设置文字搜索监听
+    //        mSearchView.setOnQueryTextListener(this);
+    //        return true;
+    //    }
 
     public static void startFragment(Class clss, Bundle bundle) {
         Intent intent = new Intent(AppApplication.appContext, ShowActivity.class);
@@ -135,15 +150,21 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     public static void startFragmentWithTitle(Class clss, Bundle bundle, String title) {
+        startFragmentWithTitle(clss, bundle, title, TITLE_NONE);
+    }
+
+    public static void startFragmentWithTitle(Class clss, Bundle bundle, String title, int right) {
         Intent intent = new Intent(AppApplication.appContext, ShowActivity.class);
         if (bundle != null) {
             intent.putExtra(Fiels.DtailActivity.BUNDLE, bundle);
         }
         intent.putExtra(Fiels.DtailActivity.CLASSNAME, clss);
         intent.putExtra(Fiels.DtailActivity.TITLE, title);
+        intent.putExtra(Fiels.DtailActivity.TOOBARICON, right);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         AppApplication.appContext.startActivity(intent);
     }
+
 
     private void hideActionBar() {
         getSupportActionBar().hide();
@@ -160,15 +181,6 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         supportActionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     //menu回调 两个
     @Override
