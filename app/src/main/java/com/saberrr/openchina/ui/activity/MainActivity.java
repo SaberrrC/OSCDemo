@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
             mTabHost.getTabWidget().getChildAt(i).setBackgroundResource(R.mipmap.ic_launcher);
         }
 
+
     }
 
     /**
