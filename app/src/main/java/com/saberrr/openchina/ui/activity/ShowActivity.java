@@ -115,7 +115,6 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
                 mSearchView.setVisibility(View.VISIBLE);
                 break;
         }
-        //mTvTitleToolbar.setVisibility(View.GONE);
     }
 
 
@@ -126,18 +125,6 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         mTvRightToolbar = (TextView) findViewById(R.id.tv_right_toolbar);
 
     }
-
-    //    @Override
-    //    public boolean onCreateOptionsMenu(Menu menu) {
-    //        getMenuInflater().inflate(R.menu.menu_searviewu, menu);
-    //        MenuItem item = menu.findItem(R.id.search);
-    //        mSearchView = (SearchView) item.getActionView();
-    //        //设置提示文字
-    //        mSearchView.setQueryHint("请输入关键字");
-    //        //设置文字搜索监听
-    //        mSearchView.setOnQueryTextListener(this);
-    //        return true;
-    //    }
 
     public static void startFragment(Class clss, Bundle bundle) {
         Intent intent = new Intent(AppApplication.appContext, ShowActivity.class);
