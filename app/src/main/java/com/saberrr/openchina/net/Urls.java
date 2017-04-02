@@ -6,9 +6,9 @@ package com.saberrr.openchina.net;
 
 public class Urls {
     public static String BASE_URL = "http://www.oschina.net/";
-    public static String BANNER =BASE_URL+ "action/apiv2/banner?catalog=1";
+    public static String BANNER = BASE_URL + "action/apiv2/banner?catalog=1";
 
-    public static String MOVE_NEW = "action/apiv2/tweets?type=1";
+    public static String MOVE_NEW = BASE_URL + "action/apiv2/tweets?type=1";
 
 
 }

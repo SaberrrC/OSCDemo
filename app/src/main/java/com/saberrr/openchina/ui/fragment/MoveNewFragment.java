@@ -39,8 +39,6 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
         View view = View.inflate(getContext(), R.layout.fragment_move_new, null);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         setRecyclerView();
-
-
         return view;
     }
 
@@ -52,35 +50,21 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
 
         mRecyclerView.setAdapter(new FinalRecycleAdapter(datas, map, this));
 
-
     }
 
-    final List<Object> data = new ArrayList<>();
 
     private List<Object> initData() {
-        MoveNewBean moveNewBean = JsonCacheManager.getInstance().getDataBean(Urls.BASE_URL + Urls.MOVE_NEW, MoveNewBean.class);
-        List<MoveNewBean.ResultBean.ItemsBean> items = moveNewBean.getResult().getItems();
+        final List<Object> data = new ArrayList<>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MoveNewBean moveNewBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_NEW, MoveNewBean.class);
+                List<MoveNewBean.ResultBean.ItemsBean> items = moveNewBean.getResult().getItems();
+                Log.i(TAG, "initData: item = " + items);
+                data.addAll(items);
+            }
+        });
 
-
-//        RetrofitUtil.getHttpServiceInstance().mMoveNewBeanCall(1).enqueue(new Callback<MoveNewBean>() {
-//            @Override
-//            public void onResponse(Call<MoveNewBean> call, Response<MoveNewBean> response) {
-//                if (response.isSuccessful()) {
-//                    List<MoveNewBean.ResultBean.ItemsBean> items = response.body().getResult().getItems();
-//                    Log.i(TAG, "onResponse: item = " + items);
-//                    data.addAll(items);
-//                } else {
-//                    Log.i(TAG, "onResponse: 连接失败1");
-//                    Toast.makeText(getContext(), "连接失败1", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<MoveNewBean> call, Throwable t) {
-//                Log.i(TAG, "onResponse: 连接失败2" + call);
-//                Toast.makeText(getContext(), "连接失败2" + call, Toast.LENGTH_SHORT).show();
-//            }
-//        });
         Log.i(TAG, "initData: data = " + data);
         return data;
     }
