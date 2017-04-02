@@ -12,11 +12,13 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.ui.fragment.ComprehensiveFragment;
 import com.saberrr.openchina.ui.fragment.FindFragment;
 import com.saberrr.openchina.ui.fragment.InformationFragment;
 import com.saberrr.openchina.ui.fragment.MoveFragment;
 import com.saberrr.openchina.ui.fragment.JumpFragment;
 import com.saberrr.openchina.ui.fragment.MyFragment;
+import com.saberrr.openchina.ui.fragment.TestFragment1;
 import com.saberrr.openchina.ui.fragment.TestFragment2;
 import com.saberrr.openchina.utils.ToastUtils;
 

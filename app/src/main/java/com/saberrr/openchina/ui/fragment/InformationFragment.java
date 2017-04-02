@@ -1,6 +1,8 @@
 package com.saberrr.openchina.ui.fragment;
 
 import android.graphics.Color;
+import android.support.v4.view.PagerAdapter;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +12,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.jude.rollviewpager.RollPagerView;
-import com.jude.rollviewpager.adapter.StaticPagerAdapter;
 import com.jude.rollviewpager.hintview.ColorPointHintView;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.InformationBodyBean;
@@ -20,9 +21,9 @@ import com.saberrr.openchina.manager.cacheManager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.utils.ThreadUtils;
+import com.saberrr.openchina.utils.ToastUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,6 +37,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
     private RecyclerView  mRecyclerView;
     private List<InformationHearBean.ResultBean.ItemsBean> datas     = new ArrayList<>();
     private List<InformationBodyBean.ResultBean.ItemsBean> bodyDatas = new ArrayList<>();
+    private List<InformationBodyBean> bodys = new ArrayList<>();
     private HashMap<Class, Integer>                        layouts   = new HashMap<>();
     private ImageView           mImageView;
     private TextView            mTextView;
@@ -44,7 +46,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
 
     @Override
     protected boolean needRefresh() {
-        return true;
+        return false;
     }
 
     @Override
@@ -64,20 +66,27 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         mRollPagerView.setAdapter(mTestNormalAdapter);
         mRollPagerView.setHintView(new ColorPointHintView(getContext(), Color.GREEN, Color.WHITE));
         mRollPagerView.setHintPadding(20, 20, 20, 20);
-        layouts.put(InformationBodyBean.class, R.layout.information_body_item);
-        List<Object> list = new ArrayList<>();
-        Collections.addAll(list,bodyDatas);
-        mFinalRecycleAdapter = new FinalRecycleAdapter(list, layouts, this);
+
+        layouts.put(InformationBodyBean.ResultBean.ItemsBean.class, R.layout.information_body_item);
+        mFinalRecycleAdapter = new FinalRecycleAdapter(bodyDatas, layouts, this);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mFinalRecycleAdapter);
     }
 
     @Override
     public Object getData() {
+        String nextPageToken = "";
+        if (bodys == null || bodys.size()==0){
+
+        }else {
+            nextPageToken = bodys.get(0).getResult().getNextPageToken();
+        }
         InformationHearBean informationHearBean = JsonCacheManager.getInstance().getDataBean(Urls.BANNER, InformationHearBean.class);
-        InformationBodyBean informationBodyBean = JsonCacheManager.getInstance().getDataBean(Urls.NEWS, InformationBodyBean.class);
+        InformationBodyBean informationBodyBean = JsonCacheManager.getInstance().getDataBean(Urls.NEWS+nextPageToken, InformationBodyBean.class);
         if (informationHearBean == null || informationBodyBean == null) {
             return null;
         }
+        bodys.add(0,informationBodyBean);
         List<InformationHearBean.ResultBean.ItemsBean> itemsBeanList = informationHearBean.getResult().getItems();
         List<InformationBodyBean.ResultBean.ItemsBean> badyBeanList = informationBodyBean.getResult().getItems();
         datas.addAll(itemsBeanList);
@@ -85,6 +94,9 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         ThreadUtils.runMain(new Runnable() {
             @Override
             public void run() {
+                mRecyclerView.requestLayout();
+                mRollPagerView.requestLayout();
+
                 mTestNormalAdapter.notifyDataSetChanged();
                 mFinalRecycleAdapter.notifyDataSetChanged();
             }
@@ -105,7 +117,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         tvTitleInformation.setText(itemsBean.getTitle());
         tvBodyInformation.setText(itemsBean.getBody());
         tvTimeInformation.setText(itemsBean.getPubDate());
-        tvCommentInformation.setText(itemsBean.getCommentCount());
+        tvCommentInformation.setText(itemsBean.getCommentCount()+"");
         llCommentInformation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,10 +127,35 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
 
     }
 
-    private class TestNormalAdapter extends StaticPagerAdapter {
+    private class TestNormalAdapter extends PagerAdapter {
+
+//        @Override
+//        public View getView(ViewGroup container, final int position) {
+//
+//
+////            mImageView.setOnClickListener(new View.OnClickListener() {
+////                @Override
+////                public void onClick(View v) {
+////
+////                    ToastUtils.showToast("我被点击了"+position);
+////                }
+////            });
+//
+//            return view;
+//        }
 
         @Override
-        public View getView(ViewGroup container, int position) {
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, final int position) {
             View view = View.inflate(container.getContext(), R.layout.viewpager_item_information, null);
             mImageView = (ImageView) view.findViewById(R.id.iv_item_viewpager_information);
             mTextView = (TextView) view.findViewById(R.id.tv_item_viewpager_information);
@@ -126,10 +163,15 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
             Glide.with(AppApplication.appContext).load(datas.get(position).getImg()).into(mImageView);
             mTextView.setText(datas.get(position).getName());
             mTextView.setTextColor(Color.WHITE);
-
+           view.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   ToastUtils.showToast("我被点击了"+position);
+               }
+           });
+            container.addView(view);
             return view;
         }
-
 
         @Override
         public int getCount() {
