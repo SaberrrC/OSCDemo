@@ -1,6 +1,7 @@
 package com.saberrr.openchina.ui.fragment;
 
 import android.os.Bundle;
+import android.os.DropBoxManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +11,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.event.LoginBeanEvent;
 import com.saberrr.openchina.utils.ToastUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,6 +54,8 @@ public class LoginFragment extends BaseFragment {
         return view;
     }
 
+
+
     @Override
     public Object getData() {
         return "";
@@ -66,6 +72,11 @@ public class LoginFragment extends BaseFragment {
                 if (checkUsernameAndPwd(mUsername, mPwd)) {
                     // TODO: 2017/4/2 登录
                     ToastUtils.showToast("登录");
+                    //将登录事件发送给我的界面
+                    EventBus.getDefault().postSticky(new LoginBeanEvent());
+
+                    getActivity().finish();
+
 
                 } else {
                     return;
