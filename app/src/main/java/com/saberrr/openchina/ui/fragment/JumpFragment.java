@@ -32,6 +32,7 @@ public class JumpFragment extends BaseFragment implements JumpView {
     @Override
     public Object getData() {
         Object o = mJumpPresenter.init();
+
         return "";
     }
 
