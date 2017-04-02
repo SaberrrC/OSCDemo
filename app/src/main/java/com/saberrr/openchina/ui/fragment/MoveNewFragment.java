@@ -97,7 +97,6 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
             tv_date.setText(bean.getPubDate());
             tv_good.setText(bean.getLikeCount());
 
-
             Glide.with(getContext()).load(portrait).asBitmap().into(iv_icon);
 
         }
