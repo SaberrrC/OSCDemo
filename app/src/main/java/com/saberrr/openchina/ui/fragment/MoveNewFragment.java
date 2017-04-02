@@ -2,6 +2,7 @@ package com.saberrr.openchina.ui.fragment;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -66,6 +67,7 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
                 new Runnable() {
                     @Override
                     public void run() {
+
                         mAdapter.notifyDataSetChanged();
                     }
                 }
@@ -99,7 +101,8 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
 
             //文本内容
             String content = bean.getContent();
-            tv_txt.setText(content);
+//            tv_txt.setText(content);
+            tv_txt.setText(Html.fromHtml(content)); //这个不好，不能点击
 
             //时间
             tv_date.setText(bean.getPubDate());
@@ -108,8 +111,15 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
             if (bean.getLikeCount() > 0) {
                 tv_good.setText(bean.getLikeCount() + "");
             }
+            //评论
+            if (bean.getCommentCount() > 0) {
+                tv_comment.setText(bean.getCommentCount() + "");
+            }
+            if (bean.getStatistics().getTransmit() > 0) {
+                tv_relay.setText(bean.getStatistics().getTransmit() + "");
+            }
 
-
+//            bean.get
         }
     }
 }
