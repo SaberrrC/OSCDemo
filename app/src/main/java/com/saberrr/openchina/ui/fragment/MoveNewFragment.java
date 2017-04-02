@@ -1,7 +1,7 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,7 +27,7 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
     private static final String TAG = "MoveNewFragment";
 
     private RecyclerView mRecyclerView;
-    List<MoveNewBean> mShowItems = new ArrayList<>();
+    private FinalRecycleAdapter mAdapter;
 
     @Override
     protected boolean needRefresh() {
@@ -42,36 +42,35 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
         return view;
     }
 
+
     private void setRecyclerView() {
-        List<Object> datas = initData();
+
 
         HashMap<Class, Integer> map = new HashMap<>();
-        map.put(MoveNewBean.ResultBean.class, R.layout.item_move_new);
+        map.put(MoveNewBean.ResultBean.ItemsBean.class, R.layout.item_move_new);
 
-        mRecyclerView.setAdapter(new FinalRecycleAdapter(datas, map, this));
-
+        mAdapter = new FinalRecycleAdapter(data, map, this);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
-
-    private List<Object> initData() {
-        final List<Object> data = new ArrayList<>();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                MoveNewBean moveNewBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_NEW, MoveNewBean.class);
-                List<MoveNewBean.ResultBean.ItemsBean> items = moveNewBean.getResult().getItems();
-                Log.i(TAG, "initData: item = " + items);
-                data.addAll(items);
-            }
-        });
-
-        Log.i(TAG, "initData: data = " + data);
-        return data;
-    }
+    final List<MoveNewBean.ResultBean.ItemsBean> data = new ArrayList<>();
 
     @Override
     public Object getData() {
-        return "";
+
+        final MoveNewBean moveNewBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_NEW, MoveNewBean.class);
+        List<MoveNewBean.ResultBean.ItemsBean> items = moveNewBean.getResult().getItems();
+        data.addAll(items);
+        getActivity().runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+        );
+        return data;
     }
 
     @Override
@@ -89,15 +88,27 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
             TextView tv_relay = (TextView) holder.getViewById(R.id.move_tv_relay);
 
             MoveNewBean.ResultBean.ItemsBean.AuthorBean author = bean.getAuthor();
-            String name = author.getName();
+
+            //头像
             String portrait = author.getPortrait();
+            Glide.with(getContext()).load(portrait).asBitmap().into(iv_icon);
+
+            //名字
+            String name = author.getName();
             tv_name.setText(name);
+
+            //文本内容
             String content = bean.getContent();
             tv_txt.setText(content);
-            tv_date.setText(bean.getPubDate());
-            tv_good.setText(bean.getLikeCount());
 
-            Glide.with(getContext()).load(portrait).asBitmap().into(iv_icon);
+            //时间
+            tv_date.setText(bean.getPubDate());
+
+            //赞
+            if (bean.getLikeCount() > 0) {
+                tv_good.setText(bean.getLikeCount() + "");
+            }
+
 
         }
     }

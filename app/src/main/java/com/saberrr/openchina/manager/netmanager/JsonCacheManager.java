@@ -1,7 +1,6 @@
 package com.saberrr.openchina.manager.netmanager;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.saberrr.openchina.utils.GsonTools;
 
@@ -12,7 +11,6 @@ import java.util.List;
  */
 
 public class JsonCacheManager {
-
     private static JsonCacheManager sJsonCacheManager = new JsonCacheManager();
 
     private JsonCacheManager() {
@@ -30,7 +28,6 @@ public class JsonCacheManager {
         String json = NetManager.getInstance().getJson(url);
         if (TextUtils.isEmpty(json)) {
             json = CacheManager.getInstance().getCacheData(url);
-            Log.d("CacheManager", "getDataBean: ====" + json);
         } else {
             CacheManager.getInstance().saveCacheData(url, json);
         }

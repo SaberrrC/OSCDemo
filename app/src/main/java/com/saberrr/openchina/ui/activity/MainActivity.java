@@ -15,8 +15,8 @@ import android.widget.TextView;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.ui.fragment.FindFragment;
 import com.saberrr.openchina.ui.fragment.InformationFragment;
+import com.saberrr.openchina.ui.fragment.MoveFragment;
 import com.saberrr.openchina.ui.fragment.MyFragment;
-import com.saberrr.openchina.ui.fragment.TestFragment1;
 import com.saberrr.openchina.ui.fragment.TestFragment2;
 import com.saberrr.openchina.utils.ToastUtils;
 
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentTabHost mTabhost;
     @BindView(R.id.iv_add)
     ImageView       mIvAdd;
-    private Class  mFragmentArray[] = {InformationFragment.class, TestFragment1.class, TestFragment2.class, FindFragment.class, MyFragment.class};
+    private Class  mFragmentArray[] = {InformationFragment.class, MoveFragment.class, TestFragment2.class, FindFragment.class, MyFragment.class};
     private String mTextArray[]     = {"综合", "动弹", "", "发现", "我的"};
     private int    mImageArray[]    = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
 
