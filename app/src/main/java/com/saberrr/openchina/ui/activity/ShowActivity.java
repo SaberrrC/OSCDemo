@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -20,17 +22,25 @@ import com.saberrr.openchina.utils.ToastUtils;
 
 import butterknife.ButterKnife;
 
-public class ShowActivity extends AppCompatActivity {
+public class ShowActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private Toolbar   mToolbar;
     private ImageView mIvIconToolbar;
     private TextView  mTvTitleToolbar;
-
-    private static final int TITLE_NONE   = 100;
-    private static final int TITLE_SEARCH = 101;
-    private static final int TITLE_BOOK   = 102;
-    private static final int TITLE_CHOOSE = 103;
-    private static final int TITLE_PEOPLE = 104;
+    /**
+     * @TITLE_NONE 右边没东西
+     * @TITLE_SEARCH 右边搜索图标
+     * @TITLE_COMMENT 右边是评论数量
+     * @TITLE_CHOOSE 右边文字 “选择”
+     * @TITLE_PEOPLE “找人”专用
+     */
+    private static final int TITLE_NONE    = 100;//右边没东西
+    private static final int TITLE_SEARCH  = 101;//右边搜索图标
+    private static final int TITLE_COMMENT = 102;//右边是评论数量
+    private static final int TITLE_CHOOSE  = 103;//右边文字 “选择”
+    private static final int TITLE_PEOPLE  = 104;//“找人”专用
+    private TextView   mTvRightToolbar;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +70,7 @@ public class ShowActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         mIvIconToolbar = (ImageView) findViewById(R.id.iv_icon_toolbar);
         mTvTitleToolbar = (TextView) findViewById(R.id.tv_title_toolbar);
+        mTvRightToolbar = (TextView) findViewById(R.id.tv_right_toolbar);
         mToolbar.setTitle(title);
         setSupportActionBar(mToolbar);
         //返回箭头
@@ -72,13 +83,18 @@ public class ShowActivity extends AppCompatActivity {
                 mIvIconToolbar.setVisibility(View.VISIBLE);
                 mIvIconToolbar.setImageResource(R.mipmap.btn_search_normal);
                 break;
-            case TITLE_BOOK:
-                mIvIconToolbar.setVisibility(View.VISIBLE);
-                mIvIconToolbar.setImageResource(R.mipmap.btn_search_normal);
+            case TITLE_COMMENT:
+                mTvRightToolbar.setVisibility(View.VISIBLE);
+                mTvRightToolbar.setBackgroundResource(R.drawable.ic_menu_comment);
+                mTvRightToolbar.setText("数量");
                 break;
             case TITLE_CHOOSE:
+                mTvRightToolbar.setVisibility(View.VISIBLE);
+                mTvRightToolbar.setBackgroundResource(0);
+                mTvRightToolbar.setText("数量");
                 break;
             case TITLE_PEOPLE:
+
                 break;
         }
 
@@ -91,6 +107,19 @@ public class ShowActivity extends AppCompatActivity {
             }
         });
         //mTvTitleToolbar.setVisibility(View.GONE);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_searviewu, menu);
+        MenuItem item = menu.findItem(R.id.search);
+        mSearchView = (SearchView) item.getActionView();
+        //设置提示文字
+        mSearchView.setQueryHint("请输入关键字");
+        //设置文字搜索监听
+        mSearchView.setOnQueryTextListener(this);
+        return true;
     }
 
 
@@ -138,5 +167,17 @@ public class ShowActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+    //menu回调 两个
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        ToastUtils.showToast("去服务器查询 " + query + " 数据");
+        mSearchView.clearFocus();
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 }

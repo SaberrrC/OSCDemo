@@ -84,10 +84,17 @@ public class MainActivity extends AppCompatActivity {
             mTabhost.getTabWidget().getChildTabViewAt(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mToolbarMain.setTitle(mTextArray[finalI]);
-                    mTabhost.setCurrentTab(finalI);
+                    if (finalI != 2) {
+                        mToolbarMain.setTitle(mTextArray[finalI]);
+                        mTabhost.setCurrentTab(finalI);
+                    } else {
+                        //弹一弹
+
+                    }
+
                 }
             });
+
         }
         mIvAdd.setOnClickListener(new View.OnClickListener() {
             @Override
