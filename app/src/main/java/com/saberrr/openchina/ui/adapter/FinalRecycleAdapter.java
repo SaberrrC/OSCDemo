@@ -14,7 +14,7 @@ import java.util.List;
  */
 
 public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapter.ViewHolder> {
-    private List<java.lang.Object>            mDatas;
+    private List<? extends Object>            mDatas;
     private OnViewAttachListener    mMultiRecycleAdapter;
     private HashMap<Class, Integer> mClassIntegerHashMap;
 
@@ -22,7 +22,7 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
      * @param datas               数据
      * @param classIntegerHashMap Class键 数据类型 对应 条目类型，Integer值对应条目布局id
      */
-    public FinalRecycleAdapter(List<java.lang.Object> datas, HashMap<Class, Integer> classIntegerHashMap, OnViewAttachListener onViewAttachListener) {
+    public FinalRecycleAdapter(List<? extends Object> datas, HashMap<Class, Integer> classIntegerHashMap, OnViewAttachListener onViewAttachListener) {
         mClassIntegerHashMap = classIntegerHashMap;
         mDatas = datas;
         mMultiRecycleAdapter = onViewAttachListener;
