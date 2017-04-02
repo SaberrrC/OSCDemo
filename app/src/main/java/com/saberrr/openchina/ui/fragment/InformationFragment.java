@@ -1,6 +1,7 @@
 package com.saberrr.openchina.ui.fragment;
 
 import android.graphics.Color;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,6 @@ import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.utils.ThreadUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
 
     @Override
     protected boolean needRefresh() {
-        return true;
+        return false;
     }
 
     @Override
@@ -64,10 +64,9 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         mRollPagerView.setAdapter(mTestNormalAdapter);
         mRollPagerView.setHintView(new ColorPointHintView(getContext(), Color.GREEN, Color.WHITE));
         mRollPagerView.setHintPadding(20, 20, 20, 20);
-        layouts.put(InformationBodyBean.class, R.layout.information_body_item);
-        List<Object> list = new ArrayList<>();
-        Collections.addAll(list,bodyDatas);
-        mFinalRecycleAdapter = new FinalRecycleAdapter(list, layouts, this);
+        layouts.put(InformationBodyBean.ResultBean.ItemsBean.class, R.layout.information_body_item);
+        mFinalRecycleAdapter = new FinalRecycleAdapter(bodyDatas, layouts, this);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mFinalRecycleAdapter);
     }
 
@@ -105,7 +104,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         tvTitleInformation.setText(itemsBean.getTitle());
         tvBodyInformation.setText(itemsBean.getBody());
         tvTimeInformation.setText(itemsBean.getPubDate());
-        tvCommentInformation.setText(itemsBean.getCommentCount());
+        tvCommentInformation.setText(itemsBean.getCommentCount()+"");
         llCommentInformation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -10,6 +10,7 @@ public class Urls {
     public static String NEWS =BASE_URL+ "action/apiv2/news?pageToken=";
 
     public static String MOVE_NEW = BASE_URL + "action/apiv2/tweets?type=1";
+    public static final String CATEGORY = BASE_URL + "action/api/softwarecatalog_list?tag=0";
 
 
 }
