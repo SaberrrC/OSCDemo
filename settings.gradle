@@ -1,1 +1,1 @@
-include ':app', ':bannernew'
+include ':app', ':bannernew', ':openchina_default'
