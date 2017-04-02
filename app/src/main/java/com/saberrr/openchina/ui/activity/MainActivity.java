@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         mIvAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowActivity.startFragmentWithTitle(JumpFragment.class,null,"弹一弹",ShowActivity.TITLE_CHOOSE);
+                ShowActivity.startFragmentWithTitle(JumpFragment.class,null,"弹一弹",ShowActivity.TITLE_SEND);
             }
         });
     }
