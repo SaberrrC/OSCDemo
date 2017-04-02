@@ -14,7 +14,7 @@ import java.util.List;
  */
 
 public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapter.ViewHolder> {
-    private List<?extends Object>            mDatas;
+    private List<? extends Object>            mDatas;
     private OnViewAttachListener    mMultiRecycleAdapter;
     private HashMap<Class, Integer> mClassIntegerHashMap;
 

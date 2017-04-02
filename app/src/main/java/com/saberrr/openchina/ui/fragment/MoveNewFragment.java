@@ -1,8 +1,13 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -78,6 +83,7 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
     @Override
     public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
 
+
         if (itemData instanceof MoveNewBean.ResultBean.ItemsBean) {
             MoveNewBean.ResultBean.ItemsBean bean = (MoveNewBean.ResultBean.ItemsBean) itemData;
             ImageView iv_icon = (ImageView) holder.getViewById(R.id.item_move_iv_icon);
@@ -93,16 +99,13 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
 
             //头像
             String portrait = author.getPortrait();
+
             Glide.with(getContext()).load(portrait).asBitmap().into(iv_icon);
 
             //名字
             String name = author.getName();
             tv_name.setText(name);
 
-            //文本内容
-            String content = bean.getContent();
-//            tv_txt.setText(content);
-            tv_txt.setText(Html.fromHtml(content)); //这个不好，不能点击
 
             //时间
             tv_date.setText(bean.getPubDate());
@@ -120,6 +123,20 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
             }
 
 //            bean.get
+
+            //文本内容
+            String content = bean.getContent();
+//            tv_txt.setText(content);
+            tv_txt.setText(Html.fromHtml(content)); //这个不好，不能点
+
+            Spanned spanned = Html.fromHtml(content);
+
+            SpannableString msp = new SpannableString(spanned);
+
+            msp.setSpan(new ForegroundColorSpan(Color.MAGENTA), 2, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            tv_txt.setText(msp);
+            tv_txt.setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 }
