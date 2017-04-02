@@ -5,6 +5,9 @@ package com.saberrr.openchina.net;
  */
 
 public class Urls {
-    public static String BASE_URL = ":http://www.oschina.net/";
+    public static String BASE_URL = "http://www.oschina.net/";
+    public static String BANNER =BASE_URL+ "action/apiv2/banner?catalog=1";
+
+
 
 }
