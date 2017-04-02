@@ -14,9 +14,20 @@ import java.util.List;
  */
 
 public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapter.ViewHolder> {
-    private List<? extends Object>            mDatas;
+    private List<? extends Object>  mDatas;
     private OnViewAttachListener    mMultiRecycleAdapter;
     private HashMap<Class, Integer> mClassIntegerHashMap;
+    private static final int     LOADMORE     = 0;
+    private              boolean needLoadMore = true;
+
+    /**
+     * 是否需要加载更多 默认需要
+     *
+     * @param needLoadMore
+     */
+    public void setNeedLoadMore(boolean needLoadMore) {
+        this.needLoadMore = needLoadMore;
+    }
 
     /**
      * @param datas               数据
@@ -31,6 +42,9 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
     @Override
     public int getItemViewType(int position) {
         Class key = mDatas.get(position).getClass();
+        if (needLoadMore && position == getItemCount() - 1) {
+            return LOADMORE;
+        }
         if (mClassIntegerHashMap.containsKey(key)) {
             return mClassIntegerHashMap.get(key);
         } else {
@@ -40,7 +54,11 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (needLoadMore) {
+            View headView = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
+        }
         View headView = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
+
         ViewHolder holder = new ViewHolder(headView);
         return holder;
     }
@@ -66,7 +84,7 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private SparseArray<View> mShowItems = new SparseArray<>();
 
-        ViewHolder(View view) {
+            ViewHolder(View view) {
             super(view);
         }
 
