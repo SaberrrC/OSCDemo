@@ -94,6 +94,9 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         ThreadUtils.runMain(new Runnable() {
             @Override
             public void run() {
+                mRecyclerView.requestLayout();
+                mRollPagerView.requestLayout();
+
                 mTestNormalAdapter.notifyDataSetChanged();
                 mFinalRecycleAdapter.notifyDataSetChanged();
             }
