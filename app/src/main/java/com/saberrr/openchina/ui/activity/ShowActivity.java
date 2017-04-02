@@ -4,16 +4,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.contact.Fiels;
 import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.ui.fragment.BaseFragment;
+import com.saberrr.openchina.utils.ToastUtils;
 
 import butterknife.ButterKnife;
 
@@ -45,6 +49,26 @@ public class ShowActivity extends AppCompatActivity {
             hideActionBar();
         }
     }
+
+    private Toolbar   mToolbar;
+    private  ImageView mIvSearchToolbar;
+    private  TextView  mTvTitleToolbar;
+
+    private void initToolBar() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        mIvSearchToolbar = (ImageView) findViewById(R.id.iv_search_toolbar);
+        mTvTitleToolbar = (TextView) findViewById(R.id.tv_title_toolbar);
+        setSupportActionBar(mToolbar);
+        mIvSearchToolbar.setVisibility(View.VISIBLE);
+        mIvSearchToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToastUtils.showToast("搜索界面");
+            }
+        });
+        //mTvTitleToolbar.setVisibility(View.GONE);
+    }
+
 
     public static void startFragment(Class clss, Bundle bundle) {
         Intent intent = new Intent(AppApplication.appContext, ShowActivity.class);

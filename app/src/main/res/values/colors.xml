@@ -19,6 +19,7 @@
     <color name="menu_bg_press">#cecece</color>
     <color name="indicator_color">#3F51B5</color>
     <color name="progress_arc">#1e95ff</color>
+    <color name="white">#FFFFFF</color>
 
 
 </resources>

@@ -22,9 +22,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.ShowActivity">
+        <activity
+            android:name=".ui.activity.ShowActivity"
+            android:theme="@style/NoTitle">
         </activity>
-        <activity android:name=".ui.activity.MainActivity">
+        <activity android:name=".ui.activity.MainActivity"
+            android:theme="@style/NoTitle">
         </activity>
     </application>
 

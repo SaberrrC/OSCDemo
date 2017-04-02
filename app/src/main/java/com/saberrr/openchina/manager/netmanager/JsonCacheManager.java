@@ -3,7 +3,6 @@ package com.saberrr.openchina.manager.netmanager;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.saberrr.openchina.manager.cacheManager.NetMangager;
 import com.saberrr.openchina.utils.GsonTools;
 
 import java.util.List;

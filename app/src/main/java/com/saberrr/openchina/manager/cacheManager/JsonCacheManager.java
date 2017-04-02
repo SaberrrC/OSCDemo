@@ -2,6 +2,7 @@ package com.saberrr.openchina.manager.cacheManager;
 
 import android.text.TextUtils;
 
+import com.saberrr.openchina.manager.netmanager.NetManager;
 import com.saberrr.openchina.utils.GsonTools;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class JsonCacheManager {
          * 1. 去网络请求最新数据
          * 2. 如果没有数据去请求缓存数据
          */
-        String json = NetMangager.getInstance().getJson(url);
+        String json = NetManager.getInstance().getJson(url);
         if (TextUtils.isEmpty(json)) {
             json = CacheManager.getInstance().getCacheData(url);
         } else {
@@ -44,7 +45,7 @@ public class JsonCacheManager {
          * 1. 去网络请求最新数据
          * 2. 如果没有数据去请求缓存数据
          */
-        String json = NetMangager.getInstance().getJson(url);
+        String json = NetManager.getInstance().getJson(url);
         if (TextUtils.isEmpty(json)) {
             json = CacheManager.getInstance().getCacheData(url);
         } else {
