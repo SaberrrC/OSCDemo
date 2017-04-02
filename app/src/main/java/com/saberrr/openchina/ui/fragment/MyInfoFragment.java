@@ -1,6 +1,9 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +12,16 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.bean.LoginBean;
+import com.saberrr.openchina.event.LoginBeanEvent;
 import com.saberrr.openchina.utils.ToastUtils;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.Serializable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,7 +64,18 @@ public class MyInfoFragment extends BaseFragment {
 
     private void init() {
         Bundle bundle = getArguments();
-//        bundle.getSerializable()
+        LoginBean uerinfo = (LoginBean) bundle.getSerializable("UERINFO");
+        mTvUsernameOffline.setText(uerinfo.getUser().getName());
+        mTvLocaton.setText(uerinfo.getUser().getLocation());
+        Glide.with(getContext()).load(uerinfo.getUser().getPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
+            @Override
+            protected void setResource(Bitmap resource) {
+                RoundedBitmapDrawable circularBitmapDrawable =
+                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                circularBitmapDrawable.setCircular(true);
+                mIvAvtarOffline.setImageDrawable(circularBitmapDrawable);
+            }
+        });
 
         // TODO: 2017/4/2 设置数据
 
@@ -74,6 +96,8 @@ public class MyInfoFragment extends BaseFragment {
             case R.id.btn_logout:
                 ToastUtils.showToast("登出");
                 // TODO: 2017/4/2 清除本地登录相关数据
+                LoginBeanEvent.cookie = null;
+                EventBus.getDefault().postSticky(new LoginBeanEvent());
 
                 getActivity().finish();
                 break;

@@ -28,10 +28,10 @@ public class JumpFragment extends BaseFragment implements JumpView {
         textView.setText("54f5asd4f564a6sdf45asdfas4dfas4df56af5");
         return textView;
     }
-
     @Override
     public Object getData() {
         Object o = mJumpPresenter.init();
+
         return "";
     }
 

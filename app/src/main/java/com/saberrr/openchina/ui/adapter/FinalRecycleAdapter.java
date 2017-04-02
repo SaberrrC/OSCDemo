@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import java.util.HashMap;
 import java.util.List;
 
+
 /**
  * Created by admin on 2017/2/22.
  */
@@ -18,15 +19,22 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
     private OnViewAttachListener    mMultiRecycleAdapter;
     private HashMap<Class, Integer> mClassIntegerHashMap;
     private static final int     LOADMORE     = 0;
-    private              boolean needLoadMore = true;
+    private              boolean needLoadMore = false;
+    private              int     loadLayout   = -1;
 
     /**
-     * 是否需要加载更多 默认需要
+     * 是否需要加载更多 默认不需要
      *
-     * @param needLoadMore
+     * @param needLoadMore 是否需要上拉加载更多
+     * @param loadLayout   上拉加载更多的布局，不要虚上拉加载，传入0
      */
-    public void setNeedLoadMore(boolean needLoadMore) {
+    public void setNeedLoadMore(boolean needLoadMore, int loadLayout) {
         this.needLoadMore = needLoadMore;
+        this.loadLayout = loadLayout;
+    }
+
+    public void notifu() {
+        notifyDataSetChanged();
     }
 
     /**
@@ -41,10 +49,10 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
 
     @Override
     public int getItemViewType(int position) {
-        Class key = mDatas.get(position).getClass();
         if (needLoadMore && position == getItemCount() - 1) {
             return LOADMORE;
         }
+        Class key = mDatas.get(position).getClass();
         if (mClassIntegerHashMap.containsKey(key)) {
             return mClassIntegerHashMap.get(key);
         } else {
@@ -54,13 +62,18 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (needLoadMore) {
-            View headView = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
+        if (viewType == LOADMORE) {
+            if (viewType == -1) {
+                throw new RuntimeException("请传入加载更多的布局");
+            }
+            View view = LayoutInflater.from(parent.getContext()).inflate(loadLayout, parent, false);
+            ViewHolder holder = new ViewHolder(view);
+            return holder;
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
+            ViewHolder holder = new ViewHolder(view);
+            return holder;
         }
-        View headView = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-
-        ViewHolder holder = new ViewHolder(headView);
-        return holder;
     }
 
     public void addItemType(Class clzz, int layoutID) {
@@ -69,11 +82,21 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        mMultiRecycleAdapter.onBindViewHolder(holder, position, mDatas.get(position));
+        if (mDatas.size() == 0) {
+            throw new RuntimeException("获取完数据请 notifyDataSetChanged()");
+        }
+        if (needLoadMore) {
+            mMultiRecycleAdapter.onBindViewHolder(holder, position, new Object());
+        } else {
+            mMultiRecycleAdapter.onBindViewHolder(holder, position, mDatas.get(position));
+        }
     }
 
     @Override
     public int getItemCount() {
+        if (needLoadMore) {
+            return mDatas.size() + 1;
+        }
         return mDatas.size();
     }
 
@@ -84,7 +107,7 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private SparseArray<View> mShowItems = new SparseArray<>();
 
-            ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
         }
 
