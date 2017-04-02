@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:orientation="vertical"
-    tools:showIn="@layout/frag_my">
+    tools:showIn="@layout/frag_my"
+    android:visibility="gone">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -157,7 +158,7 @@
                 android:id="@+id/tv_fans"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="积分"
+                android:text="粉丝"
                 android:textColor="#fff"/>
 
         </LinearLayout>

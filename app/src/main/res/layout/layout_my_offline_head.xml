@@ -15,7 +15,6 @@
         android:layout_height="60dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dp20"
-        android:background="#9c9c9c"
         android:src="@mipmap/ic_nav_my_normal"/>
 
     <TextView

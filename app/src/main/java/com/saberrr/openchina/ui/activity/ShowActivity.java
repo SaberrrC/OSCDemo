@@ -114,6 +114,8 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
             case TITLE_PEOPLE:
                 mSearchView.setVisibility(View.VISIBLE);
                 break;
+            default:
+                throw new RuntimeException("请传入指定参数");
         }
     }
 

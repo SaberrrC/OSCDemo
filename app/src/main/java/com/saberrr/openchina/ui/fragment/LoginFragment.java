@@ -11,14 +11,27 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.bean.LoginBean;
 import com.saberrr.openchina.event.LoginBeanEvent;
+import com.saberrr.openchina.manager.netmanager.RetrofitUtil;
+import com.saberrr.openchina.net.HttpServiceApi;
+import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.utils.ToastUtils;
+import com.saberrr.openchina.utils.XmlUtils;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Headers;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 /**
  * Created by 2017 on 2017/4/1.
@@ -71,11 +84,67 @@ public class LoginFragment extends BaseFragment {
                 mPwd = mEtPwd.getText().toString().trim();
                 if (checkUsernameAndPwd(mUsername, mPwd)) {
                     // TODO: 2017/4/2 登录
-                    ToastUtils.showToast("登录");
-                    //将登录事件发送给我的界面
-                    EventBus.getDefault().postSticky(new LoginBeanEvent());
+                    HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
 
-                    getActivity().finish();
+
+                    httpServiceApi.Login("1" , mUsername ,mPwd).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.isSuccessful()) {
+                                try {
+
+                                    String msg = response.body().string();
+                                    LoginBean loginBean = XmlUtils.toBean(LoginBean.class, msg.getBytes());
+                                    if (loginBean.getResult().getErrorCode().equals("1")) {
+                                        LoginBeanEvent event = new LoginBeanEvent();
+                                        event.mLoginBean = loginBean;
+
+                                        Headers headers = response.headers();
+//                                        for (int i = 0; i < headers.size(); i++) {
+//                                            String name = headers.name(i);
+//                                            System.out.println(name);
+//                                        }
+                                        String s = headers.get("Set-Cookie");
+//                                        System.out.println(s);
+                                        String[] split = s.split(";");
+                                        String[] split1 = split[0].split("=");
+                                        LoginBeanEvent.cookie = split1[1];
+
+                                        ToastUtils.showToast("登录成功！");
+                                        System.out.println(split1[1]);
+
+                                        EventBus.getDefault().postSticky(event);
+                                        getActivity().finish();
+                                    } else {
+
+                                        ToastUtils.showToast(loginBean.getResult().getErrorMessage());
+                                    }
+
+
+
+
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                    ToastUtils.showToast("用户名或密码错误！");
+                                    e.printStackTrace();
+
+                                }
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            ToastUtils.showToast("登录失败");
+
+                        }
+                    });
+
+                    //将登录事件发送给我的界面
+//                    EventBus.getDefault().postSticky(new LoginBeanEvent());
+//
+//                    getActivity().finish();
 
 
                 } else {

@@ -4,12 +4,14 @@ import android.os.SystemClock;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
+import com.saberrr.openchina.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +28,8 @@ public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.O
     private String[]  mStrings = {"String1", "String2", "String3", "String4"};
     private Integer[] mIntt    = {1, 2, 3, 4};
     private Long[]    mObjects = {1L, 2L, 3L, 4L};
-
+    private List<Object>        mDatas;
+    private FinalRecycleAdapter mFinalRecycleAdapter;
     @Override
     protected boolean needRefresh() {
         return true;
@@ -46,12 +49,14 @@ public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.O
     }
 
     private void setRecyclerView() {
-        List<Object> datas = initData();
+        mDatas = initData();
         HashMap<Class, Integer> map = new HashMap<>();
         map.put(String.class, R.layout.layout_1);
         map.put(Integer.class, R.layout.layout_2);
         map.put(Long.class, R.layout.layout_3);
-        mRecyclerView.setAdapter(new FinalRecycleAdapter(datas, map, this));
+        mFinalRecycleAdapter = new FinalRecycleAdapter(mDatas, map, this);
+        mFinalRecycleAdapter.setNeedLoadMore(true, R.layout.layout_4);
+        mRecyclerView.setAdapter(mFinalRecycleAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), OrientationHelper.VERTICAL, false));
     }
 
@@ -73,6 +78,8 @@ public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.O
 
     @Override
     public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
+        int i = position;
+        Log.d("i", "onBindViewHolder: ==============" + i++);
         if (itemData instanceof String) {
             String s = (String) itemData;
             TextView tv1 = (TextView) holder.getViewById(R.id.tv1);
@@ -88,5 +95,23 @@ public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.O
             TextView tv1 = (TextView) holder.getViewById(R.id.tv3);
             tv1.setText(s + "    Long");
         }
+        if (position == mDatas.size()) {
+            TextView tv4 = (TextView) holder.getViewById(R.id.tv3);
+            tv4.setText("下拉加载更多" + SystemClock.currentThreadTimeMillis() + "");
+            ToastUtils.showToast(SystemClock.currentThreadTimeMillis() + "");
+            changgeData();
+        }
+    }
+
+    private void changgeData() {
+        mDatas.add("string 3" + SystemClock.currentThreadTimeMillis());
+        mDatas.add(2);
+        mDatas.add("string 2" + SystemClock.currentThreadTimeMillis());
+        mDatas.add(3);
+        mDatas.add(3);
+        mDatas.add(3);
+        mDatas.add(new Long(2L));
+        mDatas.add(1);
+        mFinalRecycleAdapter.notifu();
     }
 }

@@ -1,6 +1,9 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +12,16 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.bean.LoginBean;
 import com.saberrr.openchina.event.LoginBeanEvent;
+import com.saberrr.openchina.manager.netmanager.RetrofitUtil;
+import com.saberrr.openchina.net.HttpServiceApi;
+import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
+import com.saberrr.openchina.utils.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -22,6 +32,7 @@ import java.util.TreeMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Retrofit;
 
 /**
  * Created by 2017 on 2017/4/1.
@@ -101,6 +112,9 @@ public class MyFragment extends BaseFragment {
     RelativeLayout mRlMySetting;
 
     private boolean isOnline;
+    private int[] genderRid = {R.mipmap.ic_male, R.mipmap.ic_female};
+    private LoginBean mLoginBean;
+
 
     @Override
     protected boolean needRefresh() {
@@ -112,15 +126,51 @@ public class MyFragment extends BaseFragment {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.frag_my, null);
         ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
+//        Glide.with(getContext()).load(R.mipmap.).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
+//            @Override
+//            protected void setResource(Bitmap resource) {
+//                RoundedBitmapDrawable circularBitmapDrawable =
+//                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+//                circularBitmapDrawable.setCircular(true);
+//                mIvAvtarOffline.setImageDrawable(circularBitmapDrawable);
+//            }
+//        });
+
         return view;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onLoginEvent(LoginBeanEvent event) {
+        if (LoginBeanEvent.cookie != null) {
 
-        mRlOffline.setVisibility(View.GONE);
-        mRlOnline.setVisibility(View.VISIBLE);
-        // TODO: 2017/4/2 获取参数，设置ui
+            mRlOffline.setVisibility(View.GONE);
+            mRlOnline.setVisibility(View.VISIBLE);
+            // TODO: 2017/4/2 获取参数，设置ui
+            mLoginBean = event.mLoginBean;
+
+            mTvUsername.setText(mLoginBean.getUser().getName());
+            mTvScoreCount.setText(mLoginBean.getUser().getScore());
+            mTvFavoriteCount.setText(mLoginBean.getUser().getFavoritecount());
+            mTvFollowersCount.setText(mLoginBean.getUser().getFollowers());
+            mTvFansCount.setText(mLoginBean.getUser().getFans());
+            mIvGender.setImageResource(genderRid[Integer.parseInt(mLoginBean.getUser().getGender()) -1]);
+            System.out.println(mLoginBean.getUser().getPortrait());
+            Glide.with(getContext()).load(mLoginBean.getUser().getPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
+                @Override
+                protected void setResource(Bitmap resource) {
+                    RoundedBitmapDrawable circularBitmapDrawable =
+                            RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                    circularBitmapDrawable.setCircular(true);
+                    mIvAvtarOnline.setImageDrawable(circularBitmapDrawable);
+                }
+            });
+
+
+        } else {
+            mRlOffline.setVisibility(View.VISIBLE);
+            mRlOnline.setVisibility(View.GONE);
+        }
+
 
 
         EventBus.getDefault().removeAllStickyEvents();
@@ -138,75 +188,49 @@ public class MyFragment extends BaseFragment {
         return "";
     }
 
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.rl_offline:
-//                ToastUtils.showToast("点击了登录");
-//
-//                ShowActivity.startFragment(LoginFragment.class , null);
-//                break;
-//
-//            case R.id.rl_my_msg:
-//                ToastUtils.showToast("点击了我的消息");
-//                ShowActivity.startFragment(MyMsgFragment.class , null);
-//                break;
-//        }
 
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        // TODO: 2017/4/2 每次重新显示时要判断当前是否登录
-//        if (isOnline) {
-//            //登录状态，显示登录的头条目 ， 显示相关信息
-//            mRlOffline.setVisibility(View.GONE);
-//            mRlOnline.setVisibility(View.VISIBLE);
-//
-//
-//        } else {
-//            mRlOffline.setVisibility(View.VISIBLE);
-//            mRlOnline.setVisibility(View.GONE);
-//        }
-//    }
-
-
-    @OnClick({R.id.rl_offline, R.id.iv_avtar_online, R.id.iv_mark_online, R.id.tv_score_count, R.id.ll_score, R.id.tv_favorite_count, R.id.ll_favorite, R.id.tv_followers_count, R.id.ll_followers, R.id.tv_fans_count, R.id.ll_fans, R.id.rl_my_msg, R.id.rl_my_blog, R.id.rl_my_team, R.id.rl_my_event, R.id.rl_my_setting})
+    @OnClick({R.id.rl_offline, R.id.iv_avtar_online, R.id.iv_mark_online,  R.id.ll_score, R.id.ll_favorite, R.id.ll_followers, R.id.ll_fans, R.id.rl_my_msg, R.id.rl_my_blog, R.id.rl_my_team, R.id.rl_my_event, R.id.rl_my_setting})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rl_offline:
+                ShowActivity.startFragmentWithTitle(LoginFragment.class, null  , "登录");
                 break;
             case R.id.iv_avtar_online:
-                ShowActivity.startFragment(MyInfoFragment.class, null);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("UERINFO" , mLoginBean);
+                ShowActivity.startFragmentWithTitle(MyInfoFragment.class, bundle , "我的资料");
+
                 break;
             case R.id.iv_mark_online:
-                ShowActivity.startFragment(LoginFragment.class, null);
-                break;
-            case R.id.tv_score_count:
                 break;
             case R.id.ll_score:
-                break;
-            case R.id.tv_favorite_count:
+                ToastUtils.showToast("积分");
                 break;
             case R.id.ll_favorite:
-                break;
-            case R.id.tv_followers_count:
+                ToastUtils.showToast("收藏");
                 break;
             case R.id.ll_followers:
-                break;
-            case R.id.tv_fans_count:
+                ToastUtils.showToast("关注");
                 break;
             case R.id.ll_fans:
+                ToastUtils.showToast("粉丝");
+
                 break;
             case R.id.rl_my_msg:
+                ToastUtils.showToast("我的消息");
                 break;
             case R.id.rl_my_blog:
+                ToastUtils.showToast("我的微博");
                 break;
             case R.id.rl_my_team:
+                ToastUtils.showToast("我的团队");
                 break;
             case R.id.rl_my_event:
+                ToastUtils.showToast("我的活动");
                 break;
             case R.id.rl_my_setting:
+                ToastUtils.showToast("设置");
                 break;
         }
     }
