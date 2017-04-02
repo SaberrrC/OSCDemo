@@ -6,6 +6,8 @@ package com.saberrr.openchina.bean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+import java.util.List;
+
 /**
  * <oschina>
  <softwarecount>43560</softwarecount>
@@ -114,7 +116,7 @@ public class CategoryBean {
     @XStreamAlias("softwarecount")
     public String mSoftwarecount;
     @XStreamAlias("softwareTypes")
-    public SoftwareTypes mSoftwareTypes;
+    public List<SoftwareType> mSoftwareTypes;
 
     public String getSoftwarecount() {
         return mSoftwarecount;
@@ -124,11 +126,11 @@ public class CategoryBean {
         mSoftwarecount = softwarecount;
     }
 
-    public SoftwareTypes getSoftwareTypes() {
+    public List<SoftwareType> getSoftwareTypes() {
         return mSoftwareTypes;
     }
 
-    public void setSoftwareTypes(SoftwareTypes softwareTypes) {
+    public void setSoftwareTypes(List<SoftwareType> softwareTypes) {
         mSoftwareTypes = softwareTypes;
     }
 }
