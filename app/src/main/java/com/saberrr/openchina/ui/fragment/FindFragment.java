@@ -55,12 +55,11 @@ public class FindFragment extends BaseFragment {
         switch (view.getId()) {
             case R.id.openSoftware:
                 Bundle bundle = new Bundle();
-                bundle.putString("title", mOpenSoftware.getText().toString());
-                ShowActivity.startFragment(OpenSoftwareFragment.class,bundle );
+                ShowActivity.startFragmentWithTitle(OpenSoftwareFragment.class,bundle,mOpenSoftware.getText().toString());
                 break;
             case R.id.findUser:
                 Bundle bundle1 = new Bundle();
-                ShowActivity.startFragment(FindUserFragment.class,bundle1);
+                ShowActivity.startFragmentWithTitle(FindUserFragment.class,bundle1,mFindUser.getText().toString());
 
                 break;
             case R.id.scan:

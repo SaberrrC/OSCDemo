@@ -56,6 +56,17 @@ public class ShowActivity extends AppCompatActivity {
         AppApplication.appContext.startActivity(intent);
     }
 
+    public static void startFragmentWithTitle(Class clss, Bundle bundle,String title) {
+        Intent intent = new Intent(AppApplication.appContext, ShowActivity.class);
+        if (bundle != null) {
+            intent.putExtra(Fiels.DtailActivity.BUNDLE, bundle);
+        }
+        intent.putExtra(Fiels.DtailActivity.CLASSNAME, clss);
+        intent.putExtra(Fiels.DtailActivity.TITLE,title);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        AppApplication.appContext.startActivity(intent);
+    }
+
     private void hideActionBar() {
         getSupportActionBar().hide();
         int flagFullscreen = WindowManager.LayoutParams.FLAG_FULLSCREEN;

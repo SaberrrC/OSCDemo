@@ -6,10 +6,10 @@ import android.view.View;
 import com.saberrr.openchina.R;
 
 /**
- * Created by liuqi on 2017/4/1.
+ * Created by liuqi on 2017/4/2.
  */
 
-public class CategoryFragment extends BaseFragment {
+public class RecommendFragment extends BaseFragment {
     @Override
     protected boolean needRefresh() {
         return false;
@@ -17,7 +17,7 @@ public class CategoryFragment extends BaseFragment {
 
     @Override
     public View createView() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_category, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_recommend, null);
         return view;
     }
 
