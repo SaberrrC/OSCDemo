@@ -24,5 +24,6 @@ public class JumpPresenterImpl implements JumpPresenter {
         //获取数据
 
         mJumpView.onInit(mList);
+        return "";
     }
 }
