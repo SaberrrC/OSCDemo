@@ -17,7 +17,5 @@ public final class Fiels {
         public static final String IMAGES          = "IMAGES";
         public static final String IMAGES_POSITION = "IMAGES_POSITION";
         public static final String TOOBARICON      = "TOOBARICON";
-
-        public static String RIGHTICON;
     }
 }

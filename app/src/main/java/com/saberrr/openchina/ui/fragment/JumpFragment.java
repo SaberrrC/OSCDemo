@@ -1,6 +1,7 @@
 package com.saberrr.openchina.ui.fragment;
 
 import android.view.View;
+import android.widget.TextView;
 
 import com.saberrr.openchina.presenter.JumpPresenter;
 import com.saberrr.openchina.presenter.JumpPresenterImpl;
@@ -23,13 +24,15 @@ public class JumpFragment extends BaseFragment implements JumpView {
     @Override
     public View createView() {
         mJumpPresenter = new JumpPresenterImpl(this);
-        return null;
+        TextView textView = new TextView(getContext());
+        textView.setText("54f5asd4f564a6sdf45asdfas4dfas4df56af5");
+        return textView;
     }
 
     @Override
     public Object getData() {
         Object o = mJumpPresenter.init();
-        return o;
+        return "";
     }
 
     //获取数据后的回调

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.ui.fragment.FindFragment;
 import com.saberrr.openchina.ui.fragment.InformationFragment;
+import com.saberrr.openchina.ui.fragment.JumpFragment;
 import com.saberrr.openchina.ui.fragment.MyFragment;
 import com.saberrr.openchina.ui.fragment.TestFragment1;
 import com.saberrr.openchina.ui.fragment.TestFragment2;
@@ -87,19 +88,17 @@ public class MainActivity extends AppCompatActivity {
                     if (finalI != 2) {
                         mToolbarMain.setTitle(mTextArray[finalI]);
                         mTabhost.setCurrentTab(finalI);
-                    } else {
-                        //弹一弹
-
                     }
 
                 }
             });
 
         }
+        mTabhost.getTabWidget().setDividerDrawable(null);
         mIvAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastUtils.showToast("6sd5f465a");
+                ShowActivity.startFragmentWithTitle(JumpFragment.class,null,"弹一弹",ShowActivity.TITLE_CHOOSE);
             }
         });
     }
