@@ -20,7 +20,7 @@ public class JumpPresenterImpl implements JumpPresenter {
     }
 
     @Override
-    public void init() {
+    public Object init() {
         //获取数据
 
         mJumpView.onInit(mList);

@@ -66,7 +66,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     //设置toolbar
-    private void initToolBar(String title, int title_icon) {
+    public void initToolBar(String title, int title_icon) {
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         mIvIconToolbar = (ImageView) findViewById(R.id.iv_icon_toolbar);
         mTvTitleToolbar = (TextView) findViewById(R.id.tv_title_toolbar);
@@ -76,6 +76,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         //返回箭头
         mIvIconToolbar.setVisibility(View.GONE);
         mTvTitleToolbar.setVisibility(View.GONE);
+        mSearchView.setVisibility(View.GONE);
         switch (title_icon) {
             case TITLE_NONE:
                 break;
@@ -94,7 +95,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
                 mTvRightToolbar.setText("数量");
                 break;
             case TITLE_PEOPLE:
-
+                mSearchView.setVisibility(View.VISIBLE);
                 break;
         }
 
@@ -168,6 +169,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         }
         return super.onOptionsItemSelected(item);
     }
+
     //menu回调 两个
     @Override
     public boolean onQueryTextSubmit(String query) {

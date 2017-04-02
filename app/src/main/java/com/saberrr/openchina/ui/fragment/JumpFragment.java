@@ -28,11 +28,11 @@ public class JumpFragment extends BaseFragment implements JumpView {
 
     @Override
     public Object getData() {
-
-        mJumpPresenter.init();
-        return null;
+        Object o = mJumpPresenter.init();
+        return o;
     }
 
+    //获取数据后的回调
     @Override
     public void onInit(List list) {
 
