@@ -28,7 +28,6 @@ public class RetrofitUtil {
         return retrofit;
     }
 
-
     /**
      * 实例化接口类
      * @return 接口实例

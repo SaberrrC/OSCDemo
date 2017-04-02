@@ -50,21 +50,16 @@ public  class InformationFragment extends BaseFragment {
         //设置透明度
         mRollPagerView.setAnimationDurtion(500);
         mRollPagerView.setAdapter(new TestNormalAdapter());
+//        mRecyclerView.setAdapter(new FinalRecycleAdapter());
     }
 
     @Override
     public Object getData() {
 
+
         return "";
     }
     private class TestNormalAdapter extends StaticPagerAdapter {
-        private int[] imgs = {
-                R.mipmap.share_icon_qq,
-                R.mipmap.share_icon_sinaweibo,
-                R.mipmap.share_icon_wechat
-
-        };
-
 
         @Override
         public View getView(ViewGroup container, int position) {
@@ -84,7 +79,7 @@ public  class InformationFragment extends BaseFragment {
 
         @Override
         public int getCount() {
-            return imgs.length;
+            return datas.size();
         }
     }
 }

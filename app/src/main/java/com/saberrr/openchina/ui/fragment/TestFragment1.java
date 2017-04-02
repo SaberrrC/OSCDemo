@@ -19,7 +19,7 @@ import java.util.List;
  * Created by Saberrr on 2017-04-01.
  */
 
-public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.FinalAdapterListener {
+public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
 
     private RecyclerView mRecyclerView;
 
