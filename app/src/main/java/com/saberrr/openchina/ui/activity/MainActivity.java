@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
             // 设置Tab按钮的背景
             mTabHost.getTabWidget().getChildAt(i).setBackgroundResource(R.mipmap.ic_launcher);
         }
+
     }
 
     /**
