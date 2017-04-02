@@ -47,7 +47,15 @@ public class MyFragment extends BaseFragment implements View.OnClickListener {
 
             case R.id.rl_my_msg:
                 ToastUtils.showToast("点击了我的消息");
+                ShowActivity.startFragment(MyMsgFragment.class , null);
                 break;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // TODO: 2017/4/2 每次重新显示时要判断当前是否登录
+
     }
 }
