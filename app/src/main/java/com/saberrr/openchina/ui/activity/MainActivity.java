@@ -1,6 +1,5 @@
 package com.saberrr.openchina.ui.activity;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.AppCompatActivity;
@@ -13,8 +12,8 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.ui.fragment.ComprehensiveFragment;
 import com.saberrr.openchina.ui.fragment.FindFragment;
-import com.saberrr.openchina.ui.fragment.InformationFragment;
 import com.saberrr.openchina.ui.fragment.JumpFragment;
 import com.saberrr.openchina.ui.fragment.MyFragment;
 import com.saberrr.openchina.ui.fragment.TestFragment1;
@@ -40,10 +39,9 @@ public class MainActivity extends AppCompatActivity {
     FragmentTabHost mTabhost;
     @BindView(R.id.iv_add)
     ImageView       mIvAdd;
-    private Class  mFragmentArray[] = {InformationFragment.class, TestFragment1.class, TestFragment2.class, FindFragment.class, MyFragment.class};
+    private Class  mFragmentArray[] = {ComprehensiveFragment.class, TestFragment1.class, TestFragment2.class, FindFragment.class, MyFragment.class};
     private String mTextArray[]     = {"综合", "动弹", "", "发现", "我的"};
-    private int    mImageArray[]    = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
-
+    private int    mImageArray[]    = {R.drawable.selector_all_bg, R.drawable.selector_dongtan_bg, R.drawable.selector_add_bg, R.drawable.selector_find_bg, R.drawable.selector_mine_bg};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +66,37 @@ public class MainActivity extends AppCompatActivity {
         //mTvTitleToolbar.setVisibility(View.GONE);
     }
 
+    private ImageView mImageview;
+    private TextView  mTextview;
+
     private void initView() {
-        mTabhost.setup(this, getSupportFragmentManager(), R.id.fl_content_main);
+        for (int i = 0; i < 5; i++) {
+            mTabhost.setup(this, getSupportFragmentManager(), R.id.fl_content_main);
+            TabHost.TabSpec tabSpec = mTabhost.newTabSpec("" + i);
+            View view = LayoutInflater.from(this).inflate(R.layout.tab_item_view, null, false);
+            mImageview = (ImageView) view.findViewById(R.id.imageview);
+            mTextview = (TextView) view.findViewById(R.id.textview);
+            if (i == 2) {
+                view.setVisibility(View.INVISIBLE);
+                view.setEnabled(false);
+            }
+            mImageview.setImageResource(mImageArray[i]);
+            mTextview.setText(mTextArray[i]);
+
+            tabSpec.setIndicator(view);
+            mTabhost.addTab(tabSpec, mFragmentArray[i], null);
+        }
+        mTabhost.getTabWidget().setDividerDrawable(null);
+        mIvAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowActivity.startFragmentWithTitle(JumpFragment.class, null, "弹一弹", ShowActivity.TITLE_SEND);
+            }
+        });
+
+
+
+        /*mTabhost.setup(this, getSupportFragmentManager(), R.id.fl_content_main);
         // 得到fragment的个数
         int count = mFragmentArray.length;
         for (int i = 0; i < count; i++) {
@@ -98,15 +125,15 @@ public class MainActivity extends AppCompatActivity {
         mIvAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowActivity.startFragmentWithTitle(JumpFragment.class,null,"弹一弹",ShowActivity.TITLE_SEND);
+                ShowActivity.startFragmentWithTitle(JumpFragment.class, null, "弹一弹", ShowActivity.TITLE_SEND);
             }
-        });
+        });*/
     }
 
-
-    /**
+/*
+    *//**
      * 给每个Tab按钮设置图标和文字
-     */
+     *//*
     private View getTabItemView(final int index) {
 
         View view = LayoutInflater.from(this).inflate(R.layout.tab_item_view, null, false);
@@ -120,5 +147,5 @@ public class MainActivity extends AppCompatActivity {
             view.setEnabled(false);
         }
         return view;
-    }
+    }*/
 }

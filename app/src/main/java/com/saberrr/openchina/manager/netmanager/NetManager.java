@@ -42,9 +42,9 @@ public class NetManager {
 
     public ResponseBody getBody(String url) {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(5, TimeUnit.SECONDS)//设置连接超时时间
-                .readTimeout(5,TimeUnit.SECONDS)//设置读取超时时间
-                .writeTimeout(5,TimeUnit.SECONDS)//设置写的超时时间
+                .connectTimeout(10, TimeUnit.SECONDS)//设置连接超时时间
+                .readTimeout(10,TimeUnit.SECONDS)//设置读取超时时间
+                .writeTimeout(10,TimeUnit.SECONDS)//设置写的超时时间
                 .build();
         Request request = new Request.Builder().url(url).build();
         Call call = okHttpClient.newCall(request);

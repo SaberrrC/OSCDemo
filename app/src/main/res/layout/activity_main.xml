@@ -42,7 +42,9 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp">
 
         <android.support.v4.app.FragmentTabHost
             android:id="@+id/tabhost"
@@ -51,19 +53,18 @@
 
             <FrameLayout
                 android:id="@+id/tabcontent"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_weight="0">
+                android:layout_width="match_parent"
+                android:layout_height="35dp">
             </FrameLayout>
         </android.support.v4.app.FragmentTabHost>
 
         <ImageView
             android:id="@+id/iv_add"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_gravity="center"
-            android:paddingBottom="5dp"
-            android:src="@mipmap/ic_nav_add_actived"/>
+            android:background="@drawable/selector_add_bg"
+            android:paddingBottom="5dp"/>
     </FrameLayout>
 
 </LinearLayout>
