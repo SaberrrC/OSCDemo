@@ -59,6 +59,8 @@ public class FindFragment extends BaseFragment {
                 ShowActivity.startFragment(OpenSoftwareFragment.class,bundle );
                 break;
             case R.id.findUser:
+                Bundle bundle1 = new Bundle();
+                ShowActivity.startFragment(FindUserFragment.class,bundle1);
 
                 break;
             case R.id.scan:
@@ -70,11 +72,4 @@ public class FindFragment extends BaseFragment {
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.bind(this, rootView);
-        return rootView;
-    }
 }

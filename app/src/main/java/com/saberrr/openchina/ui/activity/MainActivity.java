@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.ui.fragment.ComprehensiveFragment;
+import com.saberrr.openchina.ui.fragment.FindFragment;
 import com.saberrr.openchina.ui.fragment.MyFragment;
 import com.saberrr.openchina.ui.fragment.TestFragment1;
 
@@ -18,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentTabHost mTabHost;
     private LayoutInflater  mLayoutInflater;
 
-    private Class  mFragmentArray[] = {ComprehensiveFragment.class, TestFragment1.class, TestFragment1.class, TestFragment1.class, MyFragment.class};
+    private Class  mFragmentArray[] = {ComprehensiveFragment.class, TestFragment1.class, TestFragment1.class, FindFragment.class, MyFragment.class};
     private String mTextArray[]     = {"首页", "消息", "好友", "搜索", "更多"};
     private int    mImageArray[]    = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
 
