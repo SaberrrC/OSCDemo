@@ -67,6 +67,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         mRollPagerView.setAnimationDurtion(500);
         mTestNormalAdapter = new TestNormalAdapter();
         mRollPagerView.setAdapter(mTestNormalAdapter);
+
         mRollPagerView.setHintView(new ColorPointHintView(getContext(), Color.GREEN, Color.WHITE));
         mRollPagerView.setHintPadding(20, 20, 20, 20);
 
@@ -128,6 +129,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
                 bundle.putString(Constant.BLOGDETAILSFRAGMENT.HREF,itemsBean.getHref() );
                 bundle.putString(Constant.BLOGDETAILSFRAGMENT.COMMENTCOUNT,itemsBean.getCommentCount()+"");
                 ShowActivity.startFragmentWithTitle(BlogDetailsFragment.class,bundle,"博客详情",ShowActivity.TITLE_COMMENT);
+                mTestNormalAdapter.notifyDataSetChanged();
             }
         });
 

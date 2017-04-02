@@ -3,7 +3,6 @@ package com.saberrr.openchina.ui.fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -57,26 +56,26 @@ public class BlogDetailsFragment extends BaseFragment {
                 super.onPageFinished(view, url);
             }
         });
-        mWbBolgdetails.setWebChromeClient(new WebChromeClient(){
-            //网页的加载进度
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                super.onProgressChanged(view, newProgress);
-               // System.out.println("newProgress: " + newProgress);
-            }
-
-            //接收网页标题
-            @Override
-            public void onReceivedTitle(WebView view, String title) {
-                super.onReceivedTitle(view, title);
-                //System.out.println("title: " + title);
-            }
-        });
+//        mWbBolgdetails.setWebChromeClient(new WebChromeClient(){
+//            //网页的加载进度
+//            @Override
+//            public void onProgressChanged(WebView view, int newProgress) {
+//                super.onProgressChanged(view, newProgress);
+//               // System.out.println("newProgress: " + newProgress);
+//            }
+//
+//            //接收网页标题
+//            @Override
+//            public void onReceivedTitle(WebView view, String title) {
+//                super.onReceivedTitle(view, title);
+//                //System.out.println("title: " + title);
+//            }
+//        });
     }
 
     @Override
     public Object getData() {
-        return null;
+        return "";
     }
 
 }
