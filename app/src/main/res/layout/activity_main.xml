@@ -15,16 +15,55 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-    <android.support.v4.app.FragmentTabHost
-        android:id="@android:id/tabhost"
+    <!--  <FrameLayout
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content">
+
+          <android.support.v4.app.FragmentTabHost
+              android:id="@android:id/tabhost"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+              <FrameLayout
+                  android:id="@android:id/tabcontent"
+                  android:layout_width="0dp"
+                  android:layout_height="0dp"
+                  android:layout_weight="0"/>
+          </android.support.v4.app.FragmentTabHost>
+
+          <ImageView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_horizontal"
+              android:src="@mipmap/ic_nav_add_actived"/>
+
+      </FrameLayout>
+  -->
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <FrameLayout
-            android:id="@android:id/tabcontent"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="0"/>
-    </android.support.v4.app.FragmentTabHost>
+        <android.support.v4.app.FragmentTabHost
+            android:id="@+id/tabhost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <FrameLayout
+                android:id="@+id/tabcontent"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="0">
+            </FrameLayout>
+        </android.support.v4.app.FragmentTabHost>
+
+        <ImageView
+            android:id="@+id/iv_add"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:paddingBottom="5dp"
+            android:src="@mipmap/ic_nav_add_actived"/>
+    </FrameLayout>
 
 </LinearLayout>

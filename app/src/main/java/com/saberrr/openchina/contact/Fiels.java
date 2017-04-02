@@ -13,8 +13,10 @@ public final class Fiels {
         public static final String CLASSNAME       = "CLASSNAME";
         //传递的对象
         public static final String BUNDLE          = "BUNDLE";
-        public static       String TITLE           = "TITLE";
-        public static       String IMAGES          = "IMAGES";
-        public static       String IMAGES_POSITION = "IMAGES_POSITION";
+        public static final String TITLE           = "TITLE";
+        public static final String IMAGES          = "IMAGES";
+        public static final String IMAGES_POSITION = "IMAGES_POSITION";
+        public static final String TOOBARICON      = "TOOBARICON";
+
     }
 }

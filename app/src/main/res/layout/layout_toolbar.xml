@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar_main"
     android:layout_width="match_parent"
@@ -9,7 +9,7 @@
     android:background="@color/colorPrimary"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-  >
+    >
 
     <TextView
         android:id="@+id/tv_title_toolbar"
@@ -17,11 +17,10 @@
         android:layout_height="wrap_content"/>
 
     <ImageView
-        android:id="@+id/iv_search_toolbar"
+        android:id="@+id/iv_icon_toolbar"
         android:layout_width="50sp"
         android:layout_height="50sp"
         android:layout_gravity="right"
         android:padding="15sp"
-        android:src="@mipmap/btn_search_normal"
         android:visibility="gone"/>
 </android.support.v7.widget.Toolbar>
