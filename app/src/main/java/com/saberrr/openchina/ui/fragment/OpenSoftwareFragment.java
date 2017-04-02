@@ -1,11 +1,9 @@
 package com.saberrr.openchina.ui.fragment;
 
-import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.FragmentInfo;
@@ -14,7 +12,6 @@ import com.saberrr.openchina.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,18 +35,18 @@ public class OpenSoftwareFragment extends BaseFragment {
     @Override
     public View createView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_opensoftware, null);
-        ButterKnife.bind(this,view);
+        ButterKnife.bind(this, view);
         init();
         return view;
     }
 
     private void init() {
         String[] title = Utils.getStringArray(R.array.tab_names);
-        datas.add(new FragmentInfo(new CategoryFragment(),title[4]));
-        datas.add(new FragmentInfo(new CategoryFragment(),title[5]));
-        datas.add(new FragmentInfo(new CategoryFragment(),title[6]));
-        datas.add(new FragmentInfo(new CategoryFragment(),title[7]));
-        datas.add(new FragmentInfo(new CategoryFragment(),title[8]));
+        datas.add(new FragmentInfo(new CategoryFragment(), title[4]));
+        datas.add(new FragmentInfo(new CategoryFragment(), title[5]));
+        datas.add(new FragmentInfo(new CategoryFragment(), title[6]));
+        datas.add(new FragmentInfo(new CategoryFragment(), title[7]));
+        datas.add(new FragmentInfo(new CategoryFragment(), title[8]));
         OswViewPagerAdapter oswViewPagerAdapter = new OswViewPagerAdapter(getFragmentManager(), datas);
         mOswViewpager.setAdapter(oswViewPagerAdapter);
         mOswTablelayout.setupWithViewPager(mOswViewpager);
