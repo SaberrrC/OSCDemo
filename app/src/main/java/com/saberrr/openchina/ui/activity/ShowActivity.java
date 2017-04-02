@@ -48,9 +48,9 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         setContentView(R.layout.activity_show);
         ButterKnife.bind(this);
         Intent intent = getIntent();
-        String title = intent.getStringExtra(Fiels.DtailActivity.TITLE);
-        intent.getStringExtra(Fiels.DtailActivity.TITLE);
+        String title = intent.getStringExtra(Fiels.DtailActivity.TOOBARICON);
         int title_icon = intent.getIntExtra(Fiels.DtailActivity.TOOBARICON, TITLE_NONE);
+        initToolbar();
         initToolBar(title, title_icon);
         try {
             Bundle bundle = intent.getBundleExtra(Fiels.DtailActivity.BUNDLE);
@@ -67,10 +67,6 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
 
     //设置toolbar
     public void initToolBar(String title, int title_icon) {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        mIvIconToolbar = (ImageView) findViewById(R.id.iv_icon_toolbar);
-        mTvTitleToolbar = (TextView) findViewById(R.id.tv_title_toolbar);
-        mTvRightToolbar = (TextView) findViewById(R.id.tv_right_toolbar);
         mToolbar.setTitle(title);
         setSupportActionBar(mToolbar);
         //返回箭头
@@ -98,8 +94,6 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
                 mSearchView.setVisibility(View.VISIBLE);
                 break;
         }
-
-
         mIvIconToolbar.setVisibility(View.VISIBLE);
         mIvIconToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +104,12 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         //mTvTitleToolbar.setVisibility(View.GONE);
     }
 
+    private void initToolbar() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        mIvIconToolbar = (ImageView) findViewById(R.id.iv_icon_toolbar);
+        mTvTitleToolbar = (TextView) findViewById(R.id.tv_title_toolbar);
+        mTvRightToolbar = (TextView) findViewById(R.id.tv_right_toolbar);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -122,7 +122,6 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         mSearchView.setOnQueryTextListener(this);
         return true;
     }
-
 
     public static void startFragment(Class clss, Bundle bundle) {
         Intent intent = new Intent(AppApplication.appContext, ShowActivity.class);
