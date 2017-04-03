@@ -7,10 +7,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
-import com.saberrr.openchina.bean.CategoryBean;
-import com.saberrr.openchina.bean.SoftwareType;
+import com.saberrr.openchina.bean.categorybean.CategoryBean;
+import com.saberrr.openchina.bean.categorybean.SoftwareType;
 import com.saberrr.openchina.net.Urls;
-import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.CategoryAdapter;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.utils.ThreadUtils;
@@ -24,7 +23,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.internal.Utils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -77,13 +75,13 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
                         try {
                             Response response = okHttpClient.newCall(request).execute();
                             String xml = response.body().string();
-                            System.out.println(xml);
+                            //System.out.println(xml);
                             CategoryBean categoryBean = XmlUtils.toBean(CategoryBean.class, xml.getBytes());
                             List<SoftwareType> mSoftwareTypes = categoryBean.getSoftwareTypes();
                             for (int i = 0; i < mSoftwareTypes.size(); i++) {
                                 String name = mSoftwareTypes.get(i).name;
                                 names.add(name);
-                                System.out.println(name);
+                                //System.out.println(name);
                             }
                             ThreadUtils.runMain(new Runnable() {
                                 @Override
@@ -112,7 +110,7 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
                 try {
                     Response response = okHttpClient.newCall(request).execute();
                     String xml = response.body().string();
-                    System.out.println(xml);
+                    //System.out.println(xml);
                     CategoryBean categoryBean = XmlUtils.toBean(CategoryBean.class, xml.getBytes());
                     List<SoftwareType> mSoftwareTypes = categoryBean.getSoftwareTypes();
                     for (int i = 0; i < mSoftwareTypes.size(); i++) {
@@ -120,7 +118,7 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
                         int tag = mSoftwareTypes.get(i).tag;
                         tags.add(tag);
                         names.add(name);
-                        System.out.println(name);
+                        //System.out.println(name);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
