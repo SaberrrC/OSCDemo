@@ -5,5 +5,4 @@ package com.saberrr.openchina.presenter;
  */
 
 public interface JumpPresenter {
-    Object init();
 }
