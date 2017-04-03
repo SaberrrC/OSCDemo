@@ -1,13 +1,11 @@
 package com.saberrr.openchina.ui.fragment;
 
-import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -145,7 +143,7 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
 
         SpannableString msp = new SpannableString(spanned);
 
-        msp.setSpan(new ForegroundColorSpan(Color.MAGENTA), 2, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        msp.setSpan(new ForegroundColorSpan(Color.MAGENTA), 2, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 
         tv_txt.setText(msp);
