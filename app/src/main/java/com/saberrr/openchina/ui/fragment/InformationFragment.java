@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bartoszlipinski.recyclerviewheader.RecyclerViewHeader;
 import com.bumptech.glide.Glide;
 import com.jude.rollviewpager.RollPagerView;
 import com.jude.rollviewpager.hintview.ColorPointHintView;
@@ -46,6 +47,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
     private TextView            mTextView;
     private TestNormalAdapter   mTestNormalAdapter;
     private FinalRecycleAdapter mFinalRecycleAdapter;
+    private RecyclerViewHeader mHeader;
 
     @Override
     protected boolean needRefresh() {
@@ -55,6 +57,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
     @Override
     public View createView() {
         View view = View.inflate(getContext(), R.layout.fragmeng_information, null);
+        mHeader = (RecyclerViewHeader)view.findViewById(R.id.header);
         mRollPagerView = (RollPagerView) view.findViewById(R.id.rollPagerView_information);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_information);
         init();
@@ -62,6 +65,17 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
     }
 
     private void init() {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        //加头布局
+        mHeader.attachTo(mRecyclerView,true);
+        initViewPager();
+
+        layouts.put(InformationBodyBean.ResultBean.ItemsBean.class, R.layout.information_body_item);
+        mFinalRecycleAdapter = new FinalRecycleAdapter(bodyDatas, layouts, this);
+        mRecyclerView.setAdapter(mFinalRecycleAdapter);
+    }
+
+    private void initViewPager() {
         mRollPagerView.setPlayDelay(2000);
         //设置透明度
         mRollPagerView.setAnimationDurtion(500);
@@ -70,11 +84,6 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
 
         mRollPagerView.setHintView(new ColorPointHintView(getContext(), Color.GREEN, Color.WHITE));
         mRollPagerView.setHintPadding(20, 20, 20, 20);
-
-        layouts.put(InformationBodyBean.ResultBean.ItemsBean.class, R.layout.information_body_item);
-        mFinalRecycleAdapter = new FinalRecycleAdapter(bodyDatas, layouts, this);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(mFinalRecycleAdapter);
     }
 
     @Override
