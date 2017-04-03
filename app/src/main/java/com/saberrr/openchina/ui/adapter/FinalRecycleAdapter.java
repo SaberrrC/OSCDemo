@@ -1,7 +1,6 @@
 package com.saberrr.openchina.ui.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,7 +82,9 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Log.d("position", "onBindViewHolder: ========position============" + position);
+        if (mDatas.size() == 0) {
+            throw new RuntimeException("获取完数据请 notifyDataSetChanged()");
+        }
         if (needLoadMore) {
             mMultiRecycleAdapter.onBindViewHolder(holder, position, new Object());
         } else {
