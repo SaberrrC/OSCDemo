@@ -37,7 +37,7 @@ public class MoveFragment extends BaseFragment {
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.move_new_tabLayout);
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.move_new_viewpager);
         pages.add(new FragmentInfo(new MoveNewFragment(), title[0]));
-        pages.add(new FragmentInfo(new MoveNewFragment(), title[1]));
+        pages.add(new FragmentInfo(new MoveHotFragment(), title[1]));
         pages.add(new FragmentInfo(new MoveNewFragment(), title[2]));
         pages.add(new FragmentInfo(new MyMoveFragment(), title[3]));
         viewPager.setAdapter(new MoveAdapter(getChildFragmentManager(), pages));
