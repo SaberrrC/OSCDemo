@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.saberrr.openchina.manager.uimanager.LoadPager;
+import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.utils.ToastUtils;
 
 import java.util.List;
@@ -19,11 +21,16 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
 
     public LoadPager mLoadingPager;
     private boolean needRefresh = false;
-    private boolean mNeedRefresh;
+    private boolean      mNeedRefresh;
+    private ShowActivity mParentActivity;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Activity activity = getActivity();
+        if (activity instanceof ShowActivity) {
+            mParentActivity = (ShowActivity) activity;
+        }
         if (mLoadingPager != null) {
             return mLoadingPager;
         }
@@ -45,7 +52,16 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
                 return getData();
             }
         };
+
         return mLoadingPager;
+    }
+
+    public void setToolbarIconOnClickListener(ShowActivity.OnClickListener onClickListener) {
+        mParentActivity.setToolbarIconOnClickListener(onClickListener);
+    }
+
+    public void setOnQueryTextListener(ShowActivity.OnQueryTextListener onQueryTextListener) {
+        mParentActivity.setOnQueryTextListener(onQueryTextListener);
     }
 
     public View creatViewFromId(int layoutId) {
@@ -95,4 +111,10 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
         intent.putExtra(Fiels.DtailActivity.TITLE, title);
         startActivity(intent);
     }*/
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mParentActivity = null;
+    }
 }

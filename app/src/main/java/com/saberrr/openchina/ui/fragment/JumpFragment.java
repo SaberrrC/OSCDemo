@@ -56,13 +56,13 @@ public class JumpFragment extends BaseFragment implements JumpView {
         ButterKnife.bind(this, view);
         mJumpPresenter = new JumpPresenterImpl(this);
         ShowActivity showActivity = (ShowActivity) getActivity();
-        showActivity.setToolbarIconOnClickListener(new ShowActivity.OnClickListener() {
+        setToolbarIconOnClickListener(new ShowActivity.OnClickListener() {
             @Override
             public void onClick() {
                 ToastUtils.showToast("6666");
             }
         });
-        showActivity.setOnQueryTextListener(new ShowActivity.OnQueryTextListener() {
+        setOnQueryTextListener(new ShowActivity.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit() {
                 ToastUtils.showToast("正在搜索中");
