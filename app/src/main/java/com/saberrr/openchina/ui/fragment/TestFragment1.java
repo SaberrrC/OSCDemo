@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
-import com.saberrr.openchina.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +31,7 @@ public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.O
     private FinalRecycleAdapter mFinalRecycleAdapter;
     @Override
     protected boolean needRefresh() {
-        return true;
+        return false;
     }
 
     @Override
@@ -95,12 +94,12 @@ public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.O
             TextView tv1 = (TextView) holder.getViewById(R.id.tv3);
             tv1.setText(s + "    Long");
         }
-        if (position == mDatas.size()) {
+       /* if (position == mDatas.size()) {
             TextView tv4 = (TextView) holder.getViewById(R.id.tv3);
             tv4.setText("下拉加载更多" + SystemClock.currentThreadTimeMillis() + "");
             ToastUtils.showToast(SystemClock.currentThreadTimeMillis() + "");
             changgeData();
-        }
+        }*/
     }
 
     private void changgeData() {

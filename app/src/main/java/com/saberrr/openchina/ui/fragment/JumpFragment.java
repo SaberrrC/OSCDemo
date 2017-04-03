@@ -3,6 +3,7 @@ package com.saberrr.openchina.ui.fragment;
 import android.view.View;
 import android.widget.TextView;
 
+import com.saberrr.openchina.R;
 import com.saberrr.openchina.presenter.JumpPresenter;
 import com.saberrr.openchina.presenter.JumpPresenterImpl;
 
@@ -30,7 +31,7 @@ public class JumpFragment extends BaseFragment implements JumpView {
     }
     @Override
     public Object getData() {
-        Object o = mJumpPresenter.init();
+        creatViewFromId(R.layout.fragment_jumponejump);
 
         return "";
     }
