@@ -169,6 +169,16 @@ public class MyFragment extends BaseFragment {
         } else {
             mRlOffline.setVisibility(View.VISIBLE);
             mRlOnline.setVisibility(View.GONE);
+            Glide.with(getContext()).load(R.mipmap.ic_nav_my_normal).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
+                @Override
+                protected void setResource(Bitmap resource) {
+                    RoundedBitmapDrawable circularBitmapDrawable =
+                            RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                    circularBitmapDrawable.setCircular(true);
+                    mIvAvtarOffline.setImageDrawable(circularBitmapDrawable);
+                }
+            });
+
         }
 
 
@@ -198,7 +208,7 @@ public class MyFragment extends BaseFragment {
                 break;
             case R.id.iv_avtar_online:
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("UERINFO" , mLoginBean);
+                bundle.putSerializable("USERINFO" , mLoginBean);
                 ShowActivity.startFragmentWithTitle(MyInfoFragment.class, bundle , "我的资料");
 
                 break;
@@ -219,6 +229,8 @@ public class MyFragment extends BaseFragment {
                 break;
             case R.id.rl_my_msg:
                 ToastUtils.showToast("我的消息");
+                ShowActivity.startFragmentWithTitle(MyMsgFragment.class , null , "消息中心");
+
                 break;
             case R.id.rl_my_blog:
                 ToastUtils.showToast("我的微博");

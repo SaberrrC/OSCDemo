@@ -5,7 +5,6 @@
     android:id="@+id/rl_offline"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:showIn="@layout/frag_my"
     android:background="@mipmap/bg_my">
 
     <ImageView

@@ -1,4 +1,4 @@
-include ':app'
+include ':app', ':bannernew', ':openchina_default'
 include ':circleImageLib'
 
 
