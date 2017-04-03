@@ -17,7 +17,7 @@ import java.util.List;
 
 public abstract class BaseFragment extends android.support.v4.app.Fragment {
 
-    private LoadPager mLoadingPager;
+    public LoadPager mLoadingPager;
     private boolean needRefresh = false;
     private boolean mNeedRefresh;
 
