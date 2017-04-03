@@ -1,4 +1,4 @@
-package com.saberrr.openchina.bean;
+package com.saberrr.openchina.bean.categorybean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

@@ -1,4 +1,4 @@
-package com.saberrr.openchina.bean;
+package com.saberrr.openchina.bean.categorybean;
 
 /**
  * Created by liuqi on 2017/4/2.

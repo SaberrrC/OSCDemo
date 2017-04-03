@@ -43,7 +43,7 @@ public class OpenSoftwareFragment extends BaseFragment {
     private void init() {
         String[] title = Utils.getStringArray(R.array.tab_names);
         datas.add(new FragmentInfo(new CategoryFragment(), title[4]));
-        datas.add(new FragmentInfo(new CategoryFragment(), title[5]));
+        datas.add(new FragmentInfo(new RecommendFragment(), title[5]));
         datas.add(new FragmentInfo(new CategoryFragment(), title[6]));
         datas.add(new FragmentInfo(new CategoryFragment(), title[7]));
         datas.add(new FragmentInfo(new CategoryFragment(), title[8]));
