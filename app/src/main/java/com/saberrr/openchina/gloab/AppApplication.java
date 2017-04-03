@@ -17,4 +17,5 @@ public class AppApplication extends Application {
         super.onCreate();
         appContext = this;
     }
+
 }

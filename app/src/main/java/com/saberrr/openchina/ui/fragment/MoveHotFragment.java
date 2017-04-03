@@ -31,7 +31,7 @@ import java.util.List;
  * Created by tt on 2017/4/1.
  */
 
-public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
+public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
 
     private static final String TAG = "MoveNewFragment";
 
@@ -74,7 +74,7 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
     @Override
     public Object getData() {
 
-        final MoveNewBean moveNewBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_NEW, MoveNewBean.class);
+        final MoveNewBean moveNewBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_HOT, MoveNewBean.class);
         final List<MoveNewBean.ResultBean.ItemsBean> items = moveNewBean.getResult().getItems();
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
