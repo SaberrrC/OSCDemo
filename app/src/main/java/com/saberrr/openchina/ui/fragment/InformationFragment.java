@@ -3,6 +3,7 @@ package com.saberrr.openchina.ui.fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -48,6 +49,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
     private TestNormalAdapter   mTestNormalAdapter;
     private FinalRecycleAdapter mFinalRecycleAdapter;
     private RecyclerViewHeader mHeader;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected boolean needRefresh() {
@@ -57,6 +59,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
     @Override
     public View createView() {
         View view = View.inflate(getContext(), R.layout.fragmeng_information, null);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout_information);
         mHeader = (RecyclerViewHeader)view.findViewById(R.id.header);
         mRollPagerView = (RollPagerView) view.findViewById(R.id.rollPagerView_information);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_information);
@@ -68,11 +71,22 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         //加头布局
         mHeader.attachTo(mRecyclerView,true);
+        initSwipeRefreshLayout();
         initViewPager();
 
         layouts.put(InformationBodyBean.ResultBean.ItemsBean.class, R.layout.information_body_item);
         mFinalRecycleAdapter = new FinalRecycleAdapter(bodyDatas, layouts, this);
         mRecyclerView.setAdapter(mFinalRecycleAdapter);
+    }
+
+    private void initSwipeRefreshLayout() {
+        mSwipeRefreshLayout.setColorSchemeColors(Color.GREEN,Color.BLUE,Color.RED);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mLoadingPager.showViewDely(1000);
+            }
+        });
     }
 
     private void initViewPager() {
@@ -93,6 +107,11 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
 
         }else {
             nextPageToken = bodys.get(0).getResult().getNextPageToken();
+        }
+        if (mSwipeRefreshLayout.isRefreshing()) {
+            bodys.clear();
+            datas.clear();
+            bodyDatas.clear();
         }
         InformationHearBean informationHearBean = JsonCacheManager.getInstance().getDataBean(Urls.BANNER, InformationHearBean.class);
         InformationBodyBean informationBodyBean = JsonCacheManager.getInstance().getDataBean(Urls.NEWS+nextPageToken, InformationBodyBean.class);
