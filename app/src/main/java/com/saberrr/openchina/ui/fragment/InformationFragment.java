@@ -1,6 +1,7 @@
 package com.saberrr.openchina.ui.fragment;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +20,9 @@ import com.saberrr.openchina.bean.InformationHearBean;
 import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.manager.cacheManager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
+import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
 
@@ -64,6 +67,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         mRollPagerView.setAnimationDurtion(500);
         mTestNormalAdapter = new TestNormalAdapter();
         mRollPagerView.setAdapter(mTestNormalAdapter);
+
         mRollPagerView.setHintView(new ColorPointHintView(getContext(), Color.GREEN, Color.WHITE));
         mRollPagerView.setHintPadding(20, 20, 20, 20);
 
@@ -113,7 +117,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         TextView tvTimeInformation = (TextView) holder.getViewById(R.id.tv_time_information);
         LinearLayout llCommentInformation = (LinearLayout) holder.getViewById(R.id.ll_comment_information);
         TextView tvCommentInformation = (TextView) holder.getViewById(R.id.tv_comment_information);
-        InformationBodyBean.ResultBean.ItemsBean itemsBean= (InformationBodyBean.ResultBean.ItemsBean) itemData;
+        final InformationBodyBean.ResultBean.ItemsBean itemsBean= (InformationBodyBean.ResultBean.ItemsBean) itemData;
         tvTitleInformation.setText(itemsBean.getTitle());
         tvBodyInformation.setText(itemsBean.getBody());
         tvTimeInformation.setText(itemsBean.getPubDate());
@@ -121,7 +125,11 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         llCommentInformation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.BLOGDETAILSFRAGMENT.HREF,itemsBean.getHref() );
+                bundle.putString(Constant.BLOGDETAILSFRAGMENT.COMMENTCOUNT,itemsBean.getCommentCount()+"");
+                ShowActivity.startFragmentWithTitle(BlogDetailsFragment.class,bundle,"博客详情",ShowActivity.TITLE_COMMENT);
+                mTestNormalAdapter.notifyDataSetChanged();
             }
         });
 
