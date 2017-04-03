@@ -6,9 +6,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,15 +19,14 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.contact.Fiels;
 import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.ui.fragment.BaseFragment;
-import com.saberrr.openchina.utils.ToastUtils;
 
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ShowActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
-    private Toolbar   mToolbar;
-    private ImageView mIvIconToolbar;
-    private TextView  mTvTitleToolbar;
+    private int mTitle_icon = TITLE_NONE;
+
     /**
      * @TITLE_NONE 右边没东西
      * @TITLE_SEARCH 右边搜索图标
@@ -37,8 +39,14 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     public static final int TITLE_COMMENT = 102;//右边是评论数量
     public static final int TITLE_SEND    = 103;//右边文字 “选择”
     public static final int TITLE_PEOPLE  = 104;//“找人”专用
-    private TextView   mTvRightToolbar;
-    private SearchView mSearchView;
+    private TextView    mTvRightToolbar;
+    private SearchView  mSearchView;
+    private Toolbar     mToolbar;
+    private ImageView   mIvIconToolbar;
+    private TextView    mTvTitleToolbar;
+    private ImageView   mIvCommendBG;
+    private FrameLayout mFlCommend;
+    private TextView    mTvCommend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +55,9 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         ButterKnife.bind(this);
         Intent intent = getIntent();
         String title = intent.getStringExtra(Fiels.DtailActivity.TITLE);
-        int title_icon = intent.getIntExtra(Fiels.DtailActivity.TOOBARICON, TITLE_NONE);
+        mTitle_icon = intent.getIntExtra(Fiels.DtailActivity.TOOBARICON, TITLE_NONE);
         initToolbar();
-        initToolBar(title, title_icon);
+        initToolBar(title, mTitle_icon);
         try {
             Bundle bundle = intent.getBundleExtra(Fiels.DtailActivity.BUNDLE);
             Class<BaseFragment> classname = (Class<BaseFragment>) intent.getSerializableExtra(Fiels.DtailActivity.CLASSNAME);
@@ -64,7 +72,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     //设置toolbar
-    public void initToolBar(String title, int title_icon) {
+    public void initToolBar(String title, final int title_icon) {
         mToolbar.setTitle(title);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -76,14 +84,15 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
                 finish();
             }
         });
-
         mToolbar.setTitle(title);
         mIvIconToolbar.setVisibility(View.GONE);
         mTvTitleToolbar.setVisibility(View.GONE);
+        mFlCommend.setVisibility(View.GONE);
+        mIvCommendBG.setVisibility(View.GONE);
+        mTvCommend.setVisibility(View.GONE);
         if (mSearchView != null) {
             mSearchView.setVisibility(View.GONE);
         }
-
         switch (title_icon) {
             case TITLE_NONE:
                 break;
@@ -92,9 +101,9 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
                 mIvIconToolbar.setImageResource(R.mipmap.btn_search_normal);
                 break;
             case TITLE_COMMENT:
-                mTvRightToolbar.setVisibility(View.VISIBLE);
-                mTvRightToolbar.setBackgroundResource(R.drawable.ic_menu_comment);
-                mTvRightToolbar.setText("数量");
+                mFlCommend.setVisibility(View.VISIBLE);
+                mIvCommendBG.setVisibility(View.VISIBLE);
+                mTvCommend.setVisibility(View.VISIBLE);
                 break;
             case TITLE_SEND:
                 mToolbar.setTitle("");
@@ -104,28 +113,88 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
                 mTvRightToolbar.setBackgroundResource(0);
                 mTvTitleToolbar.setText(title);
                 mTvRightToolbar.setText("发送");
-                mTvRightToolbar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ToastUtils.showToast("发送数据");
-                    }
-                });
                 break;
             case TITLE_PEOPLE:
-                mSearchView.setVisibility(View.VISIBLE);
+                if (mSearchView != null) {
+                    mSearchView.setVisibility(View.VISIBLE);
+                }
+
                 break;
             default:
-                throw new RuntimeException("请传入指定参数");
+                throw new RuntimeException("请传入指定标题类型参数");
         }
     }
 
+    public void initRightIcon(int count) {
+        if (mTvRightToolbar != null && mTitle_icon == TITLE_COMMENT) {
+            mTvRightToolbar.setText(count + "");
+        }
+    }
+
+    private OnClickListener mOnClickListener;
+
+    @OnClick({R.id.fl_commend, R.id.tv_right_toolbar, R.id.iv_right_icon_toolbar})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.fl_commend:
+            case R.id.tv_right_toolbar:
+            case R.id.iv_right_icon_toolbar:
+                if (mOnClickListener != null) {
+                    mOnClickListener.onClick();
+                }
+                break;
+        }
+    }
+
+    public interface OnClickListener {
+        void onClick();
+    }
+
+
+    /**
+     * toolbar 条目点击监听
+     *
+     * @param onClickListener 点击监听
+     */
+    public void setToolbarIconOnClickListener(OnClickListener onClickListener) {
+        mOnClickListener = onClickListener;
+    }
 
     private void initToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        mIvIconToolbar = (ImageView) findViewById(R.id.iv_icon_toolbar);
+        mIvIconToolbar = (ImageView) findViewById(R.id.iv_right_icon_toolbar);
         mTvTitleToolbar = (TextView) findViewById(R.id.tv_title_toolbar);
         mTvRightToolbar = (TextView) findViewById(R.id.tv_right_toolbar);
+        mFlCommend = (FrameLayout) findViewById(R.id.fl_commend);
+        mIvCommendBG = (ImageView) findViewById(R.id.iv_commend_bg);
+        mTvCommend = (TextView) findViewById(R.id.tv_commend);
 
+    }
+/*    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_searviewu, menu);
+        MenuItem item = menu.findItem(R.id.search);
+        mSearchView = (SearchView) item.getActionView();
+        //设置提示文字
+        mSearchView.setQueryHint("请输入关键字");
+        //设置文字搜索监听
+        mSearchView.setOnQueryTextListener(this);
+        return true;
+    }*/
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (mTitle_icon == TITLE_PEOPLE) {
+            getMenuInflater().inflate(R.menu.menu_searviewu, menu);
+            MenuItem item = menu.findItem(R.id.search);
+            mSearchView = (SearchView) item.getActionView();
+            //设置提示文字
+            mSearchView.setQueryHint("请输入关键字");
+            //设置文字搜索监听
+            mSearchView.setOnQueryTextListener(this);
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
     }
 
     public static void startFragment(Class clss, Bundle bundle) {
@@ -170,17 +239,72 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         supportActionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+    public interface OnQueryTextListener {
+        boolean onQueryTextSubmit();
+
+        boolean onQueryTextChange();
+    }
+
+    private OnQueryTextListener mOnQueryTextListener;
+
+    public void setOnQueryTextListener(OnQueryTextListener onQueryTextListener) {
+        mOnQueryTextListener = onQueryTextListener;
+    }
 
     //menu回调 两个
     @Override
     public boolean onQueryTextSubmit(String query) {
-        ToastUtils.showToast("去服务器查询 " + query + " 数据");
-        mSearchView.clearFocus();
+        if (mOnQueryTextListener != null) {
+            mOnQueryTextListener.onQueryTextSubmit();
+        }
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        if (mOnQueryTextListener != null) {
+            mOnQueryTextListener.onQueryTextChange();
+        }
         return false;
     }
+
+   /* private boolean isShouldHideInput(View v, MotionEvent event) {
+        if (v != null && (v instanceof EditText)) {
+            int[] leftTop = {0, 0};
+            //获取输入框当前的location位置
+            v.getLocationInWindow(leftTop);
+            int left = leftTop[0];
+            int top = leftTop[1];
+            int bottom = top + v.getHeight();
+            int right = left + v.getWidth();
+            if (event.getX() > left && event.getX() < right && event.getY() > top && event.getY() < bottom) {
+                // 点击的是输入框区域，保留点击EditText的事件
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //点击其他地方隐藏键盘
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideInput(v, ev)) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+            return super.dispatchTouchEvent(ev);
+        }
+        // 必不可少，否则所有的组件都不会有TouchEvent了
+        if (getWindow().superDispatchTouchEvent(ev)) {
+            return true;
+        }
+        return onTouchEvent(ev);
+    }*/
+
 }

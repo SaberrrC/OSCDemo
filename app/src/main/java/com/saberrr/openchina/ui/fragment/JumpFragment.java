@@ -3,15 +3,17 @@ package com.saberrr.openchina.ui.fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.presenter.JumpPresenter;
 import com.saberrr.openchina.presenter.JumpPresenterImpl;
+import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.view.FlowLayout;
+import com.saberrr.openchina.utils.ToastUtils;
 import com.yuyh.library.imgsel.ImageLoader;
 import com.yuyh.library.imgsel.ImgSelActivity;
 import com.yuyh.library.imgsel.ImgSelConfig;
@@ -29,7 +31,7 @@ import butterknife.OnClick;
 public class JumpFragment extends BaseFragment implements JumpView {
 
     @BindView(R.id.tv_content)
-    TextView   mTvContent;
+    EditText   mTvContent;
     @BindView(R.id.fl_images)
     FlowLayout mFlImages;
     @BindView(R.id.iv_pic)
@@ -53,6 +55,25 @@ public class JumpFragment extends BaseFragment implements JumpView {
         View view = creatViewFromId(R.layout.fragment_jumponejump);
         ButterKnife.bind(this, view);
         mJumpPresenter = new JumpPresenterImpl(this);
+        ShowActivity showActivity = (ShowActivity) getActivity();
+        showActivity.setToolbarIconOnClickListener(new ShowActivity.OnClickListener() {
+            @Override
+            public void onClick() {
+                ToastUtils.showToast("6666");
+            }
+        });
+        showActivity.setOnQueryTextListener(new ShowActivity.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit() {
+                ToastUtils.showToast("正在搜索中");
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange() {
+                return false;
+            }
+        });
         return view;
     }
 
@@ -114,7 +135,7 @@ public class JumpFragment extends BaseFragment implements JumpView {
             // “确定”按钮文字颜色
             .btnTextColor(Color.WHITE)
             // 使用沉浸式状态栏
-            .statusBarColor(Color.parseColor("#24cf5f"))
+            //            .statusBarColor(Color.parseColor("#24cf5f"))
             // 返回图标ResId
             .backResId(R.mipmap.btn_back_normal)
             // 标题
