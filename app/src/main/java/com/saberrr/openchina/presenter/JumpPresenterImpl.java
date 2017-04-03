@@ -19,11 +19,4 @@ public class JumpPresenterImpl implements JumpPresenter {
         mJumpView = jumpView;
     }
 
-    @Override
-    public Object init() {
-        //获取数据
-
-        mJumpView.onInit(mList);
-        return "";
-    }
 }
