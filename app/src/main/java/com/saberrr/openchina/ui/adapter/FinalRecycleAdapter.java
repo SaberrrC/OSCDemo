@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -15,12 +16,20 @@ import java.util.List;
  */
 
 public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapter.ViewHolder> {
-    private List<? extends Object>  mDatas;
-    private OnViewAttachListener    mOnViewAttachListener;
-    private HashMap<Class, Integer> mClassIntegerHashMap;
-    private static final int     LOADMORE     = 0;
-    private              boolean needLoadMore = false;
-    private              int     loadLayout   = -1;
+    private List<? extends Object> mDatas;
+    private OnViewAttachListener   mOnViewAttachListener;
+    private              Map<Class, Integer> mClassIntegerHashMap = new HashMap<>();
+    private static final int                 LOADMORE             = 0;
+    private              boolean             needLoadMore         = false;
+    private              int                 loadLayout           = -1;
+
+    /**
+     * 获取map
+     * @return
+     */
+    public Map<Class, Integer> getClassIntegerHashMap() {
+        return mClassIntegerHashMap;
+    }
 
     /**
      * 是否需要加载更多 默认不需要
@@ -41,11 +50,12 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
      * @param datas               数据
      * @param classIntegerHashMap Class键 数据类型 对应 条目类型，Integer值对应条目布局id
      */
-    public FinalRecycleAdapter(List<? extends Object> datas, HashMap<Class, Integer> classIntegerHashMap, OnViewAttachListener onViewAttachListener) {
+    public FinalRecycleAdapter(List<? extends Object> datas, Map<Class, Integer> classIntegerHashMap, OnViewAttachListener onViewAttachListener) {
         mClassIntegerHashMap = classIntegerHashMap;
         mDatas = datas;
         mOnViewAttachListener = onViewAttachListener;
     }
+
 
     @Override
     public int getItemViewType(int position) {
