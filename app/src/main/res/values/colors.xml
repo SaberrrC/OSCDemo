@@ -24,6 +24,7 @@
     <color name="red">#FF0000</color>
     <color name="gray_jump_clear">#F6F6F6</color>
     <color name="gray_jump_clear_select">#80FF0000</color>
+    <color name="gray_jump_face_text">#9c9c9c</color>
 
 
 </resources>

@@ -28,9 +28,6 @@ public abstract class BaseViewHolder<T> {
     public View getView() {
         return view;
     }
-
-
-
     public View createViewFromLayout(int id) {
         return LayoutInflater.from(AppApplication.appContext).inflate(id, null, false);
     }

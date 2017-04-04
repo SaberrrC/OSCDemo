@@ -3,7 +3,6 @@ package com.saberrr.openchina.ui.fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -12,15 +11,11 @@ import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.presenter.JumpPresenter;
 import com.saberrr.openchina.presenter.JumpPresenterImpl;
 import com.saberrr.openchina.ui.activity.ShowActivity;
-import com.saberrr.openchina.ui.view.FlowLayout;
 import com.saberrr.openchina.utils.ToastUtils;
 import com.yuyh.library.imgsel.ImageLoader;
 import com.yuyh.library.imgsel.ImgSelActivity;
 import com.yuyh.library.imgsel.ImgSelConfig;
 
-import java.util.List;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -29,33 +24,30 @@ import butterknife.OnClick;
  */
 
 public class JumpFragment extends BaseFragment implements JumpView {
-
-    @BindView(R.id.tv_content)
-    EditText   mTvContent;
-    @BindView(R.id.fl_images)
-    FlowLayout mFlImages;
-    @BindView(R.id.iv_pic)
-    ImageView  mIvPic;
-    @BindView(R.id.iv_at)
-    ImageView  mIvAt;
-    @BindView(R.id.iv_topic)
-    ImageView  mIvTopic;
-    @BindView(R.id.iv_face)
-    ImageView  mIvFace;
     private JumpPresenter mJumpPresenter;
-    private static final int REQUEST_CODE = 100;
+    public static final int REQUEST_CODE = 100;
+    private String TAG = "JumpFragment";
 
     @Override
     protected boolean needRefresh() {
         return false;
     }
-
     @Override
     public View createView() {
         View view = creatViewFromId(R.layout.fragment_jumponejump);
         ButterKnife.bind(this, view);
         mJumpPresenter = new JumpPresenterImpl(this);
-        ShowActivity showActivity = (ShowActivity) getActivity();
+        initToolbar();
+        return view;
+    }
+
+    @Override
+    public Object getData() {
+
+        return "";
+    }
+
+    private void initToolbar() {
         setToolbarIconOnClickListener(new ShowActivity.OnClickListener() {
             @Override
             public void onClick() {
@@ -74,21 +66,7 @@ public class JumpFragment extends BaseFragment implements JumpView {
                 return false;
             }
         });
-        return view;
     }
-
-    @Override
-    public Object getData() {
-
-        return "";
-    }
-
-    //获取数据后的回调
-    @Override
-    public void onInit(List list) {
-
-    }
-
 
     @OnClick({R.id.tv_content, R.id.fl_images, R.id.iv_pic, R.id.iv_at, R.id.iv_topic, R.id.iv_face})
     public void onClick(View view) {
@@ -120,7 +98,6 @@ public class JumpFragment extends BaseFragment implements JumpView {
     private ImageLoader  loader = new ImageLoader() {
         @Override
         public void displayImage(Context context, String path, ImageView imageView) {
-            // TODO 在这边可以自定义图片加载库来加载ImageView，例如Glide、Picasso、ImageLoader等
             Glide.with(AppApplication.appContext).load(path).into(imageView);
         }
     };
@@ -150,6 +127,5 @@ public class JumpFragment extends BaseFragment implements JumpView {
             .needCamera(true)
             // 最大选择图片数量，默认9
             .maxNum(9).build();
-
 
 }
