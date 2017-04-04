@@ -10,7 +10,8 @@ import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
-import com.saberrr.openchina.bean.FacesBean.FaceBean;
+import com.saberrr.openchina.faces.DisplayRules;
+import com.saberrr.openchina.faces.FaceBean;
 import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.presenter.JumpPresenter;
 import com.saberrr.openchina.presenter.JumpPresenterImpl;
@@ -64,11 +65,9 @@ public class JumpFragment extends BaseFragment implements JumpView {
     }
 
     private void initView() {
-        for (int i = 0; i < 20; i++) {
-            mDatas.add(new FaceBean(R.mipmap.grinning, "001"));
-            mDatas.add(new FaceBean(R.mipmap.grin, "001"));
-            mDatas.add(new FaceBean(R.mipmap.frowning, "001"));
-        }
+        List<FaceBean> allByType = DisplayRules.getAllByType(0);
+        mDatas.addAll(allByType);
+
         mFacesPagerAdapter = new FacesPagerAdapter(mDatas);
         mVpFaces.setAdapter(mFacesPagerAdapter);
     }
@@ -100,13 +99,10 @@ public class JumpFragment extends BaseFragment implements JumpView {
         });
     }
 
-    @OnClick({R.id.tv_content, R.id.tv_count, R.id.iv_pic, R.id.iv_at, R.id.iv_topic, R.id.iv_face, R.id.tv_qq, R.id.tv_emoji, R.id.iv_del})
+    @OnClick({R.id.tv_count, R.id.iv_pic, R.id.iv_at, R.id.iv_topic, R.id.iv_face, R.id.tv_qq, R.id.tv_emoji, R.id.iv_del})
     public void onClick(View view) {
 
         switch (view.getId()) {
-            case R.id.tv_content:
-//                mLlFaces.setVisibility(View.GONE);
-                break;
             case R.id.tv_count:
                 break;
             case R.id.iv_pic:

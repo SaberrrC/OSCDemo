@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.saberrr.openchina.R;
-import com.saberrr.openchina.bean.FacesBean.FaceBean;
+import com.saberrr.openchina.faces.FaceBean;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.utils.ToastUtils;
 
@@ -62,11 +62,11 @@ public class FacesPagerAdapter extends PagerAdapter implements FinalRecycleAdapt
     public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, final int position, Object itemData) {
         final FaceBean faceBean = (FaceBean) itemData;
         ImageView face = (ImageView) holder.getViewById(R.id.iv_face);
-        face.setImageResource(faceBean.id);
+        face.setImageResource(faceBean.resId);
         face.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastUtils.showToast(faceBean.name + "===" + position);
+                ToastUtils.showToast(faceBean.value + "===" + position);
             }
         });
 
