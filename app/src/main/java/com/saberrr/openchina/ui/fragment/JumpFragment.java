@@ -69,20 +69,10 @@ public class JumpFragment extends BaseFragment implements JumpView {
         List<FaceBean> allByType1 = DisplayRules.getAllByType(1);
         mFacesPagerAdapter = new FacesPagerAdapter(allByType0,allByType1);
         mVpFaces.setAdapter(mFacesPagerAdapter);
-        mVpFaces.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mFacesPagerAdapter.setOnClickListener(new FacesPagerAdapter.OnClickListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
+            public void onClick(FaceBean faceBean) {
+                ToastUtils.showToast(faceBean.toString());
             }
         });
     }

@@ -31,4 +31,13 @@ public class FaceBean {
         this.remote = remote;
     }
 
+    @Override
+    public String toString() {
+        return "FaceBean{" +
+                "resId=" + resId +
+                ", value=" + value +
+                ", emojiStr='" + emojiStr + '\'' +
+                ", remote='" + remote + '\'' +
+                '}';
+    }
 }
