@@ -18,10 +18,11 @@ import com.saberrr.openchina.ui.fragment.JumpFragment;
 import com.saberrr.openchina.ui.fragment.MoveFragment;
 import com.saberrr.openchina.ui.fragment.MyFragment;
 import com.saberrr.openchina.ui.fragment.TestFragment2;
-import com.saberrr.openchina.utils.ToastUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.saberrr.openchina.utils.ToastUtils.showToast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private Class  mFragmentArray[] = {ComprehensiveFragment.class, MoveFragment.class, TestFragment2.class, FindFragment.class, MyFragment.class};
     private String mTextArray[]     = {"综合", "动弹", "", "发现", "我的"};
     private int    mImageArray[]    = {R.drawable.selector_all_bg, R.drawable.selector_dongtan_bg, R.drawable.selector_add_bg, R.drawable.selector_find_bg, R.drawable.selector_mine_bg};
+    private long   laatTime         = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         mIvIconToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastUtils.showToast("搜索界面");
+                showToast("搜索界面");
             }
         });
         mIvIconToolbar.setImageResource(R.mipmap.btn_search_normal);
@@ -92,5 +94,16 @@ public class MainActivity extends AppCompatActivity {
                 ShowActivity.startFragmentWithTitle(JumpFragment.class, null, "弹一弹", ShowActivity.TITLE_SEND);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+       /* long currentTimeMillis = System.currentTimeMillis();
+        if (currentTimeMillis - laatTime > 2000) {
+            ToastUtils.showToast("再次点击推出开源中国");
+            laatTime = System.currentTimeMillis();
+        } else {
+            finish();
+        }*/
     }
 }
