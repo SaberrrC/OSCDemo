@@ -65,11 +65,26 @@ public class JumpFragment extends BaseFragment implements JumpView {
     }
 
     private void initView() {
-        List<FaceBean> allByType = DisplayRules.getAllByType(0);
-        mDatas.addAll(allByType);
-
-        mFacesPagerAdapter = new FacesPagerAdapter(mDatas);
+        List<FaceBean> allByType0 = DisplayRules.getAllByType(0);
+        List<FaceBean> allByType1 = DisplayRules.getAllByType(1);
+        mFacesPagerAdapter = new FacesPagerAdapter(allByType0,allByType1);
         mVpFaces.setAdapter(mFacesPagerAdapter);
+        mVpFaces.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
@@ -120,8 +135,10 @@ public class JumpFragment extends BaseFragment implements JumpView {
                 mLlFaces.setVisibility(View.VISIBLE);
                 break;
             case R.id.tv_qq:
+                mVpFaces.setCurrentItem(0);
                 break;
             case R.id.tv_emoji:
+                mVpFaces.setCurrentItem(1);
                 break;
             case R.id.iv_del:
                 break;

@@ -25,10 +25,13 @@ import java.util.Map;
 
 public class FacesPagerAdapter extends PagerAdapter implements FinalRecycleAdapter.OnViewAttachListener {
 
-    private List<FaceBean> mDatas = new ArrayList<>();
+    private List<FaceBean> allByType0 = new ArrayList<>();
+    private List<FaceBean> allByType1 = new ArrayList<>();
 
-    public FacesPagerAdapter(List<FaceBean> datas) {
-        mDatas = datas;
+
+    public FacesPagerAdapter(List<FaceBean> allByType0, List<FaceBean> allByType1) {
+        this.allByType0 = allByType0;
+        this.allByType1 = allByType1;
     }
 
     @Override
@@ -47,6 +50,12 @@ public class FacesPagerAdapter extends PagerAdapter implements FinalRecycleAdapt
         recyclerView.setLayoutManager(new GridLayoutManager(container.getContext(), 7, OrientationHelper.VERTICAL, false));
         Map<Class, Integer> map = new HashMap<>();
         map.put(FaceBean.class, R.layout.layout_item_face);
+        List<FaceBean> mDatas = new ArrayList<>();
+        if (position == 0) {
+            mDatas.addAll(allByType0);
+        } else {
+            mDatas.addAll(allByType1);
+        }
         FinalRecycleAdapter finalRecycleAdapter = new FinalRecycleAdapter(mDatas, map, this);
         recyclerView.setAdapter(finalRecycleAdapter);
         container.addView(recyclerView);
