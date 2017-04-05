@@ -37,6 +37,10 @@
         </activity>
         <activity android:name=".ui.activity.MoveDetailActivity">
         </activity>
+        <activity android:name=".ui.activity.ShakeActivity">
+        </activity>
+        <activity android:name=".scan.ericssonlabs.BarCodeTestActivity">
+        </activity>
     </application>
 
 </manifest>

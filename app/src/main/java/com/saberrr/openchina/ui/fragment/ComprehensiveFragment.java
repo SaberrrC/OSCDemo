@@ -39,7 +39,7 @@ public class ComprehensiveFragment extends BaseFragment {
     private void init() {
         String[]title = new String[]{"资讯","博客","问答","活动"};
         datas.add(new FragmentInfo(new InformationFragment(),title[0]));
-        datas.add(new FragmentInfo(new InformationFragment(),title[1]));
+        datas.add(new FragmentInfo(new BlogFragment(),title[1]));
         datas.add(new FragmentInfo(new InformationFragment(),title[2]));
         datas.add(new FragmentInfo(new InformationFragment(),title[3]));
         mVpComprehen.setAdapter(new ComprehensiveAdapter(getFragmentManager(),datas));

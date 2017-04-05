@@ -16,6 +16,8 @@ import com.saberrr.openchina.event.LoginBeanEvent;
 import com.saberrr.openchina.manager.netmanager.RetrofitUtil;
 import com.saberrr.openchina.net.HttpServiceApi;
 import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.utils.Constant;
+import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.ToastUtils;
 import com.saberrr.openchina.utils.XmlUtils;
 
@@ -55,8 +57,6 @@ public class LoginFragment extends BaseFragment {
 
     @Override
     protected boolean needRefresh() {
-
-
         return false;
     }
 
@@ -67,14 +67,10 @@ public class LoginFragment extends BaseFragment {
         return view;
     }
 
-
-
     @Override
     public Object getData() {
         return "";
     }
-
-
 
     @OnClick({R.id.btn_login, R.id.iv_qq, R.id.iv_wechat, R.id.iv_weibo})
     public void onClick(View view) {
@@ -85,9 +81,7 @@ public class LoginFragment extends BaseFragment {
                 if (checkUsernameAndPwd(mUsername, mPwd)) {
                     // TODO: 2017/4/2 登录
                     HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
-
-
-                    httpServiceApi.Login("1" , mUsername ,mPwd).enqueue(new Callback<ResponseBody>() {
+                    httpServiceApi.preLogin("1" , mUsername ,mPwd).enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if (response.isSuccessful()) {
@@ -111,17 +105,17 @@ public class LoginFragment extends BaseFragment {
                                         LoginBeanEvent.cookie = split1[1];
 
                                         ToastUtils.showToast("登录成功！");
-                                        System.out.println(split1[1]);
+//                                        System.out.println(split1[1]);
+                                        SpUtil.saveString(getContext(), Constant.COOKIE, split1[1]);
+                                        SpUtil.saveString(getContext(), Constant.USERID, loginBean.getUser().getUid());
+                                        SpUtil.saveString(getContext(), Constant.PWD, mPwd);
 
-                                        EventBus.getDefault().postSticky(event);
+                                        EventBus.getDefault().post(event);
                                         getActivity().finish();
                                     } else {
 
                                         ToastUtils.showToast(loginBean.getResult().getErrorMessage());
                                     }
-
-
-
 
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
@@ -129,9 +123,7 @@ public class LoginFragment extends BaseFragment {
                                     e.printStackTrace();
 
                                 }
-
                             }
-
                         }
 
                         @Override
@@ -150,7 +142,6 @@ public class LoginFragment extends BaseFragment {
                 } else {
                     return;
                 }
-
 
                 break;
             case R.id.iv_qq:

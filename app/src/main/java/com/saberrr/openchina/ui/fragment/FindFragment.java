@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.ui.activity.ShakeActivity;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 
 import butterknife.BindView;
@@ -66,7 +68,9 @@ public class FindFragment extends BaseFragment {
 
                 break;
             case R.id.shake:
-
+                Intent intent = new Intent(getContext(), ShakeActivity.class);
+                intent.putExtra("title",mShake.getText().toString());
+                startActivity(intent);
                 break;
         }
     }

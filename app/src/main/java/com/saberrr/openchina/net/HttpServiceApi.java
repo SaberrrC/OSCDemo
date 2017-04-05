@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -19,10 +20,12 @@ public interface HttpServiceApi {
 
     @FormUrlEncoded
     @POST(Urls.LOGIN)
-    Call<ResponseBody> Login(@Field("keep_login") String keep_lonin, @Field("username") String username, @Field("pwd") String pwd);
+    Call<ResponseBody> preLogin(@Field("keep_login") String keep_lonin, @Field("username") String username, @Field("pwd") String pwd);
 
     @GET(Urls.USERINFO)
     Call<ResponseBody> getUserInfo(@Query("uid") String uid);
 
+
+    Call<ResponseBody> getUserInfo(@Header("cookie") String cookie, @Query("uid") String uid);
 
 }

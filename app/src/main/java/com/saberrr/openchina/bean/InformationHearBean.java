@@ -1,12 +1,14 @@
 package com.saberrr.openchina.bean;
 
+import com.saberrr.openchina.ui.adapter.interfaces.HeadType;
+
 import java.util.List;
 
 /**
  * Created by 丁银晨 on 2017/4/1.
  */
 
-public class InformationHearBean {
+public class InformationHearBean implements HeadType{
 
     /**
      * code : 1
@@ -117,7 +119,7 @@ public class InformationHearBean {
             this.items = items;
         }
 
-        public static class ItemsBean {
+        public static class ItemsBean implements HeadType {
             /**
              * detail :
              * href : https://www.oschina.net/news/83188/2017-april-yuanchuanghui
