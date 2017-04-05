@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
@@ -118,12 +117,12 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
 
             MoveNewBean.ResultBean.ItemsBean bean = (MoveNewBean.ResultBean.ItemsBean) itemData;
 
-            ShowView(holder, bean);
+            ShowView(holder, bean, position);
 
         }
     }
 
-    private void ShowView(FinalRecycleAdapter.ViewHolder holder, MoveNewBean.ResultBean.ItemsBean bean) {
+    private void ShowView(FinalRecycleAdapter.ViewHolder holder, MoveNewBean.ResultBean.ItemsBean bean, final int position) {
         ImageView iv_icon = (ImageView) holder.getViewById(R.id.item_move_iv_icon);
         TextView tv_name = (TextView) holder.getViewById(R.id.item_move_tv_name);
         TextView tv_txt = (TextView) holder.getViewById(R.id.item_move_tv_text);
@@ -147,17 +146,20 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
         //时间
         String pubDate = bean.getPubDate();
         long parseTime = parseTime(pubDate);
-        Log.i(TAG, "ShowView: parseTime = " + parseTime);
-        long endTime = System.currentTimeMillis();
-        Log.i(TAG, "ShowView: endTime = " + endTime);
+        long endTime = parseTime(getSystemTime());
         long time = endTime - parseTime;
         int m = (int) (time / 1000 / 60);
-        Log.i(TAG, "ShowView: m" + m);
-        if (m < 60) {
+
+        if (m < 3) {
+            tv_date.setText("刚刚");
+        } else if (m < 60) {
             tv_date.setText(m + "分钟前");
-        } else {
+        } else if (m / 60 < 24) {
             long h = m / 60;
             tv_date.setText(h + "小时前");
+        } else if (m / 60 / 24 < 30) {
+            int d = m / 60 / 24;
+            tv_date.setText(d + "天前");
         }
 
         //赞
@@ -201,6 +203,7 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
             //图片
             for (int i = 0; i < images.size(); i++) {
                 ImageView iv = new ImageView(getContext());
+                iv.setBackgroundResource(R.mipmap.ic_launcher);
                 MoveNewBean.ResultBean.ItemsBean.ImagesBean imagesBean = images.get(i);
                 String thumb = imagesBean.getThumb();
                 Glide.with(getContext()).load(thumb).asBitmap().into(iv);
@@ -210,11 +213,10 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
                 iv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         Intent intent = new Intent(getContext(), ShowImageActivity.class);
-                        intent.putExtra("index", finalI);
+                        int[] arr = {position, finalI, 2};
+                        intent.putExtra("item", arr);
                         startActivity(intent);
-                        Toast.makeText(getContext(), "图片" + finalI + "被点击了", Toast.LENGTH_SHORT).show();
                     }
                 });
                 gridLayout.addView(iv);
@@ -242,4 +244,5 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
         String retStrFormatNowDate = sdFormatter.format(nowTime);
         return retStrFormatNowDate;
     }
+
 }

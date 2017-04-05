@@ -22,6 +22,8 @@ import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -73,6 +75,9 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
 
     @Override
     public Object getData() {
+
+
+
         final MoveNewBean moveNewBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_MY, MoveNewBean.class);
 
         final List<MoveNewBean.ResultBean.ItemsBean> items = moveNewBean.getResult().getItems();
@@ -125,15 +130,23 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
         //时间
         String pubDate = bean.getPubDate();
         long parseTime = parseTime(pubDate);
-        long endTime = System.currentTimeMillis();
+        Log.i(TAG, "ShowView: parseTime = " + parseTime);
+        long endTime = parseTime(getSystemTime());
+        Log.i(TAG, "ShowView: endTime = " + endTime);
         long time = endTime - parseTime;
-        long m = time / 1000 / 60;
+        int m = (int) (time / 1000 / 60);
         Log.i(TAG, "ShowView: m" + m);
-        if (m < 60) {
+
+        if (m < 3) {
+            tv_date.setText("刚刚");
+        } else if (m < 60) {
             tv_date.setText(m + "分钟前");
-        } else {
+        } else if (m / 60 < 24) {
             long h = m / 60;
             tv_date.setText(h + "小时前");
+        } else if (m / 60 / 24 < 30) {
+            int d = m / 60 / 24;
+            tv_date.setText(d + "天前");
         }
 
 
@@ -208,11 +221,11 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
         return calendar.getTimeInMillis();
     }
 
-//    public String getSystemTime() {
-//        Date nowTime = new Date(System.currentTimeMillis());
-//        SimpleDateFormat sdFormatter = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss");
-//        String retStrFormatNowDate = sdFormatter.format(nowTime);
-//        return retStrFormatNowDate;
-//    }
+    public String getSystemTime() {
+        Date nowTime = new Date(System.currentTimeMillis());
+        SimpleDateFormat sdFormatter = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss");
+        String retStrFormatNowDate = sdFormatter.format(nowTime);
+        return retStrFormatNowDate;
+    }
 
 }

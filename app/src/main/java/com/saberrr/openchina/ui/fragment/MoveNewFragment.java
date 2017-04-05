@@ -9,7 +9,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -33,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.saberrr.openchina.R.id.recyclerView;
 
 
 /**
@@ -59,7 +60,7 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
     public View createView() {
         View view = View.inflate(getContext(), R.layout.fragment_move_new, null);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        mRecyclerView = (RecyclerView) view.findViewById(recyclerView);
         setRecyclerView();
 
         return view;
@@ -83,7 +84,7 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
     @Override
     public Object getData() {
 
-        final MoveNewBean moveNewBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_NEW, MoveNewBean.class);
+        final MoveNewBean moveNewBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_NEW + 1, MoveNewBean.class);
         final List<MoveNewBean.ResultBean.ItemsBean> items = moveNewBean.getResult().getItems();
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -113,29 +114,12 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
     }
 
     @Override
-    public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, final Object itemData) {
+    public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, final int position, final Object itemData) {
 
 
         if (itemData instanceof MoveNewBean.ResultBean.ItemsBean) {
 
             final MoveNewBean.ResultBean.ItemsBean bean = (MoveNewBean.ResultBean.ItemsBean) itemData;
-
-            mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-                @Override
-                public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-                    return false;
-                }
-
-                @Override
-                public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
-                }
-
-                @Override
-                public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-                }
-            });
 
             ShowView(holder, bean, position);
 
@@ -143,6 +127,8 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
     }
 
     private void ShowView(FinalRecycleAdapter.ViewHolder holder, final MoveNewBean.ResultBean.ItemsBean bean, final int position) {
+
+
         ImageView iv_icon = (ImageView) holder.getViewById(R.id.item_move_iv_icon);
         TextView tv_name = (TextView) holder.getViewById(R.id.item_move_tv_name);
         TextView tv_txt = (TextView) holder.getViewById(R.id.item_move_tv_text);
@@ -171,13 +157,17 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
         long time = endTime - parseTime;
         int m = (int) (time / 1000 / 60);
         Log.i(TAG, "ShowView: m" + m);
+
         if (m < 3) {
             tv_date.setText("刚刚");
         } else if (m < 60) {
             tv_date.setText(m + "分钟前");
-        } else {
+        } else if (m / 60 < 24) {
             long h = m / 60;
             tv_date.setText(h + "小时前");
+        } else if (m / 60 / 24 < 30) {
+            int d = m / 60 / 24;
+            tv_date.setText(d + "天前");
         }
 
         //赞
@@ -197,7 +187,7 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
         //文本内容
         String content = bean.getContent();
 //            tv_txt.setText(content);
-//            tv_txt.setText(Html.fromHtml(content)); //这个不好，不能点
+//            tv_txt.setText(Html.fromHtml(content  )); //这个不好，不能点
 
         Spanned spanned = Html.fromHtml(content);
 
@@ -231,7 +221,7 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getContext(), ShowImageActivity.class);
-                        int[] arr = {position, finalI};
+                        int[] arr = {position, finalI, 1};
                         intent.putExtra("item", arr);
                         startActivity(intent);
                         Toast.makeText(getContext(), "图片" + finalI + "被点击了", Toast.LENGTH_SHORT).show();
@@ -263,3 +253,4 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
         return retStrFormatNowDate;
     }
 }
+

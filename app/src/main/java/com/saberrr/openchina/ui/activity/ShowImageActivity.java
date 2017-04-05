@@ -16,6 +16,7 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.MoveNewBean;
 import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.utils.ToastUtils;
 
 import java.util.List;
 
@@ -40,6 +41,10 @@ public class ShowImageActivity extends AppCompatActivity {
             super.handleMessage(msg);
             final List<MoveNewBean.ResultBean.ItemsBean.ImagesBean> images = (List<MoveNewBean.ResultBean.ItemsBean.ImagesBean>) msg.obj;
 
+            if (images == null) {
+                ToastUtils.showToast("网络异常");
+                return;
+            }
 
             mViewPager.setAdapter(new PagerAdapter() {
                 @Override
@@ -83,7 +88,7 @@ public class ShowImageActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                MoveNewBean dataBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_NEW, MoveNewBean.class);
+                MoveNewBean dataBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_NEW + mInts[2], MoveNewBean.class);
                 List<MoveNewBean.ResultBean.ItemsBean.ImagesBean> images = dataBean.getResult().getItems().get(mInts[0]).getImages();
                 Message msg = new Message();
                 msg.obj = images;
