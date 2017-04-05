@@ -11,6 +11,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,12 +25,11 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.faces.DisplayRules;
 import com.saberrr.openchina.faces.FaceBean;
 import com.saberrr.openchina.gloab.AppApplication;
-import com.saberrr.openchina.presenter.JumpPresenter;
-import com.saberrr.openchina.presenter.JumpPresenterImpl;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.interfaces.FacesPagerAdapter;
 import com.saberrr.openchina.ui.view.FlowLayout;
 import com.saberrr.openchina.utils.DensityUtil;
+import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
 import com.saberrr.openchina.utils.Utils;
 import com.yuyh.library.imgsel.ImageLoader;
@@ -49,7 +49,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by Saberrr on 2017-04-02.
  */
 
-public class JumpFragment extends BaseFragment implements JumpView {
+public class JumpFragment extends BaseFragment {
     public static final String TOPIC_TEXT = "#输入软件名#";
     @BindView(R.id.tv_content)
     EditText     mEtContent;
@@ -61,7 +61,6 @@ public class JumpFragment extends BaseFragment implements JumpView {
     FlowLayout   mFlImg;
     @BindView(R.id.tv_count)
     TextView     mTvCount;
-    private JumpPresenter mJumpPresenter;
     public static final int REQUEST_CODE = 100;
     private FacesPagerAdapter mFacesPagerAdapter;
     private              List<String> images         = new ArrayList<>();
@@ -79,7 +78,6 @@ public class JumpFragment extends BaseFragment implements JumpView {
         ButterKnife.bind(this, view);
         initView();
         setHintKeyboard(true);
-        mJumpPresenter = new JumpPresenterImpl(this);
         initToolbar();
         return view;
     }
@@ -142,7 +140,65 @@ public class JumpFragment extends BaseFragment implements JumpView {
         setToolbarIconOnClickListener(new ShowActivity.OnClickListener() {
             @Override
             public void onClick() {
-                ToastUtils.showToast(images.size() + "");
+                ThreadUtils.runSub(new Runnable() {
+                    @Override
+                    public void run() {
+                       /* String cookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
+                        Map<String, String> map = new HashMap<>();
+                        map.put("cookie", cookie);
+                        //RequestBody body = new FormBody.Builder()
+                        //        .add("keep_login", "1")
+                        //        .add("username", "18801931441")
+                        //        .add("pwd", "110201.liuji")
+                        //        .add("content",mEtContent.getText().toString())
+                        //        .build();
+                        File file = new File(images.get(0));
+                        Headers head = new Headers();
+
+                        RequestBody body2 = new MultipartBody.Builder()
+                                .setType(MultipartBody.FORM)//传送的类型
+//                                                                .add("keep_login", "1")
+//                                                                .add("username", "18801931441")
+//                                                                .add("pwd", "110201.liuji")
+//                                                                .add("content",mEtContent.getText().toString())
+                                .addPart(head,body)
+                                .addFormDataPart("resource", file.getName(), MultipartBody.create(MediaType.parse("application/octet-stream"), file))
+                                .build();
+                        //                        String json = JsonCacheManager.getInstance().getXML(Urls.SEND_JUMP, map, body);
+                        //                        SendJumpBean dataBean = JsonCacheManager.getInstance().getDataBean(Urls.SEND_JUMP, map, body, SendJumpBean.class);
+                        String json2 =  JsonCacheManager.getInstance().getXML(Urls.SEND_JUMP, map, body2);
+                        Log.d(TAG, "run: ========================" + json2);
+                        ToastUtils.showToast(json2);
+*/
+                        /*try {
+                            //创建一个要上传的图片
+                            File file = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "p33.jpg");
+                            OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                            RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)//传送的类型
+                                    .addFormDataPart("resource", file.getName(), MultipartBody.create(MediaType.parse("application/octet-stream"), file)).build();
+                            Request request = new Request.Builder().addHeader("cookie", mCookie).post(body).url("http://www.oschina.net/action/apiv2/resource_image").build();
+
+                            Response response = okHttpClient.newCall(request).execute();
+                            System.out.println(response.body().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            String cookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
+                            OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                            RequestBody body = new FormBody.Builder().add("images", "FDB9880DDB8FB5EC").add("content", "今天非要让我送她回家,兄弟们怎么办?").build();
+                            Request request = new Request.Builder().url("http://www.oschina.net/action/apiv2/tweet").addHeader("cookie", cookie).post(body).build();
+                            Response response = okHttpClient.newCall(request).execute();
+                            System.out.println(response.body().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }*/
+
+
+                    }
+                });
+
+
             }
         });
     }
@@ -182,6 +238,11 @@ public class JumpFragment extends BaseFragment implements JumpView {
                 mVpFaces.setCurrentItem(1);
                 break;
             case R.id.iv_del:
+                int keyCode = KeyEvent.KEYCODE_DEL;
+                KeyEvent keyEventDown = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
+                KeyEvent keyEventUp = new KeyEvent(KeyEvent.ACTION_UP, keyCode);
+                mEtContent.onKeyDown(keyCode, keyEventDown);
+                mEtContent.onKeyUp(keyCode, keyEventUp);
                 break;
         }
     }

@@ -105,12 +105,12 @@ public class NetManager {
     }
 
     public String getJson(String url, Map<String, String> headMap, RequestBody body) {
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS)//设置连接超时时间
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(20, TimeUnit.SECONDS)//设置连接超时时间
                 .readTimeout(10, TimeUnit.SECONDS)//设置读取超时时间
                 .writeTimeout(10, TimeUnit.SECONDS)//设置写的超时时间
                 .build();
         Request.Builder builder = new Request.Builder().url(url);
-        if (headMap != null) {
+        if (headMap != null && headMap.size() > 0) {
             for (String key : headMap.keySet()) {
                 String value = headMap.get(key);
                 builder.addHeader(key, value);
@@ -129,4 +129,30 @@ public class NetManager {
             return null;
         }
     }
+
+    public Response getResponse(String url, Map<String, String> headMap, RequestBody body) {
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(20, TimeUnit.SECONDS)//设置连接超时时间
+                .readTimeout(10, TimeUnit.SECONDS)//设置读取超时时间
+                .writeTimeout(10, TimeUnit.SECONDS)//设置写的超时时间
+                .build();
+        Request.Builder builder = new Request.Builder().url(url);
+        if (headMap != null && headMap.size() > 0) {
+            for (String key : headMap.keySet()) {
+                String value = headMap.get(key);
+                builder.addHeader(key, value);
+            }
+        }
+        if (body != null) {
+            builder.post(body);
+        }
+        Request request = builder.build();
+        Call call = okHttpClient.newCall(request);
+        try {
+            return call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }
