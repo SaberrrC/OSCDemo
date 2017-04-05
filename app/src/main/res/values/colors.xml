@@ -8,7 +8,9 @@
     <color name="bg_page">#ffebebeb</color>
     <color name="bg_tab_pressed">#6633b5e5</color>
     <color name="bg_tab_pressed2">#ff3898ff</color> <!-- 蓝色 -->
-
+    <color name="list_item_background_pressed">#FCFCFC</color>
+    <color name="blog_title_text_color_light">#111111</color>
+    <color name="count_text_color_light">#9d9d9d</color>
     <color name="txt_title">#ff333333</color>
     <color name="txt_small">#ff7a7a7a</color>
     <color name="txt_big">#ff717171</color>

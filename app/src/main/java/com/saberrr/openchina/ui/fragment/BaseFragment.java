@@ -87,6 +87,10 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
         mParentActivity.setCommentCount(count);
     }
 
+    public void setonOptionsItemSelected(ShowActivity.onOptionsItemSelected onOptionsItemSelected) {
+        mParentActivity.setonOptionsItemSelected(onOptionsItemSelected);
+    }
+
     /**
      * 是否需要下拉刷新
      *

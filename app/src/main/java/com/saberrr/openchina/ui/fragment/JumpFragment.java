@@ -2,7 +2,14 @@ package com.saberrr.openchina.ui.fragment;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextWatcher;
+import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -18,6 +25,7 @@ import com.saberrr.openchina.presenter.JumpPresenterImpl;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.interfaces.FacesPagerAdapter;
 import com.saberrr.openchina.ui.view.FlowLayout;
+import com.saberrr.openchina.utils.DensityUtil;
 import com.saberrr.openchina.utils.ToastUtils;
 import com.yuyh.library.imgsel.ImageLoader;
 import com.yuyh.library.imgsel.ImgSelActivity;
@@ -67,14 +75,43 @@ public class JumpFragment extends BaseFragment implements JumpView {
     private void initView() {
         List<FaceBean> allByType0 = DisplayRules.getAllByType(0);
         List<FaceBean> allByType1 = DisplayRules.getAllByType(1);
-        mFacesPagerAdapter = new FacesPagerAdapter(allByType0,allByType1);
+        mFacesPagerAdapter = new FacesPagerAdapter(allByType0, allByType1);
         mVpFaces.setAdapter(mFacesPagerAdapter);
         mFacesPagerAdapter.setOnClickListener(new FacesPagerAdapter.OnClickListener() {
             @Override
             public void onClick(FaceBean faceBean) {
+                int index = mEtContent.getSelectionStart();
+                Editable editable = mEtContent.getText();
+                //                editable.insert(index, faceBean.emojiStr);
+                //设置图片
+                Drawable drawable = getResources().getDrawable(faceBean.resId);
+                drawable.setBounds(0, 0, DensityUtil.dip2px(25), DensityUtil.dip2px(25));
+                Spannable msp = new SpannableString(faceBean.emojiStr);
+
+                msp.setSpan(new ImageSpan(drawable), 0, faceBean.emojiStr.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                editable.insert(index, msp);
                 ToastUtils.showToast(faceBean.toString());
             }
         });
+
+        // TODO: 2017-04-05 edittext监听
+        mEtContent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
     }
 
     @Override
@@ -88,18 +125,6 @@ public class JumpFragment extends BaseFragment implements JumpView {
             @Override
             public void onClick() {
                 ToastUtils.showToast("6666");
-            }
-        });
-        setOnQueryTextListener(new ShowActivity.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit() {
-                ToastUtils.showToast("正在搜索中");
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange() {
-                return false;
             }
         });
     }
