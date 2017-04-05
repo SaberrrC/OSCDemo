@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
@@ -57,14 +59,14 @@ public class JumpFragment extends BaseFragment implements JumpView {
     LinearLayout mLlFaces;
     @BindView(R.id.fl_img)
     FlowLayout   mFlImg;
+    @BindView(R.id.tv_count)
+    TextView     mTvCount;
     private JumpPresenter mJumpPresenter;
-    public static final int            REQUEST_CODE = 100;
-    private             String         TAG          = "JumpFragment";
-    private             List<FaceBean> mDatas       = new ArrayList<>();
+    public static final int REQUEST_CODE = 100;
     private FacesPagerAdapter mFacesPagerAdapter;
-    private List<String> images = new ArrayList<>();
-    private int          dp_5   = DensityUtil.dip2px(5);
-    private int          dp_10  = DensityUtil.dip2px(10);
+    private              List<String> images         = new ArrayList<>();
+    private static final int          MAX_TEXT_COUNT = 140;
+    private              String       TAG            = "JumpFragment";
 
     @Override
     protected boolean needRefresh() {
@@ -77,7 +79,6 @@ public class JumpFragment extends BaseFragment implements JumpView {
         ButterKnife.bind(this, view);
         initView();
         setHintKeyboard(true);
-
         mJumpPresenter = new JumpPresenterImpl(this);
         initToolbar();
         return view;
@@ -108,11 +109,32 @@ public class JumpFragment extends BaseFragment implements JumpView {
                 ToastUtils.showToast(faceBean.toString());
             }
         });
+        mEtContent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > MAX_TEXT_COUNT) {
+                    mTvCount.setText("-" + (s.length() - MAX_TEXT_COUNT) + "");
+                    mTvCount.setVisibility(View.VISIBLE);
+                } else {
+                    mTvCount.setVisibility(View.INVISIBLE);
+                    mTvCount.setEnabled(false);
+                }
+            }
+        });
     }
 
     @Override
     public Object getData() {
-
         return "";
     }
 
@@ -130,6 +152,8 @@ public class JumpFragment extends BaseFragment implements JumpView {
 
         switch (view.getId()) {
             case R.id.tv_count:
+                Editable editable_count = mEtContent.getText();
+                editable_count.clear();
                 break;
             case R.id.iv_pic:
                 mLlFaces.setVisibility(View.GONE);
@@ -145,8 +169,8 @@ public class JumpFragment extends BaseFragment implements JumpView {
                 int index = mEtContent.getSelectionStart();
                 Editable editable = mEtContent.getText();
                 editable.insert(index, TOPIC_TEXT);
-//                mEtContent.setSelection(index + TOPIC_TEXT.indexOf("#"), index + TOPIC_TEXT.indexOf("#", TOPIC_TEXT.indexOf("#")));
-                mEtContent.setSelection(index + 1, index + 6);
+                mEtContent.setSelection(index + 1 + TOPIC_TEXT.indexOf("#"), index + TOPIC_TEXT.lastIndexOf("#"));
+                //                mEtContent.setSelection(index + 1, index + 6);
                 break;
             case R.id.iv_face:
                 mLlFaces.setVisibility(View.VISIBLE);
@@ -246,4 +270,5 @@ public class JumpFragment extends BaseFragment implements JumpView {
             .needCamera(true)
             // 最大选择图片数量，默认9
             .maxNum(9).build();
+
 }
