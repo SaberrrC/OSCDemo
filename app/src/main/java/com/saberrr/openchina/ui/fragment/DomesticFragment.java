@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
@@ -17,6 +18,7 @@ import com.saberrr.openchina.bean.recommendbean.RecommendBean;
 import com.saberrr.openchina.bean.recommendbean.RecommendItemBean;
 import com.saberrr.openchina.bean.recommendbean.Software;
 import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.XmlUtils;
@@ -52,6 +54,7 @@ public class DomesticFragment extends BaseFragment implements FinalRecycleAdapte
         }
     };
     private int index = 0;
+    private ArrayList<String> idList = new ArrayList<>();
 
     @Override
     protected boolean needRefresh() {
@@ -132,7 +135,7 @@ public class DomesticFragment extends BaseFragment implements FinalRecycleAdapte
                 RecommendItemBean recommendItemBean = new RecommendItemBean();
                 recommendItemBean.title = name;
                 recommendItemBean.desc = description;
-
+                idList.add(softwares.get(i).getId());
                 datas.add(recommendItemBean);
 
 //                System.out.println(name);
@@ -151,21 +154,25 @@ public class DomesticFragment extends BaseFragment implements FinalRecycleAdapte
 
 
     @Override
-    public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
+    public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, final int position, Object itemData) {
         TextView tv_title = (TextView) holder.getViewById(R.id.tv_domestic_item_title);
         TextView tv_desc = (TextView) holder.getViewById(R.id.tv_domestic_item_desc);
+        LinearLayout ll_domestic_item = (LinearLayout) holder.getViewById(R.id.ll_domestic_item);
         if (itemData instanceof RecommendItemBean) {
             RecommendItemBean recommendItemBean = (RecommendItemBean) itemData;
             tv_title.setText(recommendItemBean.title);
             tv_desc.setText(recommendItemBean.desc);
         }
+
+        ll_domestic_item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("listName", idList);
+                bundle.putInt("position", position);
+                ShowActivity.startFragmentWithTitle(SoftwareDetailFragment.class, bundle, "软件详情");
+            }
+        });
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.bind(this, rootView);
-        return rootView;
-    }
 }

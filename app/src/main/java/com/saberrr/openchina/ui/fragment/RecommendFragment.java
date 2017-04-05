@@ -170,7 +170,7 @@ public class RecommendFragment extends BaseFragment implements FinalRecycleAdapt
             public void onClick(View v) {
                 //ToastUtils.showToast("被点击了"+ position);
                 Bundle bundle = new Bundle();
-                bundle.putStringArrayList("recommendList", idList);
+                bundle.putStringArrayList("listName", idList);
                 bundle.putInt("position", position);
                 ShowActivity.startFragmentWithTitle(SoftwareDetailFragment.class, bundle, "软件详情");
             }

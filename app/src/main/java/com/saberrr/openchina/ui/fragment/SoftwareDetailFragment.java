@@ -53,10 +53,10 @@ public class SoftwareDetailFragment extends BaseFragment {
     @Override
     public Object getData() {
         Bundle bundle = getArguments();
-        ArrayList<String> recommendList = bundle.getStringArrayList("recommendList");
+        ArrayList<String> list = bundle.getStringArrayList("listName");
         int position = bundle.getInt("position");
         OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder().url(Urls.SOFTWAREDETAIL + recommendList.get(position)).build();
+        Request request = new Request.Builder().url(Urls.SOFTWAREDETAIL + list.get(position)).build();
         try {
             Response response = okHttpClient.newCall(request).execute();
             String xml = response.body().string();
