@@ -23,6 +23,9 @@ public interface HttpServiceApi {
     Call<ResponseBody> preLogin(@Field("keep_login") String keep_lonin, @Field("username") String username, @Field("pwd") String pwd);
 
     @GET(Urls.USERINFO)
+    Call<ResponseBody> getUserInfo(@Query("uid") String uid);
+
+
     Call<ResponseBody> getUserInfo(@Header("cookie") String cookie, @Query("uid") String uid);
 
     @GET(Urls.TWEETLIKE)
