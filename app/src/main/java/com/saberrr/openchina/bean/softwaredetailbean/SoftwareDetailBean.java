@@ -7,4 +7,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 @XStreamAlias("oschina")
 public class SoftwareDetailBean {
+    @XStreamAlias("software")
+    private Software mSoftware;
+
+    public Software getSoftware() {
+        return mSoftware;
+    }
+
+    public void setSoftware(Software software) {
+        mSoftware = software;
+    }
 }
