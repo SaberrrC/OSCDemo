@@ -165,7 +165,7 @@ public class MyInfoFragment extends BaseFragment {
         if (checkUseridAndCookie(mCookie, mCookie)) {
             HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
             try {
-                Response<ResponseBody> response = httpServiceApi.getUserInfo("oscid="+mCookie, mUserid).execute();
+                Response<ResponseBody> response = httpServiceApi.getUserInfo(mCookie, mUserid).execute();
 
                 String string = response.body().string();
 
@@ -191,11 +191,13 @@ public class MyInfoFragment extends BaseFragment {
                         });
                     }
                 });
+
                 return "";
 
             } catch (IOException e) {
                 ToastUtils.showToast("获取数据失败！");
                 e.printStackTrace();
+                return "";
             }
         }
 

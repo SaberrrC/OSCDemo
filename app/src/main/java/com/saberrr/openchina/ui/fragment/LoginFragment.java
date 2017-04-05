@@ -100,13 +100,16 @@ public class LoginFragment extends BaseFragment {
 //                                        }
                                         String s = headers.get("Set-Cookie");
 //                                        System.out.println(s);
-                                        String[] split = s.split(";");
-                                        String[] split1 = split[0].split("=");
-                                        LoginBeanEvent.cookie = split1[1];
+                                        String[] cookies = s.split(";");
+                                        for (int i = 0; i < cookies.length; i++) {
+                                            if (cookies[i].startsWith("oscid=")) {
+                                                SpUtil.saveString(getContext(), Constant.COOKIE, cookies[i]);
+                                            }
+                                        }
 
                                         ToastUtils.showToast("登录成功！");
 //                                        System.out.println(split1[1]);
-                                        SpUtil.saveString(getContext(), Constant.COOKIE, split1[1]);
+
                                         SpUtil.saveString(getContext(), Constant.USERID, loginBean.getUser().getUid());
                                         SpUtil.saveString(getContext(), Constant.PWD, mPwd);
 

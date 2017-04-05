@@ -63,6 +63,8 @@ public class MyMsgFragment extends BaseFragment {
         mTlTitle.setupWithViewPager(mVpContent);
         mTlTitle.setTabTextColors(Color.parseColor("#9c9c9c"), getResources().getColor(R.color.colorPrimary));
         mTlTitle.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimary));
+        mVpContent.setCurrentItem(0);
+
     }
 
     @Override
