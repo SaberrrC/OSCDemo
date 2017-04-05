@@ -25,6 +25,7 @@ import com.saberrr.openchina.presenter.JumpPresenterImpl;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.interfaces.FacesPagerAdapter;
 import com.saberrr.openchina.ui.view.FlowLayout;
+import com.saberrr.openchina.utils.DensityUtil;
 import com.saberrr.openchina.utils.ToastUtils;
 import com.yuyh.library.imgsel.ImageLoader;
 import com.yuyh.library.imgsel.ImgSelActivity;
@@ -81,10 +82,10 @@ public class JumpFragment extends BaseFragment implements JumpView {
             public void onClick(FaceBean faceBean) {
                 int index = mEtContent.getSelectionStart();
                 Editable editable = mEtContent.getText();
-//                editable.insert(index, faceBean.emojiStr);
+                //                editable.insert(index, faceBean.emojiStr);
                 //设置图片
                 Drawable drawable = getResources().getDrawable(faceBean.resId);
-                drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                drawable.setBounds(0, 0, DensityUtil.dip2px(25), DensityUtil.dip2px(25));
                 Spannable msp = new SpannableString(faceBean.emojiStr);
 
                 msp.setSpan(new ImageSpan(drawable), 0, faceBean.emojiStr.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
