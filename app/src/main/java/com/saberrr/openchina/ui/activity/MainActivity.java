@@ -18,6 +18,7 @@ import com.saberrr.openchina.ui.fragment.JumpFragment;
 import com.saberrr.openchina.ui.fragment.MoveFragment;
 import com.saberrr.openchina.ui.fragment.MyFragment;
 import com.saberrr.openchina.ui.fragment.TestFragment2;
+import com.saberrr.openchina.utils.ToastUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -98,12 +99,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-       /* long currentTimeMillis = System.currentTimeMillis();
+        long currentTimeMillis = System.currentTimeMillis();
         if (currentTimeMillis - laatTime > 2000) {
             ToastUtils.showToast("再次点击推出开源中国");
             laatTime = System.currentTimeMillis();
         } else {
             finish();
-        }*/
+        }
     }
 }

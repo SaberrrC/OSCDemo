@@ -11,6 +11,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,24 +25,29 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.faces.DisplayRules;
 import com.saberrr.openchina.faces.FaceBean;
 import com.saberrr.openchina.gloab.AppApplication;
-import com.saberrr.openchina.presenter.JumpPresenter;
-import com.saberrr.openchina.presenter.JumpPresenterImpl;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.interfaces.FacesPagerAdapter;
 import com.saberrr.openchina.ui.view.FlowLayout;
 import com.saberrr.openchina.utils.DensityUtil;
+import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
 import com.saberrr.openchina.utils.Utils;
 import com.yuyh.library.imgsel.ImageLoader;
 import com.yuyh.library.imgsel.ImgSelActivity;
 import com.yuyh.library.imgsel.ImgSelConfig;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -49,7 +55,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by Saberrr on 2017-04-02.
  */
 
-public class JumpFragment extends BaseFragment implements JumpView {
+public class JumpFragment extends BaseFragment {
     public static final String TOPIC_TEXT = "#输入软件名#";
     @BindView(R.id.tv_content)
     EditText     mEtContent;
@@ -61,7 +67,6 @@ public class JumpFragment extends BaseFragment implements JumpView {
     FlowLayout   mFlImg;
     @BindView(R.id.tv_count)
     TextView     mTvCount;
-    private JumpPresenter mJumpPresenter;
     public static final int REQUEST_CODE = 100;
     private FacesPagerAdapter mFacesPagerAdapter;
     private              List<String> images         = new ArrayList<>();
@@ -79,7 +84,6 @@ public class JumpFragment extends BaseFragment implements JumpView {
         ButterKnife.bind(this, view);
         initView();
         setHintKeyboard(true);
-        mJumpPresenter = new JumpPresenterImpl(this);
         initToolbar();
         return view;
     }
@@ -142,7 +146,30 @@ public class JumpFragment extends BaseFragment implements JumpView {
         setToolbarIconOnClickListener(new ShowActivity.OnClickListener() {
             @Override
             public void onClick() {
-                ToastUtils.showToast(images.size() + "");
+                ThreadUtils.runSub(new Runnable() {
+                    @Override
+                    public void run() {
+                        //// TODO: 2017-04-05
+                        /**
+                         * 文字  application/x-www-form-urlencoded; charset=UTF-8
+                         */
+                        try {
+                            OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                            RequestBody body = new FormBody.Builder()
+
+                                    .build();
+                            Request request = new Request.Builder().post(body).build();
+                            Response response = okHttpClient.newCall(request).execute();
+
+
+                            String string = response.body().string();
+                            System.out.println(string);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
     }
@@ -182,6 +209,11 @@ public class JumpFragment extends BaseFragment implements JumpView {
                 mVpFaces.setCurrentItem(1);
                 break;
             case R.id.iv_del:
+                int keyCode = KeyEvent.KEYCODE_DEL;
+                KeyEvent keyEventDown = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
+                KeyEvent keyEventUp = new KeyEvent(KeyEvent.ACTION_UP, keyCode);
+                mEtContent.onKeyDown(keyCode, keyEventDown);
+                mEtContent.onKeyUp(keyCode, keyEventUp);
                 break;
         }
     }
