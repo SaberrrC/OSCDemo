@@ -14,4 +14,5 @@ public class Constant {
     public static final String COOKIE = "COOKIE";
     public static final String USERID = "USERID";
     public static final String PWD = "PWD";
+    public static final String PAGESIZE = "20";
 }

@@ -27,6 +27,8 @@ public class Urls {
     public static final String LOGIN = "/action/api/login_validate";
     //用户信息
     public static  final String USERINFO = "/action/api/my_information";
+    //赞过我
+    public static  final String TWEETLIKE = "/action/api/my_tweet_like_list";
 
 
 }

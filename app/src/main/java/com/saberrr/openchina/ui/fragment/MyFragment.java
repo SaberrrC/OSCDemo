@@ -19,10 +19,10 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.LoginBean;
 import com.saberrr.openchina.bean.UserInfo;
 import com.saberrr.openchina.event.LoginBeanEvent;
-import com.saberrr.openchina.manager.netmanager.RetrofitUtil;
 import com.saberrr.openchina.net.HttpServiceApi;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
+import com.saberrr.openchina.ui.view.SolarSystemView;
 import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.ToastUtils;
@@ -31,9 +31,6 @@ import com.saberrr.openchina.utils.XmlUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.io.IOException;
-import java.util.TreeMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -118,6 +115,10 @@ public class MyFragment extends BaseFragment {
     TextView mTvMySetting;
     @BindView(R.id.rl_my_setting)
     RelativeLayout mRlMySetting;
+    @BindView(R.id.view_solar_system)
+    SolarSystemView mViewSolarSystem;
+    @BindView(R.id.rl)
+    RelativeLayout mRl;
 
     private boolean isOnline;
     private int[] genderRid = {R.mipmap.ic_male, R.mipmap.ic_female};
@@ -134,7 +135,6 @@ public class MyFragment extends BaseFragment {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.frag_my, null);
         ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
-
         return view;
     }
 
@@ -176,7 +176,7 @@ public class MyFragment extends BaseFragment {
         if (checkUseridAndCookie(cookie, userid)) {
             HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
             try {
-                Response<ResponseBody> response = httpServiceApi.getUserInfo("oscid="+cookie, userid).execute();
+                Response<ResponseBody> response = httpServiceApi.getUserInfo(cookie, userid).execute();
                 String result = response.body().string();
                 System.out.println(result);
                 UserInfo userInfo = XmlUtils.toBean(UserInfo.class, result.getBytes());
@@ -198,23 +198,24 @@ public class MyFragment extends BaseFragment {
 
     private void setOffLineView() {//设置默认的未登录状态
         // TODO: 2017/4/5
-       getActivity().runOnUiThread(new Runnable() {
-           @Override
-           public void run() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 
-               mRlOffline.setVisibility(View.VISIBLE);
-               mRlOnline.setVisibility(View.GONE);
-               Glide.with(getContext()).load(R.mipmap.ic_nav_my_normal).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
-                   @Override
-                   protected void setResource(Bitmap resource) {
-                       RoundedBitmapDrawable circularBitmapDrawable =
-                               RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
-                       circularBitmapDrawable.setCircular(true);
-                       mIvAvtarOffline.setImageDrawable(circularBitmapDrawable);
-                   }
-               });
-           }
-       });
+                mRlOffline.setVisibility(View.VISIBLE);
+                mRlOnline.setVisibility(View.GONE);
+                Glide.with(getContext()).load(R.mipmap.ic_nav_my_normal).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
+                    @Override
+                    protected void setResource(Bitmap resource) {
+                        RoundedBitmapDrawable circularBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        mIvAvtarOffline.setImageDrawable(circularBitmapDrawable);
+                    }
+
+                });
+            }
+        });
 
 
     }
@@ -226,6 +227,44 @@ public class MyFragment extends BaseFragment {
         }
         return true;
 
+    }
+
+    private void initSolar() {
+        mRl.post(new Runnable() {
+            @Override
+            public void run() {
+
+                int width = mRl.getWidth();
+                int height = mRl.getHeight() + 50;
+
+                float px = width >> 1;
+                float py = height;
+                int radius = (width >> 1) - 20;
+
+                SolarSystemView.Planet planet1 = new SolarSystemView.Planet();
+                planet1.setClockwise(false);
+                planet1.setAngleRate(0.03F);
+                planet1.setOriginAngle(270);
+                planet1.setRadius(radius / 3);
+
+                SolarSystemView.Planet planet2 = new SolarSystemView.Planet();
+                planet2.setClockwise(true);
+                planet2.setAngleRate(0.04F);
+                planet1.setOriginAngle(180);
+                planet2.setRadius(radius / 3 * 2);
+
+                SolarSystemView.Planet planet3 = new SolarSystemView.Planet();
+                planet3.setClockwise(false);
+                planet1.setOriginAngle(270);
+                planet3.setAngleRate(0.05F);
+                planet3.setRadius(radius);
+
+                mViewSolarSystem.addPlanets(planet1);
+                mViewSolarSystem.addPlanets(planet2);
+                mViewSolarSystem.addPlanets(planet3);
+                mViewSolarSystem.setPivotPoint(px, py);
+            }
+        });
     }
 
 
@@ -279,10 +318,12 @@ public class MyFragment extends BaseFragment {
     public void setOnlineView(final UserInfo userInfo) {
 
 
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+
+                try {
                     mRlOffline.setVisibility(View.GONE);
                     mRlOnline.setVisibility(View.VISIBLE);
 
@@ -302,12 +343,16 @@ public class MyFragment extends BaseFragment {
                             mIvAvtarOnline.setImageDrawable(circularBitmapDrawable);
                         }
                     });
-                    } catch (Exception e) {
-                        setOffLineView();
-                    }
+                    initSolar();
+                } catch (Exception e) {
+                    setOffLineView();
                 }
-            });
+            }
+        });
 
 
     }
+
+
+
 }

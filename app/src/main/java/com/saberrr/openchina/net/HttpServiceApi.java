@@ -28,4 +28,7 @@ public interface HttpServiceApi {
 
     Call<ResponseBody> getUserInfo(@Header("cookie") String cookie, @Query("uid") String uid);
 
+    @GET(Urls.TWEETLIKE)
+    Call<ResponseBody> getTweetlike(@Header("cookie") String cookie, @Query("pageIndex") String pageIndex, @Query("pageSize") String pageSize);
+
 }

@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bartoszlipinski.recyclerviewheader.RecyclerViewHeader;
 import com.bumptech.glide.Glide;
 import com.jude.rollviewpager.RollPagerView;
 import com.jude.rollviewpager.hintview.ColorPointHintView;
@@ -38,18 +37,15 @@ import java.util.List;
 
 public class InformationFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
 
-    private RollPagerView mRollPagerView;
-    private RecyclerView  mRecyclerView;
-    private List<InformationHearBean.ResultBean.ItemsBean> datas     = new ArrayList<>();
-    private List<InformationBodyBean.ResultBean.ItemsBean> bodyDatas = new ArrayList<>();
-    private List<InformationBodyBean> bodys = new ArrayList<>();
-    private HashMap<Class, Integer>                        layouts   = new HashMap<>();
+    private RecyclerView mRecyclerView;
+    private List<Object>              mDatas  = new ArrayList<>();
+    private List<InformationBodyBean> bodys   = new ArrayList<>();
+    private HashMap<Class, Integer>   layouts = new HashMap<>();
     private ImageView           mImageView;
     private TextView            mTextView;
-    private TestNormalAdapter   mTestNormalAdapter;
     private FinalRecycleAdapter mFinalRecycleAdapter;
-    private RecyclerViewHeader mHeader;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private SwipeRefreshLayout  mSwipeRefreshLayout;
+    private String nextPageToken = "";
 
     @Override
     protected boolean needRefresh() {
@@ -60,8 +56,6 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
     public View createView() {
         View view = View.inflate(getContext(), R.layout.fragmeng_information, null);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout_information);
-        mHeader = (RecyclerViewHeader)view.findViewById(R.id.header);
-        mRollPagerView = (RollPagerView) view.findViewById(R.id.rollPagerView_information);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_information);
         init();
         return view;
@@ -69,20 +63,35 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
 
     private void init() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        //加头布局
-        mHeader.attachTo(mRecyclerView,true);
-        initSwipeRefreshLayout();
-        initViewPager();
 
+        initSwipeRefreshLayout();
+
+        layouts.put(InformationHearBean.class, R.layout.news_head);
         layouts.put(InformationBodyBean.ResultBean.ItemsBean.class, R.layout.information_body_item);
-        mFinalRecycleAdapter = new FinalRecycleAdapter(bodyDatas, layouts, this);
+        mFinalRecycleAdapter = new FinalRecycleAdapter(mDatas, layouts, this);
         mRecyclerView.setAdapter(mFinalRecycleAdapter);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                if (lastVisibleItemPosition == mDatas.size() - 1 && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    mLoadingPager.showViewDely(1000);
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
 
 
     }
 
     private void initSwipeRefreshLayout() {
-        mSwipeRefreshLayout.setColorSchemeColors(Color.GREEN,Color.BLUE,Color.RED);
+        mSwipeRefreshLayout.setColorSchemeColors(Color.GREEN, Color.BLUE, Color.RED);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -91,82 +100,104 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         });
     }
 
-    private void initViewPager() {
-        mRollPagerView.setPlayDelay(2000);
-        //设置透明度
-        mRollPagerView.setAnimationDurtion(500);
-        mTestNormalAdapter = new TestNormalAdapter();
-        mRollPagerView.setAdapter(mTestNormalAdapter);
-
-        mRollPagerView.setHintView(new ColorPointHintView(getContext(), Color.GREEN, Color.WHITE));
-        mRollPagerView.setHintPadding(20, 20, 20, 20);
-    }
+    //    private void initViewPager() {
+    //        mRollPagerView.setPlayDelay(2000);
+    //        //设置透明度
+    //        mRollPagerView.setAnimationDurtion(500);
+    //        mTestNormalAdapter = new TestNormalAdapter();
+    //        mRollPagerView.setAdapter(mTestNormalAdapter);
+    //
+    //        mRollPagerView.setHintView(new ColorPointHintView(getContext(), Color.GREEN, Color.WHITE));
+    //        mRollPagerView.setHintPadding(20, 20, 20, 20);
+    //    }
 
     @Override
     public Object getData() {
-        String nextPageToken = "";
-        if (bodys == null || bodys.size()==0){
 
-        }else {
-            nextPageToken = bodys.get(0).getResult().getNextPageToken();
-        }
         if (mSwipeRefreshLayout.isRefreshing()) {
-            bodys.clear();
-            datas.clear();
-            bodyDatas.clear();
+            mDatas.clear();
+            nextPageToken = "";
         }
         InformationHearBean informationHearBean = JsonCacheManager.getInstance().getDataBean(Urls.BANNER, InformationHearBean.class);
-        InformationBodyBean informationBodyBean = JsonCacheManager.getInstance().getDataBean(Urls.NEWS+nextPageToken, InformationBodyBean.class);
-        if (informationHearBean == null || informationBodyBean == null) {
-            return null;
+        InformationBodyBean informationBodyBean = JsonCacheManager.getInstance().getDataBean(Urls.NEWS + nextPageToken, InformationBodyBean.class);
+        if (informationBodyBean == null) {
+            if (mDatas == null || mDatas.size() == 0) {
+                return null;
+            } else {
+                ToastUtils.showToast("没有更多数据");
+            }
+        } else {
+            List<InformationBodyBean.ResultBean.ItemsBean> badyBeanList = informationBodyBean.getResult().getItems();
+            nextPageToken = informationBodyBean.getResult().getNextPageToken();
+            if (mDatas == null || mDatas.size() == 0) {
+
+                mDatas.add(informationHearBean);
+                mDatas.addAll(badyBeanList);
+            } else {
+                mDatas.addAll(badyBeanList);
+            }
         }
-        bodys.add(0,informationBodyBean);
-        List<InformationHearBean.ResultBean.ItemsBean> itemsBeanList = informationHearBean.getResult().getItems();
-        List<InformationBodyBean.ResultBean.ItemsBean> badyBeanList = informationBodyBean.getResult().getItems();
-        datas.addAll(itemsBeanList);
-        bodyDatas.addAll(badyBeanList);
+
         ThreadUtils.runMain(new Runnable() {
             @Override
             public void run() {
                 mRecyclerView.requestLayout();
-                mRollPagerView.requestLayout();
-
-                mTestNormalAdapter.notifyDataSetChanged();
                 mFinalRecycleAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
-        return datas;
+        return mDatas;
     }
 
     @Override
     public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
+        if (itemData instanceof InformationHearBean) {
+            InformationHearBean hearBean = (InformationHearBean) itemData;
+            List<InformationHearBean.ResultBean.ItemsBean> list = hearBean.getResult().getItems();
+            RollPagerView rollPagerView = (RollPagerView) holder.getViewById(R.id.rollPagerView_information);
+            TestNormalAdapter testNormalAdapter = new TestNormalAdapter(list);
+            rollPagerView.setAdapter(testNormalAdapter);
+            rollPagerView.setPlayDelay(2000);
+            //设置透明度
+            rollPagerView.setAnimationDurtion(500);
 
-        TextView tvTitleInformation = (TextView) holder.getViewById(R.id.tv_title_information);
-        TextView tvBodyInformation = (TextView) holder.getViewById(R.id.tv_body_information);
-        TextView tvTimeInformation = (TextView) holder.getViewById(R.id.tv_time_information);
-        LinearLayout llCommentInformation = (LinearLayout) holder.getViewById(R.id.ll_comment_information);
-        TextView tvCommentInformation = (TextView) holder.getViewById(R.id.tv_comment_information);
-        final InformationBodyBean.ResultBean.ItemsBean itemsBean= (InformationBodyBean.ResultBean.ItemsBean) itemData;
-        tvTitleInformation.setText(itemsBean.getTitle());
-        tvBodyInformation.setText(itemsBean.getBody());
-        tvTimeInformation.setText(itemsBean.getPubDate());
-        tvCommentInformation.setText(itemsBean.getCommentCount()+"");
-        llCommentInformation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString(Constant.BLOGDETAILSFRAGMENT.HREF,itemsBean.getHref() );
-                bundle.putString(Constant.BLOGDETAILSFRAGMENT.COMMENTCOUNT,itemsBean.getCommentCount()+"");
-                ShowActivity.startFragmentWithTitle(BlogDetailsFragment.class,bundle,"博客详情",ShowActivity.TITLE_COMMENT);
-                mTestNormalAdapter.notifyDataSetChanged();
-            }
-        });
+            rollPagerView.setHintView(new ColorPointHintView(getContext(), Color.GREEN, Color.WHITE));
+            rollPagerView.setHintPadding(20, 20, 20, 20);
+        }
+        if (itemData instanceof InformationBodyBean.ResultBean.ItemsBean) {
+            TextView tvTitleInformation = (TextView) holder.getViewById(R.id.tv_title_information);
+            TextView tvBodyInformation = (TextView) holder.getViewById(R.id.tv_body_information);
+            TextView tvTimeInformation = (TextView) holder.getViewById(R.id.tv_time_information);
+            LinearLayout llCommentInformation = (LinearLayout) holder.getViewById(R.id.ll_comment_information);
+            TextView tvCommentInformation = (TextView) holder.getViewById(R.id.tv_comment_information);
+            final InformationBodyBean.ResultBean.ItemsBean itemsBean = (InformationBodyBean.ResultBean.ItemsBean) itemData;
+            tvTitleInformation.setText(itemsBean.getTitle());
+            tvBodyInformation.setText(itemsBean.getBody());
+            tvTimeInformation.setText(itemsBean.getPubDate());
+            tvCommentInformation.setText(itemsBean.getCommentCount() + "");
+            llCommentInformation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constant.BLOGDETAILSFRAGMENT.HREF, itemsBean.getHref());
+                    bundle.putString(Constant.BLOGDETAILSFRAGMENT.COMMENTCOUNT, itemsBean.getCommentCount() + "");
+                    ShowActivity.startFragmentWithTitle(BlogDetailsFragment.class, bundle, "博客详情", ShowActivity.TITLE_COMMENT);
+                }
+            });
+        }
+
 
     }
 
     private class TestNormalAdapter extends PagerAdapter {
 
+
+        private final List<InformationHearBean.ResultBean.ItemsBean> datas;
+
+        public TestNormalAdapter(List<InformationHearBean.ResultBean.ItemsBean> list) {
+            this.datas = list;
+        }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
@@ -187,12 +218,12 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
             Glide.with(AppApplication.appContext).load(datas.get(position).getImg()).into(mImageView);
             mTextView.setText(datas.get(position).getName());
             mTextView.setTextColor(Color.WHITE);
-           view.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View v) {
-                   ToastUtils.showToast("我被点击了"+position);
-               }
-           });
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ToastUtils.showToast("我被点击了" + position);
+                }
+            });
             container.addView(view);
             return view;
         }
