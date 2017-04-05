@@ -204,7 +204,7 @@ public class MyFragment extends BaseFragment {
 
                 mRlOffline.setVisibility(View.VISIBLE);
                 mRlOnline.setVisibility(View.GONE);
-                Glide.with(getContext()).load(R.mipmap.ic_nav_my_normal).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
+                Glide.with(getContext()).load(R.mipmap.widget_dface).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
                     @Override
                     protected void setResource(Bitmap resource) {
                         RoundedBitmapDrawable circularBitmapDrawable =
