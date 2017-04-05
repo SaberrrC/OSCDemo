@@ -31,6 +31,10 @@
             android:name=".ui.activity.MainActivity"
             android:theme="@style/NoTitle">
         </activity>
+        <activity android:name=".ui.activity.ShakeActivity">
+        </activity>
+        <activity android:name=".scan.ericssonlabs.BarCodeTestActivity">
+        </activity>
     </application>
 
 </manifest>
