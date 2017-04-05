@@ -1,6 +1,10 @@
 package com.saberrr.openchina.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -35,9 +39,19 @@ import okhttp3.Response;
 public class HotFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
     @BindView(R.id.hot_recyclerview)
     RecyclerView mHotRecyclerview;
+    @BindView(R.id.srl_hot)
+    SwipeRefreshLayout mSrlHot;
     private List<RecommendItemBean> datas = new ArrayList<>();
     private HashMap<Class, Integer> mHashMap = new HashMap<>();
     private FinalRecycleAdapter mFinalRecycleAdapter;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            mSrlHot.setRefreshing(false);
+        }
+    };
+    private int index = 0;
 
     @Override
     protected boolean needRefresh() {
@@ -53,16 +67,59 @@ public class HotFragment extends BaseFragment implements FinalRecycleAdapter.OnV
     }
 
     private void init() {
-        mHashMap.put(RecommendItemBean.class,R.layout.hot_item_layout);
+        mHashMap.put(RecommendItemBean.class, R.layout.hot_item_layout);
         mFinalRecycleAdapter = new FinalRecycleAdapter(datas, mHashMap, this);
         mHotRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mHotRecyclerview.setAdapter(mFinalRecycleAdapter);
+
+        mSrlHot.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SystemClock.sleep(3000);
+                        mHandler.sendEmptyMessage(0);
+                    }
+                }).start();
+
+            }
+        });
+
+        mHotRecyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                //上拉加载更多的功能
+                //1. 底部显示
+                //2. 去加载数据
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                //获取最后一位可见的条目
+                int lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition();
+                //最后一个可见条目是集合条目最后一位
+                if (lastVisibleItemPosition == datas.size() - 1 && newState == RecyclerView.SCROLL_STATE_IDLE
+                        ) {
+                    System.out.println("上拉加载更多");
+                    index++;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getData();
+
+                        }
+                    }).start();
+
+                }
+
+
+            }
+        });
     }
 
     @Override
     public Object getData() {
         OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder().url(Urls.HOT).build();
+        Request request = new Request.Builder().url(Urls.BASE_URL+Urls.PAGEINDEX+index+Urls.HOT).build();
         try {
             Response response = okHttpClient.newCall(request).execute();
             String xml = response.body().string();
@@ -93,15 +150,15 @@ public class HotFragment extends BaseFragment implements FinalRecycleAdapter.OnV
     }
 
 
-
     @Override
     public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
         TextView tv_title = (TextView) holder.getViewById(R.id.tv_hot_item_title);
         TextView tv_desc = (TextView) holder.getViewById(R.id.tv_hot_item_desc);
-        if(itemData instanceof RecommendItemBean) {
+        if (itemData instanceof RecommendItemBean) {
             RecommendItemBean recommendItemBean = (RecommendItemBean) itemData;
             tv_title.setText(recommendItemBean.title);
             tv_desc.setText(recommendItemBean.desc);
         }
     }
+
 }
