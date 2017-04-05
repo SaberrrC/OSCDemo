@@ -32,5 +32,9 @@ public class Urls {
     //赞过我
     public static  final String TWEETLIKE = "/action/api/my_tweet_like_list";
 
+    //发表动弹
+    public static final String SEND_JUMP = BASE_URL + "action/apiv2/";
+    public static final String SEND_JUMP_TEXT = BASE_URL + "action/apiv2/tweet";
+
 
 }
