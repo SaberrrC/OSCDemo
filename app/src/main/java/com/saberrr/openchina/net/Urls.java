@@ -19,6 +19,7 @@ public class Urls {
     public static final String BESTNEW = BASE_URL + "action/api/software_list?pageIndex=0&searchTag=time&pageSize=20";
     public static final String HOT = BASE_URL + "action/api/software_list?pageIndex=0&searchTag=view&pageSize=20";
     public static final String DOMESTIC = BASE_URL + "action/api/software_list?pageIndex=0&searchTag=list_cn&pageSize=20";
+    public static final String SOFTWAREDETAIL = BASE_URL + "action/api/software_detail?id=";
 
     //登录
     public static final String LOGIN = "/action/api/login_validate";
