@@ -10,16 +10,15 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
-import com.saberrr.openchina.bean.SelectedImageBean;
 import com.saberrr.openchina.faces.DisplayRules;
 import com.saberrr.openchina.faces.FaceBean;
 import com.saberrr.openchina.gloab.AppApplication;
@@ -62,8 +61,9 @@ public class JumpFragment extends BaseFragment implements JumpView {
     private             String         TAG          = "JumpFragment";
     private             List<FaceBean> mDatas       = new ArrayList<>();
     private FacesPagerAdapter mFacesPagerAdapter;
-    private List<SelectedImageBean> images = new ArrayList<>();
-    private int                     dp_5   = DensityUtil.dip2px(5);
+    private List<String> images = new ArrayList<>();
+    private int          dp_5   = DensityUtil.dip2px(5);
+    private int          dp_10  = DensityUtil.dip2px(10);
 
     @Override
     protected boolean needRefresh() {
@@ -160,25 +160,47 @@ public class JumpFragment extends BaseFragment implements JumpView {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // 图片选择结果回调
+        int screenWith = Utils.getScreenWith();
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             List<String> pathList = data.getStringArrayListExtra(ImgSelActivity.INTENT_RESULT);
-            for (int i = 0; i < pathList.size(); i++) {
-                ImageView imageView = new ImageView(getContext());
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                int screenWith = Utils.getScreenWith();
-                imageView.setLayoutParams(new ViewGroup.LayoutParams(screenWith / 3, screenWith / 3));
-                imageView.setPadding(dp_5, dp_5, dp_5, dp_5);
-                GridLayout.Spec rowSpec = GridLayout.spec(i / 3);
-                GridLayout.Spec columnSpec = GridLayout.spec(i % 3);
-                GridLayout.LayoutParams paramsGl = new GridLayout.LayoutParams(rowSpec, columnSpec);
-                mFlImg.addView(imageView, paramsGl);
-                /*imageView.setPadding(, 5, 5, 5);
-
-                GridLayout.Spec rowSpec = GridLayout.spec(i / 3);
-                GridLayout.Spec columnSpec = GridLayout.spec(i % 3);
-                GridLayout.LayoutParams paramsGl = new GridLayout.LayoutParams(rowSpec,columnSpec);
-
-                contentImageGrid.addView(imageView, paramsGl);*/
+            images.clear();
+            images.addAll(pathList);
+            mFlImg.removeAllViews();
+            for (int i = 0; i < images.size(); i++) {
+                final View view = LayoutInflater.from(AppApplication.appContext).inflate(R.layout.item_image_selected, null, false);
+                ImageView imageView = (ImageView) view.findViewById(R.id.iv_img);
+                ImageView iv_del = (ImageView) view.findViewById(R.id.iv_del);
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mFlImg.removeView(view);
+                    }
+                });
+                ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+                layoutParams.width = screenWith / 3;
+                layoutParams.height = screenWith / 3;
+                view.setLayoutParams(layoutParams);
+                Utils.loadImage(images.get(i), imageView);
+                mFlImg.addView(view);
+            }
+            if (images.size() < 9) {
+                final View view = LayoutInflater.from(AppApplication.appContext).inflate(R.layout.item_image_selected, null, false);
+                ImageView imageView = (ImageView) view.findViewById(R.id.iv_img);
+                ImageView iv_del = (ImageView) view.findViewById(R.id.iv_del);
+                iv_del.setVisibility(View.GONE);
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ImgSelActivity.startActivity(JumpFragment.this, config, REQUEST_CODE);
+                    }
+                });
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+                layoutParams.width = screenWith / 3;
+                layoutParams.height = screenWith / 3;
+                view.setLayoutParams(layoutParams);
+                Utils.loadImage(R.mipmap.ic_tweet_add, imageView);
+                mFlImg.addView(view);
             }
         }
     }
