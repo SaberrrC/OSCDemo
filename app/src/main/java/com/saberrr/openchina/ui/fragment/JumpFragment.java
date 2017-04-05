@@ -11,7 +11,9 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -24,11 +26,11 @@ import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.presenter.JumpPresenter;
 import com.saberrr.openchina.presenter.JumpPresenterImpl;
 import com.saberrr.openchina.ui.activity.ShowActivity;
-import com.saberrr.openchina.ui.adapter.FinalBaseAdapter;
 import com.saberrr.openchina.ui.adapter.interfaces.FacesPagerAdapter;
 import com.saberrr.openchina.ui.view.FlowLayout;
 import com.saberrr.openchina.utils.DensityUtil;
 import com.saberrr.openchina.utils.ToastUtils;
+import com.saberrr.openchina.utils.Utils;
 import com.yuyh.library.imgsel.ImageLoader;
 import com.yuyh.library.imgsel.ImgSelActivity;
 import com.yuyh.library.imgsel.ImgSelConfig;
@@ -48,21 +50,20 @@ import static android.app.Activity.RESULT_OK;
 
 public class JumpFragment extends BaseFragment implements JumpView {
     @BindView(R.id.tv_content)
-    EditText       mEtContent;
+    EditText     mEtContent;
     @BindView(R.id.vp_faces)
-    ViewPager      mVpFaces;
+    ViewPager    mVpFaces;
     @BindView(R.id.ll_faces)
-    LinearLayout   mLlFaces;
-    @BindView(R.id.gv_img)
-    FlowLayout     mGvImg;
+    LinearLayout mLlFaces;
+    @BindView(R.id.fl_img)
+    FlowLayout   mFlImg;
     private JumpPresenter mJumpPresenter;
     public static final int            REQUEST_CODE = 100;
     private             String         TAG          = "JumpFragment";
     private             List<FaceBean> mDatas       = new ArrayList<>();
     private FacesPagerAdapter mFacesPagerAdapter;
     private List<SelectedImageBean> images = new ArrayList<>();
-    private FinalBaseAdapter mImageAdapter;
-//    private int dp_5 =
+    private int                     dp_5   = DensityUtil.dip2px(5);
 
     @Override
     protected boolean needRefresh() {
@@ -154,19 +155,24 @@ public class JumpFragment extends BaseFragment implements JumpView {
         }
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // 图片选择结果回调
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             List<String> pathList = data.getStringArrayListExtra(ImgSelActivity.INTENT_RESULT);
-            for (String path : pathList) {
+            for (int i = 0; i < pathList.size(); i++) {
                 ImageView imageView = new ImageView(getContext());
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                int screenWith = Utils.getScreenWith();
+                imageView.setLayoutParams(new ViewGroup.LayoutParams(screenWith / 3, screenWith / 3));
+                imageView.setPadding(dp_5, dp_5, dp_5, dp_5);
+                GridLayout.Spec rowSpec = GridLayout.spec(i / 3);
+                GridLayout.Spec columnSpec = GridLayout.spec(i % 3);
+                GridLayout.LayoutParams paramsGl = new GridLayout.LayoutParams(rowSpec, columnSpec);
+                mFlImg.addView(imageView, paramsGl);
                 /*imageView.setPadding(, 5, 5, 5);
-                imageView.setBackgroundColor(Color.RED);
-                imageView.setLayoutParams(new ViewGroup.LayoutParams(200,200));
-                imageView.setImageBitmap(bmp);
 
                 GridLayout.Spec rowSpec = GridLayout.spec(i / 3);
                 GridLayout.Spec columnSpec = GridLayout.spec(i % 3);

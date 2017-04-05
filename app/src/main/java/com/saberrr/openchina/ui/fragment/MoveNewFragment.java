@@ -113,7 +113,7 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
             rootView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //// TODO: 2017-04-05  
+                    //// TODO: 2017-04-05
                     ToastUtils.showToast("666");
                 }
             });

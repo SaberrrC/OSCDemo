@@ -42,10 +42,6 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
         this.loadLayout = loadLayout;
     }
 
-    public void notifu() {
-        notifyDataSetChanged();
-    }
-
     /**
      * @param datas               数据
      * @param classIntegerHashMap Class键 数据类型 对应 条目类型，Integer值对应条目布局id

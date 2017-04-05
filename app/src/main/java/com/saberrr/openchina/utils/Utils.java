@@ -1,12 +1,15 @@
 package com.saberrr.openchina.utils;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AnticipateOvershootInterpolator;
 
 import com.saberrr.openchina.contact.Fiels;
@@ -70,12 +73,7 @@ public class Utils {
     public static void setiTemAnim(View view) {
         view.setScaleX(SCALE);
         view.setScaleY(SCALE);
-        ViewCompat.animate(view)
-                .scaleX(1.0f)
-                .scaleY(1.0f)
-                .setDuration(DURATION)
-                .setInterpolator(new AnticipateOvershootInterpolator())
-                .start();
+        ViewCompat.animate(view).scaleX(1.0f).scaleY(1.0f).setDuration(DURATION).setInterpolator(new AnticipateOvershootInterpolator()).start();
     }
 
     public static int getCPUCount() {
@@ -89,5 +87,24 @@ public class Utils {
         intent.setDataAndType(Uri.fromFile(openFile), "application/vnd.android.package-archive");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         AppApplication.appContext.startActivity(intent);
+    }
+
+    public static int getScreenWith() {
+        WindowManager wm = getWindowManager();
+        int width = wm.getDefaultDisplay().getWidth();
+        return width;
+    }
+
+    private static WindowManager getWindowManager() {
+        DisplayMetrics dm = new DisplayMetrics();
+        WindowManager manager = (WindowManager) AppApplication.appContext.getSystemService(Context.WINDOW_SERVICE);
+        manager.getDefaultDisplay().getMetrics(dm);
+        return (WindowManager) AppApplication.appContext.getSystemService(Context.WINDOW_SERVICE);
+    }
+
+    public static int getScreenHeight() {
+        WindowManager wm = getWindowManager();
+        int height = wm.getDefaultDisplay().getHeight();
+        return height;
     }
 }
