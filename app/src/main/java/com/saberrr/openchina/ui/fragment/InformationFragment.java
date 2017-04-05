@@ -1,11 +1,16 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,6 +29,7 @@ import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.utils.Constant;
+import com.saberrr.openchina.utils.StringUtils;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
 
@@ -46,6 +52,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
     private FinalRecycleAdapter mFinalRecycleAdapter;
     private SwipeRefreshLayout  mSwipeRefreshLayout;
     private String nextPageToken = "";
+    private Bitmap recordBitmap;
 
     @Override
     protected boolean needRefresh() {
@@ -86,7 +93,8 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
                 super.onScrolled(recyclerView, dx, dy);
             }
         });
-
+        recordBitmap = BitmapFactory.decodeResource(getContext().getResources(),
+                R.mipmap.ic_label_today);
 
     }
 
@@ -172,9 +180,20 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
             LinearLayout llCommentInformation = (LinearLayout) holder.getViewById(R.id.ll_comment_information);
             TextView tvCommentInformation = (TextView) holder.getViewById(R.id.tv_comment_information);
             final InformationBodyBean.ResultBean.ItemsBean itemsBean = (InformationBodyBean.ResultBean.ItemsBean) itemData;
-            tvTitleInformation.setText(itemsBean.getTitle());
+
+            ImageSpan recordImg = new ImageSpan(getContext(),
+                    recordBitmap);
+            String text = "[icon]" + itemsBean.getTitle();
+            SpannableString spannableString = new SpannableString(text);
+            if (StringUtils.isToday(itemsBean.getPubDate())) {
+                spannableString.setSpan(recordImg, 0, 6, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+
+            } else {
+                spannableString.setSpan("", 0, 6, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            tvTitleInformation.setText(spannableString);
             tvBodyInformation.setText(itemsBean.getBody());
-            tvTimeInformation.setText(itemsBean.getPubDate());
+            tvTimeInformation.setText(StringUtils.friendly_time(itemsBean.getPubDate()));
             tvCommentInformation.setText(itemsBean.getCommentCount() + "");
             llCommentInformation.setOnClickListener(new View.OnClickListener() {
                 @Override

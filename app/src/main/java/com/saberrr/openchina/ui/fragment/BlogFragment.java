@@ -14,6 +14,7 @@ import com.saberrr.openchina.bean.recommendbean.BlogHradBean;
 import com.saberrr.openchina.manager.cacheManager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
+import com.saberrr.openchina.utils.StringUtils;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
 
@@ -149,7 +150,7 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
             tvTitleBlog.setText(bean.getTitle());
             tvBodyBlog.setText(bean.getBody());
             tvNameBlog.setText(bean.getAuthor());
-            tvTimeBlog.setText(bean.getPubDate() + "");
+            tvTimeBlog.setText(StringUtils.friendly_time(bean.getPubDate()));
             tvVisitBlog.setText(bean.getViewCount() + "");
             tvCommentBlog.setText(bean.getCommentCount() + "");
 
