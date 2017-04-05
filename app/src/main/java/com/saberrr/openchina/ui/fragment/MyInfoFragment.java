@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import com.saberrr.openchina.bean.UserInfo;
 import com.saberrr.openchina.event.LoginBeanEvent;
 import com.saberrr.openchina.net.HttpServiceApi;
 import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.utils.Constant;
+import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.ToastUtils;
 import com.saberrr.openchina.utils.XmlUtils;
 
@@ -59,6 +62,8 @@ public class MyInfoFragment extends BaseFragment {
     @BindView(R.id.btn_logout)
     Button mBtnLogout;
     private String mUid;
+    private String mCookie;
+    private String mUserid;
 
     @Override
     protected boolean needRefresh() {
@@ -74,15 +79,21 @@ public class MyInfoFragment extends BaseFragment {
     }
 
     private void init() {
-        Bundle bundle = getArguments();
+        /*Bundle bundle = getArguments();
         LoginBean userinfo = (LoginBean) bundle.getSerializable("USERINFO");
         mUid = userinfo.getUser().getUid();
 
-        System.out.println(mUid);
+        System.out.println(mUid);*/
+
+        mCookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
+        mUserid = SpUtil.getString(getContext(), Constant.USERID, "");
+
 
         // TODO: 2017/4/2 设置数据
 
-        mTvUsernameOffline.setText(userinfo.getUser().getName());
+
+
+        /*mTvUsernameOffline.setText(userinfo.getUser().getName());
         Glide.with(getContext()).load(userinfo.getUser().getPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
             @Override
             protected void setResource(Bitmap resource) {
@@ -98,7 +109,7 @@ public class MyInfoFragment extends BaseFragment {
 
         mTvPlatform.setText("<无>");
         mTvStrength.setText("<无>");
-
+*/
 
 
 
@@ -150,41 +161,62 @@ public class MyInfoFragment extends BaseFragment {
     @Override
     public Object getData() {
 
-        //同步获取
-//        HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
-//        try {
-//            Response<ResponseBody> response = httpServiceApi.getUserInfo(mUid).execute();
-//
-//            String string = response.body().string();
-//
-//            System.out.println(string);
-           /* UserInfo userInfo = XmlUtils.toBean(UserInfo.class,  string.getBytes());
-                    mTvUsernameOffline.setText(userInfo.getUser().getName());
-                    mTvLocaton.setText(userInfo.getUser().getFrom());
-                    mTvJoinTime.setText(userInfo.getUser().getJointime());
 
-                    mTvPlatform.setText(userInfo.getUser().getDevplatform());
-                    mTvStrength.setText(userInfo.getUser().getExpertise());
-                    Glide.with(getContext()).load(userInfo.getUser().getPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            mIvAvtarOffline.setImageDrawable(circularBitmapDrawable);
-                        }
-                    });
-            return "";*/
-//
-//        } catch (IOException e) {
-//            ToastUtils.showToast("获取数据失败！");
-//            e.printStackTrace();
-//        }
+        if (checkUseridAndCookie(mCookie, mCookie)) {
+            HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
+            try {
+                Response<ResponseBody> response = httpServiceApi.getUserInfo(mCookie, mUserid).execute();
+
+                String string = response.body().string();
+
+                System.out.println(string);
+                final UserInfo userInfo = XmlUtils.toBean(UserInfo.class,  string.getBytes());
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mTvUsernameOffline.setText(userInfo.getUser().getName());
+                        mTvLocaton.setText(userInfo.getUser().getFrom());
+                        mTvJoinTime.setText(userInfo.getUser().getJointime());
+
+                        mTvPlatform.setText(userInfo.getUser().getDevplatform());
+                        mTvStrength.setText(userInfo.getUser().getExpertise());
+                        Glide.with(getContext()).load(userInfo.getUser().getPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                mIvAvtarOffline.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+                    }
+                });
+
+                return "";
+
+            } catch (IOException e) {
+                ToastUtils.showToast("获取数据失败！");
+                e.printStackTrace();
+                return "";
+            }
+        }
+
+//        同步获取
+
 
 
 
 
         return "";
+    }
+
+    private boolean checkUseridAndCookie(String cookie, String userid) {
+
+        if (TextUtils.isEmpty(userid) || TextUtils.isEmpty(cookie)) {
+            return false;
+        }
+        return true;
+
     }
 
 
@@ -195,8 +227,11 @@ public class MyInfoFragment extends BaseFragment {
             case R.id.btn_logout:
                 ToastUtils.showToast("登出");
                 // TODO: 2017/4/2 清除本地登录相关数据
+                SpUtil.saveString(getContext(), Constant.COOKIE, "");
+                SpUtil.saveString(getContext(), Constant.USERID, "");
+
                 LoginBeanEvent.cookie = null;
-                EventBus.getDefault().postSticky(new LoginBeanEvent());
+                EventBus.getDefault().post(new LoginBeanEvent());
 
                 getActivity().finish();
                 break;

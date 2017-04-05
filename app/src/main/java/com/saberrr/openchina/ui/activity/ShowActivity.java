@@ -1,16 +1,21 @@
 package com.saberrr.openchina.ui.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,6 +44,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     public static final int TITLE_COMMENT = 102;//右边是评论数量
     public static final int TITLE_SEND    = 103;//右边文字 “选择”
     public static final int TITLE_PEOPLE  = 104;//“找人”专用
+    public static final int TITLE_MENU    = 105;//“找人”专用
     private TextView    mTvRightToolbar;
     private SearchView  mSearchView;
     private Toolbar     mToolbar;
@@ -47,6 +53,9 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     private ImageView   mIvCommendBG;
     private FrameLayout mFlCommend;
     private TextView    mTvCommend;
+    private int     mTitle_menu           = -1;
+    private boolean touchHintKeyboard     = false;
+    private boolean hintKeyboardexception = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +127,9 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
                 if (mSearchView != null) {
                     mSearchView.setVisibility(View.VISIBLE);
                 }
-
+                break;
+            case TITLE_MENU:
+                mTitle_menu = getIntent().getIntExtra(Fiels.DtailActivity.MENU, TITLE_MENU);
                 break;
             default:
                 throw new RuntimeException("请传入指定标题类型参数");
@@ -153,7 +164,6 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         void onClick();
     }
 
-
     /**
      * toolbar 条目点击监听
      *
@@ -171,19 +181,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         mFlCommend = (FrameLayout) findViewById(R.id.fl_commend);
         mIvCommendBG = (ImageView) findViewById(R.id.iv_commend_bg);
         mTvCommend = (TextView) findViewById(R.id.tv_commend);
-
     }
-/*    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_searviewu, menu);
-        MenuItem item = menu.findItem(R.id.search);
-        mSearchView = (SearchView) item.getActionView();
-        //设置提示文字
-        mSearchView.setQueryHint("请输入关键字");
-        //设置文字搜索监听
-        mSearchView.setOnQueryTextListener(this);
-        return true;
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -197,7 +195,36 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
             mSearchView.setOnQueryTextListener(this);
             return true;
         }
+        if (mTitle_icon == TITLE_MENU) {
+            getMenuInflater().inflate(mTitle_menu, menu);
+            //右上角menu按钮显示
+            if (menu instanceof MenuBuilder) {
+                MenuBuilder menuBuilder = (MenuBuilder) menu;
+                menuBuilder.setOptionalIconsVisible(true);
+            }
+            return true;
+        }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mTitle_icon == TITLE_MENU) {
+            if (mOnOptionsItemSelected != null) {
+                mOnOptionsItemSelected.onOptionsMenu(item);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public interface onOptionsItemSelected {
+        void onOptionsMenu(MenuItem item);
+    }
+
+    private onOptionsItemSelected mOnOptionsItemSelected;
+
+    public void setonOptionsItemSelected(onOptionsItemSelected onOptionsItemSelected) {
+        mOnOptionsItemSelected = onOptionsItemSelected;
     }
 
     public static void startFragment(Class clss, Bundle bundle) {
@@ -220,6 +247,26 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
             intent.putExtra(Fiels.DtailActivity.BUNDLE, bundle);
         }
         intent.putExtra(Fiels.DtailActivity.CLASSNAME, clss);
+        intent.putExtra(Fiels.DtailActivity.TITLE, title);
+        intent.putExtra(Fiels.DtailActivity.TOOBARICON, right);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        AppApplication.appContext.startActivity(intent);
+    }
+
+    /***
+     * @param clss
+     * @param bundle
+     * @param title
+     * @param right
+     * @param menuLayout menu的布局
+     */
+    public static void startFragmentWithTitleMenu(Class clss, Bundle bundle, String title, int right, int menuLayout) {
+        Intent intent = new Intent(AppApplication.appContext, ShowActivity.class);
+        if (bundle != null) {
+            intent.putExtra(Fiels.DtailActivity.BUNDLE, bundle);
+        }
+        intent.putExtra(Fiels.DtailActivity.CLASSNAME, clss);
+        intent.putExtra(Fiels.DtailActivity.MENU, menuLayout);
         intent.putExtra(Fiels.DtailActivity.TITLE, title);
         intent.putExtra(Fiels.DtailActivity.TOOBARICON, right);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -271,7 +318,41 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         return false;
     }
 
-   /* private boolean isShouldHideInput(View v, MotionEvent event) {
+    public void setHintKeyboard(boolean touchHintKeyboard) {
+        this.touchHintKeyboard = touchHintKeyboard;
+    }
+
+    public void setHintKeyboardexception() {
+        hintKeyboardexception = true;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (hintKeyboardexception) {
+            hintKeyboardexception = false;
+            return super.dispatchTouchEvent(ev);
+        }
+        if (touchHintKeyboard) {
+            if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+                View v = getCurrentFocus();
+                if (isShouldHideInput(v, ev)) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
+                }
+                return super.dispatchTouchEvent(ev);
+            }
+            // 必不可少，否则所有的组件都不会有TouchEvent了
+            if (getWindow().superDispatchTouchEvent(ev)) {
+                return true;
+            }
+            return onTouchEvent(ev);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    public boolean isShouldHideInput(View v, MotionEvent event) {
         if (v != null && (v instanceof EditText)) {
             int[] leftTop = {0, 0};
             //获取输入框当前的location位置
@@ -289,25 +370,4 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         }
         return false;
     }
-
-    //点击其他地方隐藏键盘
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if (isShouldHideInput(v, ev)) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
-            }
-            return super.dispatchTouchEvent(ev);
-        }
-        // 必不可少，否则所有的组件都不会有TouchEvent了
-        if (getWindow().superDispatchTouchEvent(ev)) {
-            return true;
-        }
-        return onTouchEvent(ev);
-    }*/
-
 }

@@ -87,6 +87,23 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
         mParentActivity.setCommentCount(count);
     }
 
+    public void setonOptionsItemSelected(ShowActivity.onOptionsItemSelected onOptionsItemSelected) {
+        mParentActivity.setonOptionsItemSelected(onOptionsItemSelected);
+    }
+
+    public void setHintKeyboardexception() {
+        mParentActivity.setHintKeyboardexception();
+    }
+
+    /**
+     * 点击其他地方隐藏键盘
+     *
+     * @param touchHintKeyboard 默认FALSE  ->  点击其它地方不隐藏键盘
+     */
+    public void setHintKeyboard(boolean touchHintKeyboard) {
+        mParentActivity.setHintKeyboard(touchHintKeyboard);
+    }
+
     /**
      * 是否需要下拉刷新
      *

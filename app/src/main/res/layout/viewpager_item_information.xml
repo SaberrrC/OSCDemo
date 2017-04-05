@@ -10,11 +10,11 @@
             android:id="@+id/iv_item_viewpager_information"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-        <!--<TextView-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:background="#A0A3A0"-->
-            <!--android:layout_height="40dp"/>-->
+        <TextView
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:background="#A0A3A0"
+            android:layout_height="40dp"/>
         <TextView
             android:id="@+id/tv_item_viewpager_information"
             android:text="我的字体"
