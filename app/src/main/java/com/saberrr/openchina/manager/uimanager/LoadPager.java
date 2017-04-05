@@ -55,6 +55,7 @@ public abstract class LoadPager extends FrameLayout {
         if (mAddRefresh) {
             //需要刷新
             mSwipeRefreshLayout = new SwipeRefreshLayout(getContext());
+            mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mSwipeRefreshLayout.setLayoutParams(layoutParams);
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -100,12 +101,6 @@ public abstract class LoadPager extends FrameLayout {
                 throw new RuntimeException("必须传入布局");
             }
         }
-//        if (mSwipeRefreshLayout == null) {
-//            addView(mSuccessView);
-//        } else {
-//            mSwipeRefreshLayout.addView(mSuccessView);
-//            addView(mSwipeRefreshLayout);
-//        }
         if (mAddRefresh) {
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mSuccessView.setLayoutParams(layoutParams);
