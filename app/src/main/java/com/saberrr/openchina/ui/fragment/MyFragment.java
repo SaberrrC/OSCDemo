@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,22 +17,29 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.LoginBean;
+import com.saberrr.openchina.bean.UserInfo;
 import com.saberrr.openchina.event.LoginBeanEvent;
 import com.saberrr.openchina.manager.netmanager.RetrofitUtil;
 import com.saberrr.openchina.net.HttpServiceApi;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
+import com.saberrr.openchina.utils.Constant;
+import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.ToastUtils;
+import com.saberrr.openchina.utils.XmlUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.IOException;
 import java.util.TreeMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 
 /**
@@ -126,64 +134,20 @@ public class MyFragment extends BaseFragment {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.frag_my, null);
         ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
-//        Glide.with(getContext()).load(R.mipmap.).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
-//            @Override
-//            protected void setResource(Bitmap resource) {
-//                RoundedBitmapDrawable circularBitmapDrawable =
-//                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
-//                circularBitmapDrawable.setCircular(true);
-//                mIvAvtarOffline.setImageDrawable(circularBitmapDrawable);
-//            }
-//        });
 
         return view;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginEvent(LoginBeanEvent event) {
-        if (LoginBeanEvent.cookie != null) {
-
-            mRlOffline.setVisibility(View.GONE);
-            mRlOnline.setVisibility(View.VISIBLE);
-            // TODO: 2017/4/2 获取参数，设置ui
-            mLoginBean = event.mLoginBean;
-
-            mTvUsername.setText(mLoginBean.getUser().getName());
-            mTvScoreCount.setText(mLoginBean.getUser().getScore());
-            mTvFavoriteCount.setText(mLoginBean.getUser().getFavoritecount());
-            mTvFollowersCount.setText(mLoginBean.getUser().getFollowers());
-            mTvFansCount.setText(mLoginBean.getUser().getFans());
-            mIvGender.setImageResource(genderRid[Integer.parseInt(mLoginBean.getUser().getGender()) -1]);
-            System.out.println(mLoginBean.getUser().getPortrait());
-            Glide.with(getContext()).load(mLoginBean.getUser().getPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
-                @Override
-                protected void setResource(Bitmap resource) {
-                    RoundedBitmapDrawable circularBitmapDrawable =
-                            RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
-                    circularBitmapDrawable.setCircular(true);
-                    mIvAvtarOnline.setImageDrawable(circularBitmapDrawable);
-                }
-            });
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                checkLogin();
+            }
+        }).start();
 
 
-        } else {
-            mRlOffline.setVisibility(View.VISIBLE);
-            mRlOnline.setVisibility(View.GONE);
-            Glide.with(getContext()).load(R.mipmap.ic_nav_my_normal).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
-                @Override
-                protected void setResource(Bitmap resource) {
-                    RoundedBitmapDrawable circularBitmapDrawable =
-                            RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
-                    circularBitmapDrawable.setCircular(true);
-                    mIvAvtarOffline.setImageDrawable(circularBitmapDrawable);
-                }
-            });
-
-        }
-
-
-
-        EventBus.getDefault().removeAllStickyEvents();
     }
 
     @Override
@@ -195,21 +159,86 @@ public class MyFragment extends BaseFragment {
 
     @Override
     public Object getData() {
+
+        checkLogin();
+
+
         return "";
     }
 
+    //子线程
+    private void checkLogin() {
+        String cookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
+        String userid = SpUtil.getString(getContext(), Constant.USERID, "");
+        System.out.println(cookie);
 
 
-    @OnClick({R.id.rl_offline, R.id.iv_avtar_online, R.id.iv_mark_online,  R.id.ll_score, R.id.ll_favorite, R.id.ll_followers, R.id.ll_fans, R.id.rl_my_msg, R.id.rl_my_blog, R.id.rl_my_team, R.id.rl_my_event, R.id.rl_my_setting})
+        if (checkUseridAndCookie(cookie, userid)) {
+            HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
+            try {
+                Response<ResponseBody> response = httpServiceApi.getUserInfo("oscid="+cookie, userid).execute();
+                String result = response.body().string();
+                System.out.println(result);
+                UserInfo userInfo = XmlUtils.toBean(UserInfo.class, result.getBytes());
+
+                setOnlineView(userInfo);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                setOffLineView();
+            }
+
+
+        } else {
+            setOffLineView();
+
+        }
+
+    }
+
+    private void setOffLineView() {//设置默认的未登录状态
+        // TODO: 2017/4/5
+       getActivity().runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+
+               mRlOffline.setVisibility(View.VISIBLE);
+               mRlOnline.setVisibility(View.GONE);
+               Glide.with(getContext()).load(R.mipmap.ic_nav_my_normal).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
+                   @Override
+                   protected void setResource(Bitmap resource) {
+                       RoundedBitmapDrawable circularBitmapDrawable =
+                               RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                       circularBitmapDrawable.setCircular(true);
+                       mIvAvtarOffline.setImageDrawable(circularBitmapDrawable);
+                   }
+               });
+           }
+       });
+
+
+    }
+
+    private boolean checkUseridAndCookie(String cookie, String userid) {
+
+        if (TextUtils.isEmpty(userid) || TextUtils.isEmpty(cookie)) {
+            return false;
+        }
+        return true;
+
+    }
+
+
+    @OnClick({R.id.rl_offline, R.id.iv_avtar_online, R.id.iv_mark_online, R.id.ll_score, R.id.ll_favorite, R.id.ll_followers, R.id.ll_fans, R.id.rl_my_msg, R.id.rl_my_blog, R.id.rl_my_team, R.id.rl_my_event, R.id.rl_my_setting})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rl_offline:
-                ShowActivity.startFragmentWithTitle(LoginFragment.class, null  , "登录");
+                ShowActivity.startFragmentWithTitle(LoginFragment.class, null, "登录");
                 break;
             case R.id.iv_avtar_online:
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("USERINFO" , mLoginBean);
-                ShowActivity.startFragmentWithTitle(MyInfoFragment.class, bundle , "我的资料");
+                bundle.putSerializable("USERINFO", mLoginBean);
+                ShowActivity.startFragmentWithTitle(MyInfoFragment.class, bundle, "我的资料");
 
                 break;
             case R.id.iv_mark_online:
@@ -229,7 +258,7 @@ public class MyFragment extends BaseFragment {
                 break;
             case R.id.rl_my_msg:
                 ToastUtils.showToast("我的消息");
-                ShowActivity.startFragmentWithTitle(MyMsgFragment.class , null , "消息中心");
+                ShowActivity.startFragmentWithTitle(MyMsgFragment.class, null, "消息中心");
 
                 break;
             case R.id.rl_my_blog:
@@ -245,5 +274,40 @@ public class MyFragment extends BaseFragment {
                 ToastUtils.showToast("设置");
                 break;
         }
+    }
+
+    public void setOnlineView(final UserInfo userInfo) {
+
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                    mRlOffline.setVisibility(View.GONE);
+                    mRlOnline.setVisibility(View.VISIBLE);
+
+                    mTvUsername.setText(userInfo.getUser().getName());
+                    mTvScoreCount.setText(userInfo.getUser().getScore());
+                    mTvFavoriteCount.setText(userInfo.getUser().getFavoritecount());
+                    mTvFollowersCount.setText(userInfo.getUser().getFollowers());
+                    mTvFansCount.setText(userInfo.getUser().getFans());
+                    mIvGender.setImageResource(genderRid[Integer.parseInt(userInfo.getUser().getGender()) - 1]);
+                    System.out.println(userInfo.getUser().getPortrait());
+                    Glide.with(getContext()).load(userInfo.getUser().getPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            mIvAvtarOnline.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+                    } catch (Exception e) {
+                        setOffLineView();
+                    }
+                }
+            });
+
+
     }
 }
