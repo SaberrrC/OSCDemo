@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -39,6 +40,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     public static final int TITLE_COMMENT = 102;//右边是评论数量
     public static final int TITLE_SEND    = 103;//右边文字 “选择”
     public static final int TITLE_PEOPLE  = 104;//“找人”专用
+    public static final int TITLE_MENU    = 105;//“找人”专用
     private TextView    mTvRightToolbar;
     private SearchView  mSearchView;
     private Toolbar     mToolbar;
@@ -47,6 +49,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     private ImageView   mIvCommendBG;
     private FrameLayout mFlCommend;
     private TextView    mTvCommend;
+    private int mTitle_menu = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +121,9 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
                 if (mSearchView != null) {
                     mSearchView.setVisibility(View.VISIBLE);
                 }
-
+                break;
+            case TITLE_MENU:
+                mTitle_menu = getIntent().getIntExtra(Fiels.DtailActivity.MENU, TITLE_MENU);
                 break;
             default:
                 throw new RuntimeException("请传入指定标题类型参数");
@@ -153,7 +158,6 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         void onClick();
     }
 
-
     /**
      * toolbar 条目点击监听
      *
@@ -171,19 +175,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         mFlCommend = (FrameLayout) findViewById(R.id.fl_commend);
         mIvCommendBG = (ImageView) findViewById(R.id.iv_commend_bg);
         mTvCommend = (TextView) findViewById(R.id.tv_commend);
-
     }
-/*    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_searviewu, menu);
-        MenuItem item = menu.findItem(R.id.search);
-        mSearchView = (SearchView) item.getActionView();
-        //设置提示文字
-        mSearchView.setQueryHint("请输入关键字");
-        //设置文字搜索监听
-        mSearchView.setOnQueryTextListener(this);
-        return true;
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -197,7 +189,36 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
             mSearchView.setOnQueryTextListener(this);
             return true;
         }
+        if (mTitle_icon == TITLE_MENU) {
+            getMenuInflater().inflate(mTitle_menu, menu);
+            //右上角menu按钮显示
+            if (menu instanceof MenuBuilder) {
+                MenuBuilder menuBuilder = (MenuBuilder) menu;
+                menuBuilder.setOptionalIconsVisible(true);
+            }
+            return true;
+        }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mTitle_icon == TITLE_MENU) {
+            if (mOnOptionsItemSelected != null) {
+                mOnOptionsItemSelected.onOptionsMenu(item);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public interface onOptionsItemSelected {
+        void onOptionsMenu(MenuItem item);
+    }
+
+    private onOptionsItemSelected mOnOptionsItemSelected;
+
+    public void setonOptionsItemSelected(onOptionsItemSelected onOptionsItemSelected) {
+        mOnOptionsItemSelected = onOptionsItemSelected;
     }
 
     public static void startFragment(Class clss, Bundle bundle) {
@@ -220,6 +241,26 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
             intent.putExtra(Fiels.DtailActivity.BUNDLE, bundle);
         }
         intent.putExtra(Fiels.DtailActivity.CLASSNAME, clss);
+        intent.putExtra(Fiels.DtailActivity.TITLE, title);
+        intent.putExtra(Fiels.DtailActivity.TOOBARICON, right);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        AppApplication.appContext.startActivity(intent);
+    }
+
+    /***
+     * @param clss
+     * @param bundle
+     * @param title
+     * @param right
+     * @param menuLayout menu的布局
+     */
+    public static void startFragmentWithTitleMenu(Class clss, Bundle bundle, String title, int right, int menuLayout) {
+        Intent intent = new Intent(AppApplication.appContext, ShowActivity.class);
+        if (bundle != null) {
+            intent.putExtra(Fiels.DtailActivity.BUNDLE, bundle);
+        }
+        intent.putExtra(Fiels.DtailActivity.CLASSNAME, clss);
+        intent.putExtra(Fiels.DtailActivity.MENU, menuLayout);
         intent.putExtra(Fiels.DtailActivity.TITLE, title);
         intent.putExtra(Fiels.DtailActivity.TOOBARICON, right);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
