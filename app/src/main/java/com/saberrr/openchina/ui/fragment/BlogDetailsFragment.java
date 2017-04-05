@@ -21,6 +21,7 @@ public class BlogDetailsFragment extends BaseFragment {
     @BindView(R.id.wb_bolgdetails)
     WebView mWbBolgdetails;
     private String mUrl;
+    private String mCount;
 
     @Override
     protected boolean needRefresh() {
@@ -31,11 +32,14 @@ public class BlogDetailsFragment extends BaseFragment {
     public View createView() {
         Bundle bundle = getArguments();
         mUrl = bundle.getString(Constant.BLOGDETAILSFRAGMENT.HREF);
+        mCount = bundle.getString(Constant.BLOGDETAILSFRAGMENT.COMMENTCOUNT);
+        setCommentCount(mCount);
         View view = View.inflate(getContext(), R.layout.fragment_blogdatails, null);
         ButterKnife.bind(this,view);
         init();
         return view;
     }
+
 
     private void init() {
         WebSettings settings = mWbBolgdetails.getSettings();
@@ -77,5 +81,6 @@ public class BlogDetailsFragment extends BaseFragment {
     public Object getData() {
         return "";
     }
+
 
 }
