@@ -125,10 +125,13 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
-    public void initRightIcon(int count) {
-        if (mTvRightToolbar != null && mTitle_icon == TITLE_COMMENT) {
-            mTvRightToolbar.setText(count + "");
+    public void setCommentCount(String count) {
+        if (mTitle_icon == TITLE_COMMENT) {
+            mTvCommend.setText(count);
+        } else {
+            throw new RuntimeException("传入标题类型必须是 TITLE_COMMENT ");
         }
+
     }
 
     private OnClickListener mOnClickListener;

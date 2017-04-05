@@ -19,7 +19,7 @@ import java.util.List;
 
 public abstract class BaseFragment extends android.support.v4.app.Fragment {
 
-    public LoadPager mLoadingPager;
+    public  LoadPager    mLoadingPager;
     private boolean      mNeedRefresh;
     private ShowActivity mParentActivity;
 
@@ -81,6 +81,11 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
      */
     public View creatViewFromId(int layoutId) {
         return LayoutInflater.from(getContext()).inflate(layoutId, null, false);
+    }
+
+    public void setCommentCount(String count) {
+        mParentActivity.setCommentCount(count);
+
     }
 
     /**
