@@ -85,7 +85,6 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
 
     public void setCommentCount(String count) {
         mParentActivity.setCommentCount(count);
-
     }
 
     /**
