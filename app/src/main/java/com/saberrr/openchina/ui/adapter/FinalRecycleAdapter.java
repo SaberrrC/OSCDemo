@@ -121,9 +121,13 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private SparseArray<View> mShowItems = new SparseArray<>();
-
+        private View rootView;
         ViewHolder(View view) {
             super(view);
+            rootView = view;
+        }
+        public View getRootView() {
+            return rootView;
         }
 
         public View getViewById(int id) {

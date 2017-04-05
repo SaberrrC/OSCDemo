@@ -21,6 +21,7 @@ import com.saberrr.openchina.bean.MoveNewBean;
 import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
+import com.saberrr.openchina.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,7 +109,14 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
 
 
         if (itemData instanceof MoveNewBean.ResultBean.ItemsBean) {
-
+            View rootView = holder.getRootView();
+            rootView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //// TODO: 2017-04-05  
+                    ToastUtils.showToast("666");
+                }
+            });
             MoveNewBean.ResultBean.ItemsBean bean = (MoveNewBean.ResultBean.ItemsBean) itemData;
 
             ShowView(holder, bean);

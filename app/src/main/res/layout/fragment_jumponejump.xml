@@ -7,7 +7,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="200dp"
         android:layout_weight="1">
 
         <LinearLayout
@@ -38,10 +38,12 @@
                 android:textSize="12sp"/>
 
             <com.saberrr.openchina.ui.view.FlowLayout
-                android:id="@+id/fl_images"
+                android:id="@+id/gv_img"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </com.saberrr.openchina.ui.view.FlowLayout>
+                android:layout_height="wrap_content"
+                android:horizontalSpacing="5dp"
+                android:numColumns="3"
+                android:verticalSpacing="5dp"/>
         </LinearLayout>
     </ScrollView>
 

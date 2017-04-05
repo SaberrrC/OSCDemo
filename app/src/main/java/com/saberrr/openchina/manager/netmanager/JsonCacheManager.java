@@ -24,10 +24,6 @@ public class JsonCacheManager {
     }
 
     public <T> T getDataBean(String url, Class<T> bean) {
-        /**
-         * 1. 去网络请求最新数据
-         * 2. 如果没有数据去请求缓存数据
-         */
         String json = NetManager.getInstance().getJson(url);
         if (TextUtils.isEmpty(json)) {
             json = CacheManager.getInstance().getCacheData(url);
@@ -42,16 +38,7 @@ public class JsonCacheManager {
     }
 
     public <T> T getDataBean(String url, Map<String, String> headMap, Class<T> bean) {
-        /**
-         * 1. 去网络请求最新数据
-         * 2. 如果没有数据去请求缓存数据
-         */
         String json = NetManager.getInstance().getJson(url, headMap);
-        if (TextUtils.isEmpty(json)) {
-            json = CacheManager.getInstance().getCacheData(url);
-        } else {
-            CacheManager.getInstance().saveCacheData(url, json);
-        }
         if (TextUtils.isEmpty(json)) {
             return null;
         } else {
@@ -59,17 +46,9 @@ public class JsonCacheManager {
         }
     }
 
+
     public <T> T getDataBean(String url, RequestBody body, Class<T> bean) {
-        /**
-         * 1. 去网络请求最新数据
-         * 2. 如果没有数据去请求缓存数据
-         */
         String json = NetManager.getInstance().getPostJson(url, body);
-        if (TextUtils.isEmpty(json)) {
-            json = CacheManager.getInstance().getCacheData(url);
-        } else {
-            CacheManager.getInstance().saveCacheData(url, json);
-        }
         if (TextUtils.isEmpty(json)) {
             return null;
         } else {
@@ -78,10 +57,6 @@ public class JsonCacheManager {
     }
 
     public <T> List<T> getDataList(String url, Class<T> t) {
-        /**
-         * 1. 去网络请求最新数据
-         * 2. 如果没有数据去请求缓存数据
-         */
         String json = NetManager.getInstance().getJson(url);
         if (TextUtils.isEmpty(json)) {
             json = CacheManager.getInstance().getCacheData(url);
@@ -91,60 +66,30 @@ public class JsonCacheManager {
         if (TextUtils.isEmpty(json)) {
             return null;
         } else {
-            //            return GsonUtil.fromJsonArray(json, t);
             return GsonTools.changeGsonToList(json, t);
         }
     }
 
     public <T> List<T> getDataList(String url, Map<String, String> headMap, Class<T> t) {
-        /**
-         * 1. 去网络请求最新数据
-         * 2. 如果没有数据去请求缓存数据
-         */
         String json = NetManager.getInstance().getJson(url, headMap);
-        if (TextUtils.isEmpty(json)) {
-            json = CacheManager.getInstance().getCacheData(url);
-        } else {
-            CacheManager.getInstance().saveCacheData(url, json);
-        }
         if (TextUtils.isEmpty(json)) {
             return null;
         } else {
-            //            return GsonUtil.fromJsonArray(json, t);
             return GsonTools.changeGsonToList(json, t);
         }
     }
 
     public <T> List<T> getDataList(String url, RequestBody body, Class<T> t) {
-        /**
-         * 1. 去网络请求最新数据
-         * 2. 如果没有数据去请求缓存数据
-         */
         String json = NetManager.getInstance().getPostJson(url, body);
-        if (TextUtils.isEmpty(json)) {
-            json = CacheManager.getInstance().getCacheData(url);
-        } else {
-            CacheManager.getInstance().saveCacheData(url, json);
-        }
         if (TextUtils.isEmpty(json)) {
             return null;
         } else {
-            //            return GsonUtil.fromJsonArray(json, t);
             return GsonTools.changeGsonToList(json, t);
         }
     }
 
     public String getXML(String url, Map<String, String> headMap) {
-        /**
-         * 1. 去网络请求最新数据
-         * 2. 如果没有数据去请求缓存数据
-         */
         String xml = NetManager.getInstance().getJson(url, headMap);
-        if (TextUtils.isEmpty(xml)) {
-            xml = CacheManager.getInstance().getCacheData(url);
-        } else {
-            CacheManager.getInstance().saveCacheData(url, xml);
-        }
         if (TextUtils.isEmpty(xml)) {
             return null;
         } else {
@@ -153,16 +98,7 @@ public class JsonCacheManager {
     }
 
     public String getXML(String url, RequestBody body) {
-        /**
-         * 1. 去网络请求最新数据
-         * 2. 如果没有数据去请求缓存数据
-         */
         String xml = NetManager.getInstance().getPostJson(url, body);
-        if (TextUtils.isEmpty(xml)) {
-            xml = CacheManager.getInstance().getCacheData(url);
-        } else {
-            CacheManager.getInstance().saveCacheData(url, xml);
-        }
         if (TextUtils.isEmpty(xml)) {
             return null;
         } else {
@@ -170,21 +106,22 @@ public class JsonCacheManager {
         }
     }
 
-    public String getXML(String url) {
-        /**
-         * 1. 去网络请求最新数据
-         * 2. 如果没有数据去请求缓存数据
-         */
-        String xml = NetManager.getInstance().getJson(url);
-        if (TextUtils.isEmpty(xml)) {
-            xml = CacheManager.getInstance().getCacheData(url);
-        } else {
-            CacheManager.getInstance().saveCacheData(url, xml);
-        }
-        if (TextUtils.isEmpty(xml)) {
+    public <T> T getDataBean(String url, Map<String, String> headMap, RequestBody body, Class<T> bean) {
+        String json = NetManager.getInstance().getJson(url, headMap, body);
+        if (TextUtils.isEmpty(json)) {
             return null;
         } else {
-            return xml;
+            return GsonTools.changeGsonToBean(json, bean);
         }
     }
+
+    public <T> List<T> getDataList(String url, Map<String, String> headMap, RequestBody body, Class<T> t) {
+        String json = NetManager.getInstance().getJson(url, headMap, body);
+        if (TextUtils.isEmpty(json)) {
+            return null;
+        } else {
+            return GsonTools.changeGsonToList(json, t);
+        }
+    }
+
 }
