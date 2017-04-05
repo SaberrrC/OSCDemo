@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.saberrr.openchina.manager.uimanager.LoadPager;
+import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.utils.ToastUtils;
 
 import java.util.List;
@@ -18,12 +20,16 @@ import java.util.List;
 public abstract class BaseFragment extends android.support.v4.app.Fragment {
 
     public LoadPager mLoadingPager;
-    private boolean needRefresh = false;
-    private boolean mNeedRefresh;
+    private boolean      mNeedRefresh;
+    private ShowActivity mParentActivity;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Activity activity = getActivity();
+        if (activity instanceof ShowActivity) {
+            mParentActivity = (ShowActivity) activity;
+        }
         if (mLoadingPager != null) {
             return mLoadingPager;
         }
@@ -45,9 +51,34 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
                 return getData();
             }
         };
+
         return mLoadingPager;
     }
 
+    /**
+     * 设置顶部Toolbar点击事件
+     *
+     * @param onClickListener 传入点击监听 处理对应操作
+     */
+    public void setToolbarIconOnClickListener(ShowActivity.OnClickListener onClickListener) {
+        mParentActivity.setToolbarIconOnClickListener(onClickListener);
+    }
+
+    /**
+     * Toolbar顶部SearchView搜索监听
+     *
+     * @param onQueryTextListener 传入监听器 处理形影操作
+     */
+    public void setOnQueryTextListener(ShowActivity.OnQueryTextListener onQueryTextListener) {
+        mParentActivity.setOnQueryTextListener(onQueryTextListener);
+    }
+
+    /**
+     * 根据传入的布局id生成view
+     *
+     * @param layoutId
+     * @return
+     */
     public View creatViewFromId(int layoutId) {
         return LayoutInflater.from(getContext()).inflate(layoutId, null, false);
     }
@@ -95,4 +126,10 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
         intent.putExtra(Fiels.DtailActivity.TITLE, title);
         startActivity(intent);
     }*/
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mParentActivity = null;
+    }
 }

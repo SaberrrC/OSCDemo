@@ -2,20 +2,28 @@ package com.saberrr.openchina.ui.fragment;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.faces.DisplayRules;
+import com.saberrr.openchina.faces.FaceBean;
 import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.presenter.JumpPresenter;
 import com.saberrr.openchina.presenter.JumpPresenterImpl;
+import com.saberrr.openchina.ui.activity.ShowActivity;
+import com.saberrr.openchina.ui.adapter.interfaces.FacesPagerAdapter;
 import com.saberrr.openchina.ui.view.FlowLayout;
+import com.saberrr.openchina.utils.ToastUtils;
 import com.yuyh.library.imgsel.ImageLoader;
 import com.yuyh.library.imgsel.ImgSelActivity;
 import com.yuyh.library.imgsel.ImgSelConfig;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,21 +35,19 @@ import butterknife.OnClick;
  */
 
 public class JumpFragment extends BaseFragment implements JumpView {
-
     @BindView(R.id.tv_content)
-    TextView   mTvContent;
+    EditText     mEtContent;
     @BindView(R.id.fl_images)
-    FlowLayout mFlImages;
-    @BindView(R.id.iv_pic)
-    ImageView  mIvPic;
-    @BindView(R.id.iv_at)
-    ImageView  mIvAt;
-    @BindView(R.id.iv_topic)
-    ImageView  mIvTopic;
-    @BindView(R.id.iv_face)
-    ImageView  mIvFace;
+    FlowLayout   mFlImages;
+    @BindView(R.id.vp_faces)
+    ViewPager    mVpFaces;
+    @BindView(R.id.ll_faces)
+    LinearLayout mLlFaces;
     private JumpPresenter mJumpPresenter;
-    private static final int REQUEST_CODE = 100;
+    public static final int            REQUEST_CODE = 100;
+    private             String         TAG          = "JumpFragment";
+    private             List<FaceBean> mDatas       = new ArrayList<>();
+    private FacesPagerAdapter mFacesPagerAdapter;
 
     @Override
     protected boolean needRefresh() {
@@ -52,8 +58,23 @@ public class JumpFragment extends BaseFragment implements JumpView {
     public View createView() {
         View view = creatViewFromId(R.layout.fragment_jumponejump);
         ButterKnife.bind(this, view);
+        initView();
         mJumpPresenter = new JumpPresenterImpl(this);
+        initToolbar();
         return view;
+    }
+
+    private void initView() {
+        List<FaceBean> allByType0 = DisplayRules.getAllByType(0);
+        List<FaceBean> allByType1 = DisplayRules.getAllByType(1);
+        mFacesPagerAdapter = new FacesPagerAdapter(allByType0,allByType1);
+        mVpFaces.setAdapter(mFacesPagerAdapter);
+        mFacesPagerAdapter.setOnClickListener(new FacesPagerAdapter.OnClickListener() {
+            @Override
+            public void onClick(FaceBean faceBean) {
+                ToastUtils.showToast(faceBean.toString());
+            }
+        });
     }
 
     @Override
@@ -62,47 +83,66 @@ public class JumpFragment extends BaseFragment implements JumpView {
         return "";
     }
 
-    //获取数据后的回调
-    @Override
-    public void onInit(List list) {
+    private void initToolbar() {
+        setToolbarIconOnClickListener(new ShowActivity.OnClickListener() {
+            @Override
+            public void onClick() {
+                ToastUtils.showToast("6666");
+            }
+        });
+        setOnQueryTextListener(new ShowActivity.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit() {
+                ToastUtils.showToast("正在搜索中");
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange() {
+                return false;
+            }
+        });
     }
 
-
-    @OnClick({R.id.tv_content, R.id.fl_images, R.id.iv_pic, R.id.iv_at, R.id.iv_topic, R.id.iv_face})
+    @OnClick({R.id.tv_count, R.id.iv_pic, R.id.iv_at, R.id.iv_topic, R.id.iv_face, R.id.tv_qq, R.id.tv_emoji, R.id.iv_del})
     public void onClick(View view) {
+
         switch (view.getId()) {
-            case R.id.tv_content:
-                break;
-            case R.id.fl_images:
+            case R.id.tv_count:
                 break;
             case R.id.iv_pic:
-                initPic();
+                mLlFaces.setVisibility(View.GONE);
                 // 跳转到图片选择器
                 ImgSelActivity.startActivity(this, config, REQUEST_CODE);
                 break;
             case R.id.iv_at:
+                mLlFaces.setVisibility(View.GONE);
                 break;
             case R.id.iv_topic:
+                mLlFaces.setVisibility(View.GONE);
                 break;
             case R.id.iv_face:
+                mLlFaces.setVisibility(View.VISIBLE);
+                break;
+            case R.id.tv_qq:
+                mVpFaces.setCurrentItem(0);
+                break;
+            case R.id.tv_emoji:
+                mVpFaces.setCurrentItem(1);
+                break;
+            case R.id.iv_del:
                 break;
         }
-    }
-
-    private void initPic() {
-
-
     }
 
     // 自定义图片加载器
-    private ImageLoader  loader = new ImageLoader() {
+    private ImageLoader loader = new ImageLoader() {
         @Override
         public void displayImage(Context context, String path, ImageView imageView) {
-            // TODO 在这边可以自定义图片加载库来加载ImageView，例如Glide、Picasso、ImageLoader等
             Glide.with(AppApplication.appContext).load(path).into(imageView);
         }
     };
+
     // 自由配置选项
     private ImgSelConfig config = new ImgSelConfig.Builder(AppApplication.appContext, loader)
             // 是否多选, 默认true
@@ -114,7 +154,7 @@ public class JumpFragment extends BaseFragment implements JumpView {
             // “确定”按钮文字颜色
             .btnTextColor(Color.WHITE)
             // 使用沉浸式状态栏
-            .statusBarColor(Color.parseColor("#24cf5f"))
+            //            .statusBarColor(Color.parseColor("#24cf5f"))
             // 返回图标ResId
             .backResId(R.mipmap.btn_back_normal)
             // 标题
@@ -129,6 +169,5 @@ public class JumpFragment extends BaseFragment implements JumpView {
             .needCamera(true)
             // 最大选择图片数量，默认9
             .maxNum(9).build();
-
 
 }

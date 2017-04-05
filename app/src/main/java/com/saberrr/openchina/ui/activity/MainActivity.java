@@ -18,16 +18,17 @@ import com.saberrr.openchina.ui.fragment.JumpFragment;
 import com.saberrr.openchina.ui.fragment.MoveFragment;
 import com.saberrr.openchina.ui.fragment.MyFragment;
 import com.saberrr.openchina.ui.fragment.TestFragment2;
-import com.saberrr.openchina.utils.ToastUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.saberrr.openchina.utils.ToastUtils.showToast;
 
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.tv_title_toolbar)
     TextView        mTvTitleToolbar;
-    @BindView(R.id.iv_icon_toolbar)
+    @BindView(R.id.iv_right_icon_toolbar)
     ImageView       mIvIconToolbar;
     @BindView(R.id.toolbar_main)
     Toolbar         mToolbarMain;
@@ -39,9 +40,10 @@ public class MainActivity extends AppCompatActivity {
     FragmentTabHost mTabhost;
     @BindView(R.id.iv_add)
     ImageView       mIvAdd;
-    private Class  mFragmentArray[] = { ComprehensiveFragment.class, MoveFragment.class, TestFragment2.class, FindFragment.class, MyFragment.class};
+    private Class  mFragmentArray[] = {ComprehensiveFragment.class, MoveFragment.class, TestFragment2.class, FindFragment.class, MyFragment.class};
     private String mTextArray[]     = {"综合", "动弹", "", "发现", "我的"};
     private int    mImageArray[]    = {R.drawable.selector_all_bg, R.drawable.selector_dongtan_bg, R.drawable.selector_add_bg, R.drawable.selector_find_bg, R.drawable.selector_mine_bg};
+    private long   laatTime         = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +61,10 @@ public class MainActivity extends AppCompatActivity {
         mIvIconToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastUtils.showToast("搜索界面");
+                showToast("搜索界面");
             }
         });
         mIvIconToolbar.setImageResource(R.mipmap.btn_search_normal);
-        //mTvTitleToolbar.setVisibility(View.GONE);
     }
 
     private ImageView mImageview;
@@ -93,62 +94,16 @@ public class MainActivity extends AppCompatActivity {
                 ShowActivity.startFragmentWithTitle(JumpFragment.class, null, "弹一弹", ShowActivity.TITLE_SEND);
             }
         });
-
-
-
-        /*mTabhost.setup(this, getSupportFragmentManager(), R.id.fl_content_main);
-        // 得到fragment的个数
-        int count = mFragmentArray.length;
-        for (int i = 0; i < count; i++) {
-            // 给每个Tab按钮设置图标、文字和内容
-            TabHost.TabSpec tabSpec = mTabhost.newTabSpec(mTextArray[i]).setIndicator(getTabItemView(i));
-
-            // 将Tab按钮添加进Tab选项卡中
-            mTabhost.addTab(tabSpec, mFragmentArray[i], null);
-            // 设置Tab按钮的背景
-            mTabhost.getTabWidget().getChildAt(i).setBackgroundResource(R.mipmap.ic_launcher);
-            mTabhost.getTabWidget().getChildAt(i).setBackgroundColor(Color.parseColor("#FAFAFA"));
-            final int finalI = i;
-            mTabhost.getTabWidget().getChildTabViewAt(i).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (finalI != 2) {
-                        mToolbarMain.setTitle(mTextArray[finalI]);
-                        mTabhost.setCurrentTab(finalI);
-                    } else {
-                        //弹一弹
-
-                    }
-
-                }
-            });
-
-        }
-        mTabhost.getTabWidget().setDividerDrawable(null);
-        mIvAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ShowActivity.startFragmentWithTitle(JumpFragment.class, null, "弹一弹", ShowActivity.TITLE_SEND);
-            }
-        });*/
     }
 
-/*
-    *//**
-     * 给每个Tab按钮设置图标和文字
-     *//*
-    private View getTabItemView(final int index) {
-
-        View view = LayoutInflater.from(this).inflate(R.layout.tab_item_view, null, false);
-        ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
-        imageView.setImageResource(mImageArray[index]);
-        TextView textView = (TextView) view.findViewById(R.id.textview);
-        textView.setText(mTextArray[index]);
-        if (index == 2) {
-            textView.setVisibility(View.GONE);
-            imageView.setVisibility(View.GONE);
-            view.setEnabled(false);
-        }
-        return view;
-    }*/
+    @Override
+    public void onBackPressed() {
+       /* long currentTimeMillis = System.currentTimeMillis();
+        if (currentTimeMillis - laatTime > 2000) {
+            ToastUtils.showToast("再次点击推出开源中国");
+            laatTime = System.currentTimeMillis();
+        } else {
+            finish();
+        }*/
+    }
 }
