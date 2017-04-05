@@ -77,6 +77,8 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
         layouts.put(InformationBodyBean.ResultBean.ItemsBean.class, R.layout.information_body_item);
         mFinalRecycleAdapter = new FinalRecycleAdapter(bodyDatas, layouts, this);
         mRecyclerView.setAdapter(mFinalRecycleAdapter);
+
+
     }
 
     private void initSwipeRefreshLayout() {
@@ -165,20 +167,6 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
 
     private class TestNormalAdapter extends PagerAdapter {
 
-//        @Override
-//        public View getView(ViewGroup container, final int position) {
-//
-//
-////            mImageView.setOnClickListener(new View.OnClickListener() {
-////                @Override
-////                public void onClick(View v) {
-////
-////                    ToastUtils.showToast("我被点击了"+position);
-////                }
-////            });
-//
-//            return view;
-//        }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {

@@ -1,5 +1,7 @@
 package com.saberrr.openchina.bean;
 
+import com.saberrr.openchina.ui.adapter.interfaces.BodyType;
+
 import java.util.List;
 
 /**
@@ -117,7 +119,7 @@ public class InformationBodyBean {
             this.items = items;
         }
 
-        public static class ItemsBean  {
+        public static class ItemsBean implements BodyType {
             /**
              * author : 局长
              * body : 软件周刊（03.26 — 04.01）：本周热门软件更新 — IntelliJ IDEA 2017.1.1 EAP 发布；DragonFly BSD 4.8.0 发布，提高了内核性能；renren-securi...

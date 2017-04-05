@@ -8,6 +8,7 @@ public class Constant {
     public static class BLOGDETAILSFRAGMENT {
         public static final String HREF      = "HREF";
         public static final String COMMENTCOUNT = "COMMENTCOUNT";
+
     }
 
     public static final String COOKIE = "COOKIE";
