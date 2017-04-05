@@ -53,8 +53,9 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     private ImageView   mIvCommendBG;
     private FrameLayout mFlCommend;
     private TextView    mTvCommend;
-    private int     mTitle_menu       = -1;
-    private boolean touchHintKeyboard = false;
+    private int     mTitle_menu           = -1;
+    private boolean touchHintKeyboard     = false;
+    private boolean hintKeyboardexception = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -321,8 +322,16 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         this.touchHintKeyboard = touchHintKeyboard;
     }
 
+    public void setHintKeyboardexception() {
+        hintKeyboardexception = true;
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (hintKeyboardexception) {
+            hintKeyboardexception = false;
+            return super.dispatchTouchEvent(ev);
+        }
         if (touchHintKeyboard) {
             if (ev.getAction() == MotionEvent.ACTION_DOWN) {
                 View v = getCurrentFocus();

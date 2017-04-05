@@ -48,6 +48,7 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class JumpFragment extends BaseFragment implements JumpView {
+    public static final String TOPIC_TEXT = "#输入软件名#";
     @BindView(R.id.tv_content)
     EditText     mEtContent;
     @BindView(R.id.vp_faces)
@@ -119,7 +120,7 @@ public class JumpFragment extends BaseFragment implements JumpView {
         setToolbarIconOnClickListener(new ShowActivity.OnClickListener() {
             @Override
             public void onClick() {
-                ToastUtils.showToast("6666");
+                ToastUtils.showToast(images.size() + "");
             }
         });
     }
@@ -139,7 +140,13 @@ public class JumpFragment extends BaseFragment implements JumpView {
                 mLlFaces.setVisibility(View.GONE);
                 break;
             case R.id.iv_topic:
+                setHintKeyboardexception();
                 mLlFaces.setVisibility(View.GONE);
+                int index = mEtContent.getSelectionStart();
+                Editable editable = mEtContent.getText();
+                editable.insert(index, TOPIC_TEXT);
+//                mEtContent.setSelection(index + TOPIC_TEXT.indexOf("#"), index + TOPIC_TEXT.indexOf("#", TOPIC_TEXT.indexOf("#")));
+                mEtContent.setSelection(index + 1, index + 6);
                 break;
             case R.id.iv_face:
                 mLlFaces.setVisibility(View.VISIBLE);

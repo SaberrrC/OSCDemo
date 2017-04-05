@@ -91,6 +91,10 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
         mParentActivity.setonOptionsItemSelected(onOptionsItemSelected);
     }
 
+    public void setHintKeyboardexception() {
+        mParentActivity.setHintKeyboardexception();
+    }
+
     /**
      * 点击其他地方隐藏键盘
      *
