@@ -8,7 +8,7 @@ import java.util.List;
  * Created by 丁银晨 on 2017/4/1.
  */
 
-public class InformationHearBean implements HeadType{
+public class InformationHearBean {
 
     /**
      * code : 1
