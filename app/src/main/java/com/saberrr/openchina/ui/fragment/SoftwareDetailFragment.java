@@ -60,7 +60,7 @@ public class SoftwareDetailFragment extends BaseFragment {
         try {
             Response response = okHttpClient.newCall(request).execute();
             String xml = response.body().string();
-            System.out.println(xml);
+//            System.out.println(xml);
             SoftwareDetailBean softwareDetailBean = XmlUtils.toBean(SoftwareDetailBean.class, xml.getBytes());
             final Software software = softwareDetailBean.getSoftware();
             String title = software.getTitle();

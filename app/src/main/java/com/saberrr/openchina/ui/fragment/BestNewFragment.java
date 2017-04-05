@@ -66,7 +66,7 @@ public class BestNewFragment extends BaseFragment implements FinalRecycleAdapter
         try {
             Response response = okHttpClient.newCall(request).execute();
             String xml = response.body().string();
-            System.out.println(xml);
+//            System.out.println(xml);
             RecommendBean recommendBean = XmlUtils.toBean(RecommendBean.class, xml.getBytes());
             List<Software> softwares = recommendBean.getSoftwares();
             for (int i = 0; i < softwares.size(); i++) {
@@ -78,7 +78,7 @@ public class BestNewFragment extends BaseFragment implements FinalRecycleAdapter
 
                 datas.add(recommendItemBean);
 
-                System.out.println(name);
+//                System.out.println(name);
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -27,6 +27,8 @@
                 android:id="@+id/wv_softwaredetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></WebView>
+
+
         </LinearLayout>
 
     </ScrollView>

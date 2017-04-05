@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -9,9 +10,12 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,7 +53,9 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     private ImageView   mIvCommendBG;
     private FrameLayout mFlCommend;
     private TextView    mTvCommend;
-    private int mTitle_menu = -1;
+    private int     mTitle_menu           = -1;
+    private boolean touchHintKeyboard     = false;
+    private boolean hintKeyboardexception = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -312,7 +318,41 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         return false;
     }
 
-   /* private boolean isShouldHideInput(View v, MotionEvent event) {
+    public void setHintKeyboard(boolean touchHintKeyboard) {
+        this.touchHintKeyboard = touchHintKeyboard;
+    }
+
+    public void setHintKeyboardexception() {
+        hintKeyboardexception = true;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (hintKeyboardexception) {
+            hintKeyboardexception = false;
+            return super.dispatchTouchEvent(ev);
+        }
+        if (touchHintKeyboard) {
+            if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+                View v = getCurrentFocus();
+                if (isShouldHideInput(v, ev)) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
+                }
+                return super.dispatchTouchEvent(ev);
+            }
+            // 必不可少，否则所有的组件都不会有TouchEvent了
+            if (getWindow().superDispatchTouchEvent(ev)) {
+                return true;
+            }
+            return onTouchEvent(ev);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    public boolean isShouldHideInput(View v, MotionEvent event) {
         if (v != null && (v instanceof EditText)) {
             int[] leftTop = {0, 0};
             //获取输入框当前的location位置
@@ -330,25 +370,4 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         }
         return false;
     }
-
-    //点击其他地方隐藏键盘
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if (isShouldHideInput(v, ev)) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
-            }
-            return super.dispatchTouchEvent(ev);
-        }
-        // 必不可少，否则所有的组件都不会有TouchEvent了
-        if (getWindow().superDispatchTouchEvent(ev)) {
-            return true;
-        }
-        return onTouchEvent(ev);
-    }*/
-
 }

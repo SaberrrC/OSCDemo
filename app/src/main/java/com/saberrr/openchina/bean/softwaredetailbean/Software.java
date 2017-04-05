@@ -17,7 +17,7 @@ public class Software {
     private String mExtensionTitle;
     @XStreamAlias("authorid")
     private String authorid;
-    @XStreamAlias("Li_Mr")
+    @XStreamAlias("author")
     private String name;
     @XStreamAlias("recommended")
     private int recommended;

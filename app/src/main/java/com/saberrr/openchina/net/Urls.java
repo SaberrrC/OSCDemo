@@ -10,7 +10,7 @@ public class Urls {
     public static String NEWS =BASE_URL+ "action/apiv2/news?pageToken=";
     public static String BLOG =BASE_URL+ "action/apiv2/blog?catalog=";
     public static String BLOGUP ="& pageToken=";
-    public static String MOVE_NEW = BASE_URL + "action/apiv2/tweets?type=1";
+    public static String MOVE_NEW = BASE_URL + "action/apiv2/tweets?type=";
 
     public static String MOVE_HOT = BASE_URL + "action/apiv2/tweets?type=2";
     public static String MOVE_MY = BASE_URL + "action/apiv2/tweets?type=3";
@@ -29,6 +29,7 @@ public class Urls {
     public static  final String USERINFO = "/action/api/my_information";
     //赞过我
     public static  final String TWEETLIKE = "/action/api/my_tweet_like_list";
-
+    //发表动弹
+    public static final String SEND_JUMP = BASE_URL + "action/apiv2/";
 
 }
