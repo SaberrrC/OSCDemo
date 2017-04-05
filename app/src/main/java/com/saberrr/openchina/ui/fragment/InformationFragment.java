@@ -200,8 +200,10 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
                     bundle.putString(Constant.BLOGDETAILSFRAGMENT.HREF, itemsBean.getHref());
+                    bundle.putString(Constant.BLOGDETAILSFRAGMENT.TITLE, itemsBean.getTitle());
+                    bundle.putInt(Constant.BLOGDETAILSFRAGMENT.ID, itemsBean.getId());
                     bundle.putString(Constant.BLOGDETAILSFRAGMENT.COMMENTCOUNT, itemsBean.getCommentCount() + "");
-                    ShowActivity.startFragmentWithTitle(BlogDetailsFragment.class, bundle, "博客详情", ShowActivity.TITLE_COMMENT);
+                    ShowActivity.startFragmentWithTitle(InfomationDetailsFragment.class, bundle, "博客详情", ShowActivity.TITLE_COMMENT);
                 }
             });
         }
