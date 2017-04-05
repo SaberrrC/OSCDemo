@@ -31,6 +31,12 @@
             android:name=".ui.activity.MainActivity"
             android:theme="@style/NoTitle">
         </activity>
+        <activity
+            android:name=".ui.activity.ShowImageActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        </activity>
+        <activity android:name=".ui.activity.MoveDetailActivity">
+        </activity>
     </application>
 
 </manifest>

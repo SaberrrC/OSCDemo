@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -8,10 +9,11 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,11 +22,17 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.MoveNewBean;
 import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.ui.activity.ShowImageActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -67,6 +75,7 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
         mAdapter = new FinalRecycleAdapter(data, map, this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
     }
 
     final List<MoveNewBean.ResultBean.ItemsBean> data = new ArrayList<>();
@@ -104,19 +113,36 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
     }
 
     @Override
-    public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
+    public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, final Object itemData) {
 
 
         if (itemData instanceof MoveNewBean.ResultBean.ItemsBean) {
 
-            MoveNewBean.ResultBean.ItemsBean bean = (MoveNewBean.ResultBean.ItemsBean) itemData;
+            final MoveNewBean.ResultBean.ItemsBean bean = (MoveNewBean.ResultBean.ItemsBean) itemData;
 
-            ShowView(holder, bean);
+            mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+                @Override
+                public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                    return false;
+                }
+
+                @Override
+                public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+                }
+
+                @Override
+                public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+                }
+            });
+
+            ShowView(holder, bean, position);
 
         }
     }
 
-    private void ShowView(FinalRecycleAdapter.ViewHolder holder, MoveNewBean.ResultBean.ItemsBean bean) {
+    private void ShowView(FinalRecycleAdapter.ViewHolder holder, final MoveNewBean.ResultBean.ItemsBean bean, final int position) {
         ImageView iv_icon = (ImageView) holder.getViewById(R.id.item_move_iv_icon);
         TextView tv_name = (TextView) holder.getViewById(R.id.item_move_tv_name);
         TextView tv_txt = (TextView) holder.getViewById(R.id.item_move_tv_text);
@@ -137,7 +163,22 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
 
 
         //时间
-        tv_date.setText(bean.getPubDate());
+        String pubDate = bean.getPubDate();
+        long parseTime = parseTime(pubDate);
+        Log.i(TAG, "ShowView: parseTime = " + parseTime);
+        long endTime = parseTime(getSystemTime());
+        Log.i(TAG, "ShowView: endTime = " + endTime);
+        long time = endTime - parseTime;
+        int m = (int) (time / 1000 / 60);
+        Log.i(TAG, "ShowView: m" + m);
+        if (m < 3) {
+            tv_date.setText("刚刚");
+        } else if (m < 60) {
+            tv_date.setText(m + "分钟前");
+        } else {
+            long h = m / 60;
+            tv_date.setText(h + "小时前");
+        }
 
         //赞
         if (bean.getLikeCount() > 0) {
@@ -168,19 +209,19 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
         tv_txt.setText(msp);
         tv_txt.setMovementMethod(LinkMovementMethod.getInstance());
 
-        List<MoveNewBean.ResultBean.ItemsBean.ImagesBean> images = bean.getImages();
+        final List<MoveNewBean.ResultBean.ItemsBean.ImagesBean> images = bean.getImages();
         gridLayout.setColumnCount(3);
         int width = gridLayout.getMeasuredWidth();
         int childWidth = width / 3 - 20;
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(childWidth, childWidth);
-//            layoutParams.setMargins(10, 10, 10, 10);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(childWidth, childWidth);
+        layoutParams.setMargins(10, 10, 10, 10);
         gridLayout.removeAllViews();
         if (images != null && images.size() != 0) {
-            Log.i(TAG, "onBindViewHolder: 1111111111111111");
             //图片
             for (int i = 0; i < images.size(); i++) {
+                View view = View.inflate(getContext(), R.layout.show_image, null);
                 ImageView iv = new ImageView(getContext());
-                MoveNewBean.ResultBean.ItemsBean.ImagesBean imagesBean = images.get(i);
+                final MoveNewBean.ResultBean.ItemsBean.ImagesBean imagesBean = images.get(i);
                 String thumb = imagesBean.getThumb();
                 Glide.with(getContext()).load(thumb).asBitmap().into(iv);
                 iv.setLayoutParams(layoutParams);
@@ -189,6 +230,10 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
                 iv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), ShowImageActivity.class);
+                        int[] arr = {position, finalI};
+                        intent.putExtra("item", arr);
+                        startActivity(intent);
                         Toast.makeText(getContext(), "图片" + finalI + "被点击了", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -199,5 +244,22 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
         tv_name.setText(name);
     }
 
+    public long parseTime(String date) {
+        String regEx = "[^0-9]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(date);
+        String[] split = m.replaceAll(" ").trim().split(" ");
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]));
+
+        return calendar.getTimeInMillis();
+    }
+
+    public String getSystemTime() {
+        Date nowTime = new Date(System.currentTimeMillis());
+        SimpleDateFormat sdFormatter = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss");
+        String retStrFormatNowDate = sdFormatter.format(nowTime);
+        return retStrFormatNowDate;
+    }
 }

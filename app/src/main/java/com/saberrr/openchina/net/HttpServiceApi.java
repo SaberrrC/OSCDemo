@@ -23,4 +23,6 @@ public interface HttpServiceApi {
 
     @GET(Urls.USERINFO)
     Call<ResponseBody> getUserInfo(@Query("uid") String uid);
+
+
 }

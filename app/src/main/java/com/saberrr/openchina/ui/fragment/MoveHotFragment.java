@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,11 +21,17 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.MoveNewBean;
 import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.ui.activity.ShowImageActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -137,7 +144,21 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
 
 
         //时间
-        tv_date.setText(bean.getPubDate());
+        //时间
+        String pubDate = bean.getPubDate();
+        long parseTime = parseTime(pubDate);
+        Log.i(TAG, "ShowView: parseTime = " + parseTime);
+        long endTime = System.currentTimeMillis();
+        Log.i(TAG, "ShowView: endTime = " + endTime);
+        long time = endTime - parseTime;
+        int m = (int) (time / 1000 / 60);
+        Log.i(TAG, "ShowView: m" + m);
+        if (m < 60) {
+            tv_date.setText(m + "分钟前");
+        } else {
+            long h = m / 60;
+            tv_date.setText(h + "小时前");
+        }
 
         //赞
         if (bean.getLikeCount() > 0) {
@@ -189,6 +210,10 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
                 iv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        Intent intent = new Intent(getContext(), ShowImageActivity.class);
+                        intent.putExtra("index", finalI);
+                        startActivity(intent);
                         Toast.makeText(getContext(), "图片" + finalI + "被点击了", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -199,5 +224,22 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
         tv_name.setText(name);
     }
 
+    public long parseTime(String date) {
+        String regEx = "[^0-9]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(date);
+        String[] split = m.replaceAll(" ").trim().split(" ");
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]));
+
+        return calendar.getTimeInMillis();
+    }
+
+    public String getSystemTime() {
+        Date nowTime = new Date(System.currentTimeMillis());
+        SimpleDateFormat sdFormatter = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss");
+        String retStrFormatNowDate = sdFormatter.format(nowTime);
+        return retStrFormatNowDate;
+    }
 }
