@@ -10,7 +10,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     >
-
+    <!--中间标题-->
     <TextView
         android:id="@+id/tv_title_toolbar"
         android:layout_width="wrap_content"
@@ -19,15 +19,45 @@
         android:gravity="center"
         android:textColor="@color/white"
         android:textSize="18sp"/>
-
+    <!--右边搜索图标-->
     <ImageView
-        android:id="@+id/iv_icon_toolbar"
+        android:id="@+id/iv_right_icon_toolbar"
         android:layout_width="50sp"
         android:layout_height="50sp"
         android:layout_gravity="right"
         android:padding="15sp"
         android:visibility="gone"/>
+    <!--右边书本和评论图标-->
+    <FrameLayout
+        android:id="@+id/fl_commend"
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="right"
+        android:visibility="gone">
 
+        <ImageView
+            android:id="@+id/iv_commend_bg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingBottom="17dp"
+            android:paddingLeft="17dp"
+            android:paddingRight="17dp"
+            android:paddingTop="18dp"
+            android:src="@drawable/ic_menu_comment"/>
+
+        <TextView
+            android:id="@+id/tv_commend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="120"
+            android:textColor="@color/white"
+            android:textSize="12sp"/>
+    </FrameLayout>
+
+    <!--右边发送-->
     <TextView
         android:id="@+id/tv_right_toolbar"
         android:layout_width="wrap_content"
@@ -39,4 +69,6 @@
         android:textColor="@color/white"
         android:textSize="18sp"
         android:visibility="gone"/>
+
+
 </android.support.v7.widget.Toolbar>
