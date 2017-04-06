@@ -35,5 +35,8 @@ public class Urls {
     public static final String SEND_JUMP_TEXT = BASE_URL + "action/apiv2/tweet";
     public static final String SEND_JUMP_IMAGE = BASE_URL + "action/apiv2/resource_image";
 
+    //获取apk版本信息
+    public static final String MOBILEAPPVERSION = BASE_URL + "MobileAppVersion.xml";
+
 
 }

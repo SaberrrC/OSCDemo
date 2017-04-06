@@ -114,6 +114,14 @@ public class JsonCacheManager {
             return xml;
         }
     }
+    public String getXML(String url) {
+        String xml = NetManager.getInstance().getJson(url);
+        if (TextUtils.isEmpty(xml)) {
+            return null;
+        } else {
+            return xml;
+        }
+    }
 
     public <T> T getDataBean(String url, Map<String, String> headMap, RequestBody body, Class<T> bean) {
         String json = NetManager.getInstance().getJson(url, headMap, body);

@@ -13,6 +13,9 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.bean.UpdateInfo;
+import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
+import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.fragment.ComprehensiveFragment;
 import com.saberrr.openchina.ui.fragment.FindFragment;
 import com.saberrr.openchina.ui.fragment.JumpFragment;
@@ -22,7 +25,9 @@ import com.saberrr.openchina.ui.fragment.MyFragment;
 import com.saberrr.openchina.ui.fragment.TestFragment2;
 import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.SpUtil;
+import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
+import com.saberrr.openchina.utils.XmlUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,6 +62,24 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initToolBar();
         initView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //版本比对
+        ThreadUtils.runSub(new Runnable() {
+            @Override
+            public void run() {
+                String xml = JsonCacheManager.getInstance().getXML(Urls.MOBILEAPPVERSION);
+                UpdateInfo updateInfo = XmlUtils.toBean(UpdateInfo.class, xml.getBytes());
+
+
+            }
+        });
+
+
+
     }
 
     private void initToolBar() {
