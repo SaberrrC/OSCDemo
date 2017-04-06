@@ -2,6 +2,7 @@ package com.saberrr.openchina.ui.fragment;
 
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,9 +63,13 @@ public class OpenSoftwareFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (mCurrentFragment instanceof CategoryThreeItemFragment) {
-                    getFragmentManager().beginTransaction().replace(R.id.fl_categoryThree, new CategoryItemFragment()).addToBackStack(null).commit();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.setCustomAnimations(R.anim.slide_left_in,R.anim.slide_right_out);
+                    transaction.replace(R.id.fl_categoryThree, new CategoryItemFragment()).addToBackStack(null).commit();
                 } else if (mCurrentFragment instanceof CategoryItemFragment) {
-                    getFragmentManager().beginTransaction().replace(R.id.fl_categorySecond, new CategoryFragment()).addToBackStack(null).commit();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.setCustomAnimations(R.anim.slide_left_in,R.anim.slide_right_out);
+                    transaction.replace(R.id.fl_categorySecond, new CategoryFragment()).addToBackStack(null).commit();
                 } else {
                     showActivity.finish();
                 }

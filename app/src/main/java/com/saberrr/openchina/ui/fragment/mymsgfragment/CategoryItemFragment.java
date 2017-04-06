@@ -140,7 +140,7 @@ public class CategoryItemFragment extends BaseFragment implements FinalRecycleAd
             @Override
             public void onClick(View v) {
                 EventBus.getDefault().postSticky(new EventBusBean2(tagList, position));
-                getFragmentManager().beginTransaction().replace(R.id.fl_categorySecond,new CategoryThreeItemFragment()).addToBackStack(null).commit();
+                getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_right_in,R.anim.slide_left_out,R.anim.slide_left_in,R.anim.slide_right_out).replace(R.id.fl_categorySecond,new CategoryThreeItemFragment()).addToBackStack(null).commit();
             }
         });
 

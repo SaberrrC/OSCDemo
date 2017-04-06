@@ -173,7 +173,7 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
                 //((ShowActivity) getContext()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_categoryFirst,new CategoryItemFragment()).commit();
 
                 //getChildFragmentManager().beginTransaction().replace(R.id.fl_categoryFirst, new CategoryItemFragment()).commit();
-                getFragmentManager().beginTransaction().replace(R.id.fl_categoryFirst,new CategoryItemFragment()).addToBackStack(null).commit();
+                getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_right_in,R.anim.slide_left_out,R.anim.slide_left_in,R.anim.slide_right_out).replace(R.id.fl_categoryFirst,new CategoryItemFragment()).addToBackStack(null).commit();
 
             }
         });
