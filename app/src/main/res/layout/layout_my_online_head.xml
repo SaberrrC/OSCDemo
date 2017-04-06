@@ -42,8 +42,8 @@
 
             <ImageView
                 android:id="@+id/iv_gender"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
                 android:layout_alignBottom="@id/iv_avtar_online"
                 android:layout_alignRight="@id/iv_avtar_online"
                 android:layout_margin="5dp"

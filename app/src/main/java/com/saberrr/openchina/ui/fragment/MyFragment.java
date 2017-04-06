@@ -121,7 +121,7 @@ public class MyFragment extends BaseFragment {
     RelativeLayout mRl;
 
     private boolean isOnline;
-    private int[] genderRid = {R.mipmap.ic_male, R.mipmap.ic_female};
+    private int[] genderRid = {0 , R.mipmap.ic_male,R.mipmap.ic_female};
     private LoginBean mLoginBean;
 
 
@@ -138,12 +138,15 @@ public class MyFragment extends BaseFragment {
         return view;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onLoginEvent(LoginBeanEvent event) {
+        EventBus.getDefault().removeStickyEvent(event);
         new Thread(new Runnable() {
             @Override
             public void run() {
                 checkLogin();
+
+
             }
         }).start();
 
@@ -332,7 +335,15 @@ public class MyFragment extends BaseFragment {
                     mTvFavoriteCount.setText(userInfo.getUser().getFavoritecount());
                     mTvFollowersCount.setText(userInfo.getUser().getFollowers());
                     mTvFansCount.setText(userInfo.getUser().getFans());
-                    mIvGender.setImageResource(genderRid[Integer.parseInt(userInfo.getUser().getGender()) - 1]);
+
+                    if (userInfo.getUser().getGender().equals("0")) {
+                        mIvGender.setVisibility(View.GONE);
+
+                    } else {
+                        mIvGender.setVisibility(View.VISIBLE);
+                        mIvGender.setImageResource(genderRid[Integer.parseInt(userInfo.getUser().getGender())]);
+                    }
+
                     System.out.println(userInfo.getUser().getPortrait());
                     Glide.with(getContext()).load(userInfo.getUser().getPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvAvtarOffline) {
                         @Override

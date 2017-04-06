@@ -113,7 +113,7 @@ public class LoginFragment extends BaseFragment {
                                         SpUtil.saveString(getContext(), Constant.USERID, loginBean.getUser().getUid());
                                         SpUtil.saveString(getContext(), Constant.PWD, mPwd);
 
-                                        EventBus.getDefault().post(event);
+                                        EventBus.getDefault().postSticky(event);
                                         getActivity().finish();
                                     } else {
 
