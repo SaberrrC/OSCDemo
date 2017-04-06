@@ -29,6 +29,7 @@ import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.GsonTools;
 import com.saberrr.openchina.utils.SpUtil;
+import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -145,7 +146,7 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
 
     private void updateData() {
 
-        getActivity().runOnUiThread(
+        ThreadUtils.runMain(
                 new Runnable() {
                     @Override
                     public void run() {
@@ -206,8 +207,6 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
         SpannableString spann = new SpannableString(name);
 //        spann.setSpan(new ImageSpan(R.mipmap));
         tv_name.setText(name);
-
-
 
 
         //时间

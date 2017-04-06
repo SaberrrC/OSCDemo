@@ -7,7 +7,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.text.SpannableString;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -26,6 +27,7 @@ import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.MoveDetailActivity;
 import com.saberrr.openchina.ui.activity.ShowImageActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
+import com.saberrr.openchina.utils.Utils;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -208,14 +210,9 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
 
         //文本内容
         String content = bean.getContent();
-//            tv_txt.setText(content);
-//            tv_txt.setText(Html.fromHtml(content  )); //这个不好，不能点
-
         Spanned spanned = Html.fromHtml(content);
-
-        SpannableString msp = new SpannableString(spanned);
-
-//        msp.setSpan(new ForegroundColorSpan(Color.MAGENTA), 2, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableStringBuilder msp = new SpannableStringBuilder(spanned);
+        Spannable spannable = Utils.displayEmoji(getContext().getResources(), msp);
 
         tv_txt.setText(msp);
 

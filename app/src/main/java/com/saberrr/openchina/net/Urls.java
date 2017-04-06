@@ -39,7 +39,6 @@ public class Urls {
 
     //获取apk版本信息
     public static final String MOBILEAPPVERSION = BASE_URL + "MobileAppVersion.xml";
-    public static final String TWEETLIKE = "/action/api/my_tweet_like_list";
 
 
     //粉丝

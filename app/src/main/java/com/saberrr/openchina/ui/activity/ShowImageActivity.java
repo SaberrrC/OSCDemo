@@ -73,6 +73,7 @@ public class ShowImageActivity extends AppCompatActivity {
                     Glide.with(ShowImageActivity.this).load(thumb).asBitmap().into(imageView);
                     ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                     imageView.setLayoutParams(layoutParams);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER);
                     container.addView(imageView);//记住这一步
                     return imageView;
                 }

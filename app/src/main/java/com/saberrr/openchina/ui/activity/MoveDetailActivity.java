@@ -1,13 +1,18 @@
 package com.saberrr.openchina.ui.activity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,6 +23,7 @@ import com.saberrr.openchina.bean.MoveNewBean;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +53,8 @@ public class MoveDetailActivity extends AppCompatActivity {
     ListView mLvZan;
     @BindView(R.id.lv_common)
     ListView mLvCommon;
+    @BindView(R.id.gridLayout)
+    GridLayout mGridLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +99,29 @@ public class MoveDetailActivity extends AppCompatActivity {
         mTZan.setText("赞（" + bean.getLikeCount() + "）");
         mBtCommon.setText("评论（" + bean.getCommentCount() + "）");
 
-        final MoveNewBean.ResultBean.ItemsBean.AboutBean about = bean.getAbout();
+        WindowManager windowManager = (WindowManager) ((Activity) this).getSystemService(Context.WINDOW_SERVICE);
+        int seernWidth = windowManager.getDefaultDisplay().getWidth();
+        int childWidth = seernWidth / 3 - 40;
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(childWidth, childWidth);
+        layoutParams.setMargins(10, 10, 10, 10);
+        mGridLayout.setColumnCount(3);
+        mGridLayout.removeAllViews();
+        List<MoveNewBean.ResultBean.ItemsBean.ImagesBean> images = bean.getImages();
+        if (images != null && images.size() > 0) {
+            //图片
+            for (int i = 0; i < images.size(); i++) {
+                ImageView iv = new ImageView(this);
+                final MoveNewBean.ResultBean.ItemsBean.ImagesBean imagesBean = images.get(i);
+                String thumb = imagesBean.getThumb();
+                Glide.with(this).load(thumb).asBitmap().into(iv);
+                iv.setLayoutParams(layoutParams);
+                iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                final int finalI = i;
+                mGridLayout.addView(iv);
+            }
+        }
+
+//        final MoveNewBean.ResultBean.ItemsBean.AboutBean about = bean.getAbout();
 
     }
 
