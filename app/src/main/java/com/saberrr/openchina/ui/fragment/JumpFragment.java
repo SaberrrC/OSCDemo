@@ -69,6 +69,8 @@ public class JumpFragment extends BaseFragment {
     public static final String RESOURCE   = "resource";
     public static final String COOKIE     = "cookie";
     public static final String TOKEN      = "token";
+    public static final String CONTENT    = "content";
+    public static final String IMAGES     = "images";
     @BindView(R.id.tv_content)
     EditText     mEtContent;
     @BindView(R.id.vp_faces)
@@ -178,6 +180,10 @@ public class JumpFragment extends BaseFragment {
         setToolbarIconOnClickListener(new ShowActivity.OnClickListener() {
             @Override
             public void onClick() {
+                mCookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
+                if (TextUtils.isEmpty(mCookie)) {
+                    ShowActivity.startFragment(LoginFragment.class, null);
+                }
                 ThreadUtils.runSub(new Runnable() {
                     @Override
                     public void run() {
@@ -200,13 +206,12 @@ public class JumpFragment extends BaseFragment {
                         if (images.size() == 0) { //纯文字
                             try {
                                 OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-                                RequestBody body = new FormBody.Builder().add("content", content).build();
+                                RequestBody body = new FormBody.Builder().add(CONTENT, content).build();
                                 Request request = new Request.Builder().url(Urls.SEND_JUMP_TEXT)//纯文字地址
-                                        .addHeader("cookie", mCookie).post(body).build();
+                                        .addHeader(COOKIE, mCookie).post(body).build();
                                 Response response = okHttpClient.newCall(request).execute();
                                 String string = response.body().string();
                                 System.out.println(string);
-
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 ToastUtils.showToast("发送失败");
@@ -255,7 +260,7 @@ public class JumpFragment extends BaseFragment {
                             //发文字
                             try {
                                 OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-                                RequestBody body = new FormBody.Builder().add("images", token).add("content", content).build();
+                                RequestBody body = new FormBody.Builder().add(IMAGES, token).add(CONTENT, content).build();
                                 Request request = new Request.Builder().url("http://www.oschina.net/action/apiv2/tweet").addHeader(COOKIE, mCookie).post(body).build();
                                 Response response = okHttpClient.newCall(request).execute();
                                 String string = response.body().string();
@@ -386,7 +391,7 @@ public class JumpFragment extends BaseFragment {
             // 是否多选, 默认true
             .multiSelect(true)
             // 是否记住上次选中记录, 仅当multiSelect为true的时候配置，默认为true
-            .rememberSelected(true)
+            .rememberSelected(false)
             // “确定”按钮背景色
             .btnBgColor(Color.TRANSPARENT)
             // “确定”按钮文字颜色
