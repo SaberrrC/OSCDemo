@@ -57,7 +57,6 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
 
     public void setOnBackIconClickListener(ShowActivity.OnBackIconClickListener onBackIconClickListener) {
         mParentActivity.setOnBackIconClickListener(onBackIconClickListener);
-
     }
 
     /**

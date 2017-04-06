@@ -1,17 +1,15 @@
 package com.saberrr.openchina.ui.fragment;
 
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.MyMsgInfo;
 import com.saberrr.openchina.ui.adapter.MyMsgAdapter;
-import com.saberrr.openchina.ui.fragment.mymsgfragment.CallMeFragment;
+import com.saberrr.openchina.ui.fragment.mymsgfragment.AtMeFragment;
 import com.saberrr.openchina.ui.fragment.mymsgfragment.CommentFragment;
 import com.saberrr.openchina.ui.fragment.mymsgfragment.FansFragment;
 import com.saberrr.openchina.ui.fragment.mymsgfragment.MsgFragment;
@@ -51,10 +49,10 @@ public class MyMsgFragment extends BaseFragment {
 
     private void init() {
         // TODO: 2017/4/2 展示数据
-        mDataList.add(new MyMsgInfo(new CallMeFragment(), Title[0]));
+        mDataList.add(new MyMsgInfo(new AtMeFragment(), Title[0]));
         mDataList.add(new MyMsgInfo(new CommentFragment(), Title[1]));
-        mDataList.add(new MyMsgInfo(new FansFragment(), Title[2]));
-        mDataList.add(new MyMsgInfo(new MsgFragment(), Title[3]));
+        mDataList.add(new MyMsgInfo(new MsgFragment(), Title[2]));
+        mDataList.add(new MyMsgInfo(new FansFragment(), Title[3]));
         mDataList.add(new MyMsgInfo(new TweetlikeFragment(), Title[4]));
 
 
