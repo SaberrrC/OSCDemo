@@ -1,7 +1,9 @@
 package com.saberrr.openchina.ui.activity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -11,9 +13,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.saberrr.openchina.R;
-import com.saberrr.openchina.bean.UpdateInfo;
+import com.saberrr.openchina.bean.updatainfo.UpdateInfo;
 import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.fragment.ComprehensiveFragment;
@@ -27,6 +30,7 @@ import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
+import com.saberrr.openchina.utils.Utils;
 import com.saberrr.openchina.utils.XmlUtils;
 
 import butterknife.BindView;
@@ -72,12 +76,50 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 String xml = JsonCacheManager.getInstance().getXML(Urls.MOBILEAPPVERSION);
-                UpdateInfo updateInfo = XmlUtils.toBean(UpdateInfo.class, xml.getBytes());
+                final UpdateInfo updateInfo = XmlUtils.toBean(UpdateInfo.class, xml.getBytes());
+                System.out.println(updateInfo.toString());
+                String vcode = updateInfo.getUpdate().getAAndroid().getVersionCode();
+                int netCode = Integer.valueOf(vcode);
+                int locolCode = Utils.getVersionCode(getPackageName());
+                if (locolCode < netCode) {
+
+                    ThreadUtils.runMain(new Runnable() {
+                        @Override
+                        public void run() {
+                            // 普通
+                            String updateLog = updateInfo.getUpdate().getAAndroid().getUpdateLog();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            // 设置图标
+                            //                                builder.setIcon(R.drawable.iv3);
+                            // 设置标题
+                            builder.setTitle("发现新版本");
+                            // 设置消息内容
+                            builder.setMessage(updateLog);
+                            // 点击旁边区域不会消失
+                            builder.setCancelable(false);
+                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(getApplication(), "您保存了您的菊花！", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                }
+                            });
+                            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            builder.show();
+                        }
+                    });
+
+                }
 
 
             }
         });
-
 
 
     }
