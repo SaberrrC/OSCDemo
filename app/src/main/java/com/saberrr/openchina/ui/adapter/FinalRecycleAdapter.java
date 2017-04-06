@@ -17,14 +17,15 @@ import java.util.Map;
 
 public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapter.ViewHolder> {
     private List<? extends Object> mDatas;
-    private OnViewAttachListener   mOnViewAttachListener;
-    private              Map<Class, Integer> mClassIntegerHashMap = new HashMap<>();
-    private static final int                 LOADMORE             = 0;
-    private              boolean             needLoadMore         = false;
-    private              int                 loadLayout           = -1;
+    private OnViewAttachListener mOnViewAttachListener;
+    private Map<Class, Integer> mClassIntegerHashMap = new HashMap<>();
+    private static final int LOADMORE = 0;
+    private boolean needLoadMore = false;
+    private int loadLayout = -1;
 
     /**
      * 获取map
+     *
      * @return
      */
     public Map<Class, Integer> getClassIntegerHashMap() {

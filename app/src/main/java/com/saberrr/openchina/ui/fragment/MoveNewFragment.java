@@ -1,28 +1,33 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.text.SpannableString;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.MoveNewBean;
 import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.ui.activity.MoveDetailActivity;
 import com.saberrr.openchina.ui.activity.ShowImageActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
+import com.saberrr.openchina.utils.Utils;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -47,7 +52,6 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
     private RecyclerView mRecyclerView;
     private FinalRecycleAdapter mAdapter;
     private boolean isUpdate = true;
-
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -121,6 +125,17 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
 
             final MoveNewBean.ResultBean.ItemsBean bean = (MoveNewBean.ResultBean.ItemsBean) itemData;
 
+            holder.getRootView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO: 2017/4/5 点击事件
+                    Intent intent = new Intent(getContext(), MoveDetailActivity.class);
+                    intent.putExtra("bean", bean);
+                    startActivity(intent);
+
+                }
+            });
+
             ShowView(holder, bean, position);
 
         }
@@ -133,9 +148,10 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
         TextView tv_name = (TextView) holder.getViewById(R.id.item_move_tv_name);
         TextView tv_txt = (TextView) holder.getViewById(R.id.item_move_tv_text);
         TextView tv_date = (TextView) holder.getViewById(R.id.move_tv_date);
+        TextView phone = (TextView) holder.getViewById(R.id.phone);
+
         TextView tv_good = (TextView) holder.getViewById(R.id.move_tv_good);
         TextView tv_comment = (TextView) holder.getViewById(R.id.move_tv_comment);
-
         TextView tv_relay = (TextView) holder.getViewById(R.id.move_tv_relay);
 
         GridLayout gridLayout = (GridLayout) holder.getViewById(R.id.move_new_item_gridLayout);
@@ -169,6 +185,14 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
             int d = m / 60 / 24;
             tv_date.setText(d + "天前");
         }
+        switch (bean.getAppClient()) {
+            case 3:
+                phone.setText("android");
+                break;
+            case 4:
+                phone.setText("iphone");
+                break;
+        }
 
         //赞
         if (bean.getLikeCount() > 0) {
@@ -186,24 +210,22 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
 
         //文本内容
         String content = bean.getContent();
-//            tv_txt.setText(content);
-//            tv_txt.setText(Html.fromHtml(content  )); //这个不好，不能点
-
         Spanned spanned = Html.fromHtml(content);
-
-        SpannableString msp = new SpannableString(spanned);
-
-//        msp.setSpan(new ForegroundColorSpan(Color.MAGENTA), 2, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
+        SpannableStringBuilder msp = new SpannableStringBuilder(spanned);
+        Spannable spannable = Utils.displayEmoji(getContext().getResources(), msp);
 
         tv_txt.setText(msp);
+
         tv_txt.setMovementMethod(LinkMovementMethod.getInstance());
 
+
         final List<MoveNewBean.ResultBean.ItemsBean.ImagesBean> images = bean.getImages();
-        gridLayout.setColumnCount(3);
-        int width = gridLayout.getMeasuredWidth();
-        int childWidth = width / 3 - 20;
+//        int width = gridLayout.getMeasuredWidth();
+        WindowManager windowManager = (WindowManager) ((Activity) getContext()).getSystemService(Context.WINDOW_SERVICE);
+        int seernWidth = windowManager.getDefaultDisplay().getWidth();
+        int childWidth = seernWidth / 3 - 40;
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(childWidth, childWidth);
+        gridLayout.setColumnCount(3);
         layoutParams.setMargins(10, 10, 10, 10);
         gridLayout.removeAllViews();
         if (images != null && images.size() != 0) {
@@ -224,7 +246,6 @@ public class MoveNewFragment extends BaseFragment implements FinalRecycleAdapter
                         int[] arr = {position, finalI, 1};
                         intent.putExtra("item", arr);
                         startActivity(intent);
-                        Toast.makeText(getContext(), "图片" + finalI + "被点击了", Toast.LENGTH_SHORT).show();
                     }
                 });
                 gridLayout.addView(iv);

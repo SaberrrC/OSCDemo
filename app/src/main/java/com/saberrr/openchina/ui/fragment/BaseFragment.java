@@ -3,6 +3,7 @@ package com.saberrr.openchina.ui.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
     public  LoadPager    mLoadingPager;
     private boolean      mNeedRefresh;
     private ShowActivity mParentActivity;
+    public static Fragment mCurrentFragment;
 
     @Nullable
     @Override
@@ -180,5 +182,8 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
     public void onDestroy() {
         super.onDestroy();
         mParentActivity = null;
+    }
+    public Fragment getCurrentFragment() {
+        return mCurrentFragment;
     }
 }

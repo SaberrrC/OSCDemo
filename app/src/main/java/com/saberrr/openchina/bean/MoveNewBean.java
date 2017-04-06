@@ -1,12 +1,13 @@
 package com.saberrr.openchina.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by tt on 2017/4/1.
  */
 
-public class MoveNewBean {
+public class MoveNewBean implements Serializable{
 
 
     private int code;
@@ -46,7 +47,7 @@ public class MoveNewBean {
         this.time = time;
     }
 
-    public static class ResultBean {
+    public static class ResultBean implements Serializable{
 
 
         private String nextPageToken;
@@ -104,7 +105,7 @@ public class MoveNewBean {
             this.items = items;
         }
 
-        public static class ItemsBean {
+        public static class ItemsBean implements Serializable {
             /**
              * appClient : 1
              * author : {"id":72953,"identity":{"officialMember":false,"softwareAuthor":false},"name":"啤酒屋里的猫","portrait":"http://static.oschina.net/uploads/user/36/72953_50.jpg","relation":0}
@@ -229,7 +230,9 @@ public class MoveNewBean {
                 this.images = images;
             }
 
-            public static class AuthorBean {
+
+
+            public static class AuthorBean implements Serializable{
                 /**
                  * id : 72953
                  * identity : {"officialMember":false,"softwareAuthor":false}
@@ -284,7 +287,7 @@ public class MoveNewBean {
                     this.relation = relation;
                 }
 
-                public static class IdentityBean {
+                public static class IdentityBean implements Serializable{
                     /**
                      * officialMember : false
                      * softwareAuthor : false
@@ -311,7 +314,7 @@ public class MoveNewBean {
                 }
             }
 
-            public static class StatisticsBean {
+            public static class StatisticsBean implements Serializable{
                 /**
                  * comment : 0
                  * favCount : 0
@@ -367,7 +370,7 @@ public class MoveNewBean {
                 }
             }
 
-            public static class AboutBean {
+            public static class AboutBean implements Serializable{
                 /**
                  * commentCount : 30
                  * content :         Java 已经22岁了，依靠强大的功能、庞大的开发社区和无人能及的生态系统，长期占据世界编程语言排行榜首，成为当之无愧的业界之王。本人在大学时期被这种很有艺术性的开发语言所吸引，果断抛弃C，学习方式很简单，只看JDK API源码，直到现在都是如此。刚毕业就一直从事Java开发方面的工作，至今也有十来年了。从JSP、WebWork到Struts、JSF，从JDBC、Hibernate到TopLink、JPA。从NIO、Mina到Netty、Grizzly。很多...
@@ -452,7 +455,7 @@ public class MoveNewBean {
                     this.viewCount = viewCount;
                 }
 
-                public static class StatisticsBeanX {
+                public static class StatisticsBeanX implements Serializable{
                     /**
                      * comment : 30
                      * favCount : 0
@@ -509,7 +512,7 @@ public class MoveNewBean {
                 }
             }
 
-            public static class ImagesBean {
+            public static class ImagesBean implements Serializable{
                 /**
                  * h : 1104
                  * href : http://static.oschina.net/uploads/space/2017/0402/074255_Q3eX_1028150.png

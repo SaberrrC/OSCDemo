@@ -1,6 +1,7 @@
 package com.saberrr.openchina.ui.fragment.mymsgfragment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -62,6 +63,7 @@ public class CategoryItemFragment extends BaseFragment implements FinalRecycleAd
         ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
         init();
+        mCurrentFragment = new CategoryItemFragment();
         return view;
     }
 
@@ -138,11 +140,15 @@ public class CategoryItemFragment extends BaseFragment implements FinalRecycleAd
             @Override
             public void onClick(View v) {
                 EventBus.getDefault().postSticky(new EventBusBean2(tagList, position));
-                getFragmentManager().beginTransaction().replace(R.id.fl_categorySecond,new CategoryThreeItemFragment()).addToBackStack(null).commit();
+                getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_right_in,R.anim.slide_left_out,R.anim.slide_left_in,R.anim.slide_right_out).replace(R.id.fl_categorySecond,new CategoryThreeItemFragment()).addToBackStack(null).commit();
             }
         });
 
 
     }
 
+    @Override
+    public Fragment getCurrentFragment() {
+        return new CategoryItemFragment();
+    }
 }

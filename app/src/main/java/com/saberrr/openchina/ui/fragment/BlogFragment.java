@@ -6,11 +6,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
-import com.saberrr.openchina.bean.recommendbean.BlogBodyBean;
-import com.saberrr.openchina.bean.recommendbean.BlogHradBean;
+import com.saberrr.openchina.bean.comprehensivebean.BlogBodyBean;
+import com.saberrr.openchina.bean.comprehensivebean.BlogHradBean;
 import com.saberrr.openchina.manager.cacheManager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
@@ -146,7 +147,15 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
             TextView tvTimeBlog = (TextView) holder.getViewById(R.id.tv_time_blog);
             TextView tvVisitBlog = (TextView) holder.getViewById(R.id.tv_visit_blog);
             TextView tvCommentBlog = (TextView) holder.getViewById(R.id.tv_comment_blog);
+            ImageView iv_originate = (ImageView) holder.getViewById(R.id.iv_originate);
+            ImageView iv_recommend = (ImageView) holder.getViewById(R.id.iv_recommend);
             BlogBodyBean.ResultBean.ItemsBean bean = (BlogBodyBean.ResultBean.ItemsBean) itemData;
+            if (bean.isOriginal()){
+                iv_originate.setVisibility(View.VISIBLE);
+            }
+            if (bean.isRecommend()){
+                iv_recommend.setVisibility(View.VISIBLE);
+            }
             tvTitleBlog.setText(bean.getTitle());
             tvBodyBlog.setText(bean.getBody());
             tvNameBlog.setText(bean.getAuthor());

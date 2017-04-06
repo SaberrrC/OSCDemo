@@ -113,5 +113,6 @@ public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.O
         mDatas.add(3);
         mDatas.add(new Long(2L));
         mDatas.add(1);
+        mFinalRecycleAdapter.notifyDataSetChanged();
     }
 }

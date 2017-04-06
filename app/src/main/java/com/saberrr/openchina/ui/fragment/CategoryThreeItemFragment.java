@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -73,6 +74,7 @@ public class CategoryThreeItemFragment extends BaseFragment implements FinalRecy
         ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
         init();
+        mCurrentFragment = new CategoryThreeItemFragment();
         return view;
     }
 
@@ -170,6 +172,7 @@ public class CategoryThreeItemFragment extends BaseFragment implements FinalRecy
                 mFinalRecycleAdapter.notifyDataSetChanged();
             }
         });
+
         return "";
     }
 
@@ -197,4 +200,8 @@ public class CategoryThreeItemFragment extends BaseFragment implements FinalRecy
 
     }
 
+    @Override
+    public Fragment getCurrentFragment() {
+        return new CategoryThreeItemFragment();
+    }
 }

@@ -242,10 +242,11 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         if (mTitle_icon == TITLE_MENU) {
+            super.onBackPressed();
             if (mOnOptionsItemSelected != null) {
-                super.onBackPressed();
-                //mOnOptionsItemSelected.onOptionsMenu(item);
+                mOnOptionsItemSelected.onOptionsMenu(item);
                 return true;
             }
         }
