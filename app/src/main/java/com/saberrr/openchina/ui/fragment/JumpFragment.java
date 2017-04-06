@@ -36,12 +36,18 @@ import com.yuyh.library.imgsel.ImageLoader;
 import com.yuyh.library.imgsel.ImgSelActivity;
 import com.yuyh.library.imgsel.ImgSelConfig;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -143,62 +149,27 @@ public class JumpFragment extends BaseFragment {
                 ThreadUtils.runSub(new Runnable() {
                     @Override
                     public void run() {
-                       /* String cookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
-                        Map<String, String> map = new HashMap<>();
-                        map.put("cookie", cookie);
-                        //RequestBody body = new FormBody.Builder()
-                        //        .add("keep_login", "1")
-                        //        .add("username", "18801931441")
-                        //        .add("pwd", "110201.liuji")
-                        //        .add("content",mEtContent.getText().toString())
-                        //        .build();
-                        File file = new File(images.get(0));
-                        Headers head = new Headers();
-
-                        RequestBody body2 = new MultipartBody.Builder()
-                                .setType(MultipartBody.FORM)//传送的类型
-//                                                                .add("keep_login", "1")
-//                                                                .add("username", "18801931441")
-//                                                                .add("pwd", "110201.liuji")
-//                                                                .add("content",mEtContent.getText().toString())
-                                .addPart(head,body)
-                                .addFormDataPart("resource", file.getName(), MultipartBody.create(MediaType.parse("application/octet-stream"), file))
-                                .build();
-                        //                        String json = JsonCacheManager.getInstance().getXML(Urls.SEND_JUMP, map, body);
-                        //                        SendJumpBean dataBean = JsonCacheManager.getInstance().getDataBean(Urls.SEND_JUMP, map, body, SendJumpBean.class);
-                        String json2 =  JsonCacheManager.getInstance().getXML(Urls.SEND_JUMP, map, body2);
-                        Log.d(TAG, "run: ========================" + json2);
-                        ToastUtils.showToast(json2);
-*/
-                        /*try {
-                            //创建一个要上传的图片
-                            File file = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "p33.jpg");
+                        //// TODO: 2017-04-05
+                        /**
+                         * 文字  application/x-www-form-urlencoded; charset=UTF-8
+                         */
+                        try {
                             OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-                            RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)//传送的类型
-                                    .addFormDataPart("resource", file.getName(), MultipartBody.create(MediaType.parse("application/octet-stream"), file)).build();
-                            Request request = new Request.Builder().addHeader("cookie", mCookie).post(body).url("http://www.oschina.net/action/apiv2/resource_image").build();
+                            RequestBody body = new FormBody.Builder()
 
+                                    .build();
+                            Request request = new Request.Builder().post(body).build();
                             Response response = okHttpClient.newCall(request).execute();
-                            System.out.println(response.body().string());
+
+
+                            String string = response.body().string();
+                            System.out.println(string);
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        try {
-                            String cookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
-                            OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-                            RequestBody body = new FormBody.Builder().add("images", "FDB9880DDB8FB5EC").add("content", "今天非要让我送她回家,兄弟们怎么办?").build();
-                            Request request = new Request.Builder().url("http://www.oschina.net/action/apiv2/tweet").addHeader("cookie", cookie).post(body).build();
-                            Response response = okHttpClient.newCall(request).execute();
-                            System.out.println(response.body().string());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }*/
-
-
                     }
                 });
-
-
             }
         });
     }

@@ -52,6 +52,16 @@ public class SendJumpBean {
         this.time = time;
     }
 
+    @Override
+    public String toString() {
+        return "SendJumpBean{" +
+                "code=" + code +
+                ", message='" + message + '\'' +
+                ", result=" + result +
+                ", time='" + time + '\'' +
+                '}';
+    }
+
     public static class ResultBean {
         /**
          * resources : [{"h":181,"href":"https://static.oschina.net/uploads/space/2016/1011/204207_Bpva_231738.jpg","name":"204207_Bpva_231738","thumb":"https://static.oschina.net/uploads/space/2016/1011/204207_Bpva_231738_thumb.jpg","type":"jpg","w":480}]

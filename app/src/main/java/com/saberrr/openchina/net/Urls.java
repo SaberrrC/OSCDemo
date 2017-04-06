@@ -17,10 +17,11 @@ public class Urls {
     public static final String CATEGORY = BASE_URL + "action/api/softwarecatalog_list?tag=0";
 
     public static final String DETAIL = BASE_URL + "action/api/softwarecatalog_list?tag=";
-    public static final String RECOMMEND = BASE_URL + "action/api/software_list?pageIndex=0&searchTag=recommend&pageSize=20";
-    public static final String BESTNEW = BASE_URL + "action/api/software_list?pageIndex=0&searchTag=time&pageSize=20";
-    public static final String HOT = BASE_URL + "action/api/software_list?pageIndex=0&searchTag=view&pageSize=20";
-    public static final String DOMESTIC = BASE_URL + "action/api/software_list?pageIndex=0&searchTag=list_cn&pageSize=20";
+    public static final String PAGEINDEX = "action/api/software_list?pageIndex=";
+    public static final String RECOMMEND = "&searchTag=recommend&pageSize=20";
+    public static final String BESTNEW = "&searchTag=time&pageSize=20";
+    public static final String HOT = "&searchTag=view&pageSize=20";
+    public static final String DOMESTIC = "&searchTag=list_cn&pageSize=20";
     public static final String SOFTWAREDETAIL = BASE_URL + "action/api/software_detail?id=";
     //登录
     public static final String LOGIN = "/action/api/login_validate";
@@ -31,6 +32,9 @@ public class Urls {
     public static  final String TWEETLIKE = "/action/api/my_tweet_like_list";
     //发表动弹
     public static final String SEND_JUMP = BASE_URL + "action/apiv2/";
+    public static final String SEND_JUMP_TEXT = BASE_URL + "action/apiv2/tweet";
+
+
     //粉丝
     public static final String FANS = "/action/api/friends_list";
     //消息
