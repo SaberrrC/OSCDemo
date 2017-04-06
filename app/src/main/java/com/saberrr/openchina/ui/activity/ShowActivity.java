@@ -81,6 +81,16 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
 
     }
 
+    public interface OnBackIconClickListener {
+        void onClick(View v);
+    }
+
+    private OnBackIconClickListener mOnBackIconClickListener;
+
+    public void setOnBackIconClickListener(OnBackIconClickListener onBackIconClickListener) {
+        mOnBackIconClickListener = onBackIconClickListener;
+    }
+
     //设置toolbar
     public void initToolBar(String title, final int title_icon) {
         mToolbar.setTitle(title);
@@ -91,7 +101,11 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if (mOnBackIconClickListener != null) {
+                    mOnBackIconClickListener.onClick(v);
+                } else {
+                    finish();
+                }
             }
         });
         mToolbar.setTitle(title);
