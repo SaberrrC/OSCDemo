@@ -3,20 +3,22 @@ package com.saberrr.openchina.bean.jumponejump;
 import java.util.List;
 
 /**
- * Created by Saberrr on 2017-04-05.
+ * Created by Saberrr on 2017-04-06.
  */
 
-public class SendJumpBean {
+public class SendJumpFirstImgBean {
 
     /**
      * code : 1
      * message : SUCCESS
-     * result : {"resources":[{"h":181,"href":"https://static.oschina.net/uploads/space/2016/1011/204207_Bpva_231738.jpg","name":"204207_Bpva_231738","thumb":"https://static.oschina.net/uploads/space/2016/1011/204207_Bpva_231738_thumb.jpg","type":"jpg","w":480}],"token":"DB1689BB5F21DB4D"}
-     * time : 2016-10-11 20:42:07
+     * notice : {"like":0,"review":0,"letter":0,"mention":0,"fans":0}
+     * result : {"resources":[{"h":96,"href":"http://static.oschina.net/uploads/space/2017/0406/110550_fYHf_3398466.png","name":"110550_fYHf_3398466","thumb":"http://static.oschina.net/uploads/space/2017/0406/110550_fYHf_3398466_thumb.png","type":"png","w":96}],"token":"D42B3C303BE65520"}
+     * time : 2017-04-06 11:05:50
      */
 
-    private int        code;
+    private int code;
     private String     message;
+    private NoticeBean notice;
     private ResultBean result;
     private String     time;
 
@@ -36,6 +38,14 @@ public class SendJumpBean {
         this.message = message;
     }
 
+    public NoticeBean getNotice() {
+        return notice;
+    }
+
+    public void setNotice(NoticeBean notice) {
+        this.notice = notice;
+    }
+
     public ResultBean getResult() {
         return result;
     }
@@ -52,23 +62,69 @@ public class SendJumpBean {
         this.time = time;
     }
 
-    @Override
-    public String toString() {
-        return "SendJumpBean{" +
-                "code=" + code +
-                ", message='" + message + '\'' +
-                ", result=" + result +
-                ", time='" + time + '\'' +
-                '}';
+    public static class NoticeBean {
+        /**
+         * like : 0
+         * review : 0
+         * letter : 0
+         * mention : 0
+         * fans : 0
+         */
+
+        private int like;
+        private int review;
+        private int letter;
+        private int mention;
+        private int fans;
+
+        public int getLike() {
+            return like;
+        }
+
+        public void setLike(int like) {
+            this.like = like;
+        }
+
+        public int getReview() {
+            return review;
+        }
+
+        public void setReview(int review) {
+            this.review = review;
+        }
+
+        public int getLetter() {
+            return letter;
+        }
+
+        public void setLetter(int letter) {
+            this.letter = letter;
+        }
+
+        public int getMention() {
+            return mention;
+        }
+
+        public void setMention(int mention) {
+            this.mention = mention;
+        }
+
+        public int getFans() {
+            return fans;
+        }
+
+        public void setFans(int fans) {
+            this.fans = fans;
+        }
     }
 
     public static class ResultBean {
         /**
-         * resources : [{"h":181,"href":"https://static.oschina.net/uploads/space/2016/1011/204207_Bpva_231738.jpg","name":"204207_Bpva_231738","thumb":"https://static.oschina.net/uploads/space/2016/1011/204207_Bpva_231738_thumb.jpg","type":"jpg","w":480}]
-         * token : DB1689BB5F21DB4D
+         * resources : [{"h":96,"href":"http://static.oschina.net/uploads/space/2017/0406/110550_fYHf_3398466.png","name":"110550_fYHf_3398466","thumb":"http://static.oschina.net/uploads/space/2017/0406/110550_fYHf_3398466_thumb.png","type":"png","w":96}]
+         * token : D42B3C303BE65520
          */
 
-        private String              token;
+        private String token;
         private List<ResourcesBean> resources;
 
         public String getToken() {
@@ -89,15 +145,15 @@ public class SendJumpBean {
 
         public static class ResourcesBean {
             /**
-             * h : 181
-             * href : https://static.oschina.net/uploads/space/2016/1011/204207_Bpva_231738.jpg
-             * name : 204207_Bpva_231738
-             * thumb : https://static.oschina.net/uploads/space/2016/1011/204207_Bpva_231738_thumb.jpg
-             * type : jpg
-             * w : 480
+             * h : 96
+             * href : http://static.oschina.net/uploads/space/2017/0406/110550_fYHf_3398466.png
+             * name : 110550_fYHf_3398466
+             * thumb : http://static.oschina.net/uploads/space/2017/0406/110550_fYHf_3398466_thumb.png
+             * type : png
+             * w : 96
              */
 
-            private int    h;
+            private int h;
             private String href;
             private String name;
             private String thumb;

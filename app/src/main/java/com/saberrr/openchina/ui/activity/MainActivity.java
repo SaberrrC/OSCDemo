@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -15,9 +16,12 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.ui.fragment.ComprehensiveFragment;
 import com.saberrr.openchina.ui.fragment.FindFragment;
 import com.saberrr.openchina.ui.fragment.JumpFragment;
+import com.saberrr.openchina.ui.fragment.LoginFragment;
 import com.saberrr.openchina.ui.fragment.MoveFragment;
 import com.saberrr.openchina.ui.fragment.MyFragment;
 import com.saberrr.openchina.ui.fragment.TestFragment2;
+import com.saberrr.openchina.utils.Constant;
+import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.ToastUtils;
 
 import butterknife.BindView;
@@ -92,7 +96,12 @@ public class MainActivity extends AppCompatActivity {
         mIvAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowActivity.startFragmentWithTitle(JumpFragment.class, null, "弹一弹", ShowActivity.TITLE_SEND);
+                String cookie = SpUtil.getString(MainActivity.this, Constant.COOKIE, "");
+                if (TextUtils.isEmpty(cookie)) {
+                    ShowActivity.startFragment(LoginFragment.class, null);
+                } else {
+                    ShowActivity.startFragmentWithTitle(JumpFragment.class, null, "弹一弹", ShowActivity.TITLE_SEND);
+                }
             }
         });
     }
