@@ -1,27 +1,42 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.MoveNewBean;
-import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
-import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.event.LoginBeanEvent;
+import com.saberrr.openchina.ui.activity.MoveDetailActivity;
+import com.saberrr.openchina.ui.activity.ShowImageActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
+import com.saberrr.openchina.utils.Constant;
+import com.saberrr.openchina.utils.GsonTools;
+import com.saberrr.openchina.utils.SpUtil;
+import com.saberrr.openchina.utils.ThreadUtils;
+import com.saberrr.openchina.utils.ToastUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +45,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by tt on 2017/4/3.
@@ -45,6 +64,7 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
 
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private List<MoveNewBean.ResultBean.ItemsBean> items;
 
     @Override
     protected boolean needRefresh() {
@@ -53,11 +73,55 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
 
     @Override
     public View createView() {
+
         View view = View.inflate(getContext(), R.layout.fragment_move_new, null);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+
+
         setRecyclerView();
+
+        EventBus.getDefault().register(this);
         return view;
+    }
+
+    private void initRequest() {
+        try {
+            String cookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
+            if (TextUtils.isEmpty(cookie)) {
+                // TODO: 2017/4/6 跳转登陆界面
+                ToastUtils.showToast("未登陆");
+            }
+            String userid = SpUtil.getString(getContext(), Constant.USERID, "");
+
+            OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+            Request request = new Request.Builder().url("http://www.oschina.net/action/apiv2/tweets?authorId=" + userid).addHeader("cookie", cookie).get().build();
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.code() == 200) {
+                String string = response.body().string();
+
+                System.out.println("string" + string);
+                MoveNewBean moveNewBean = GsonTools.parseJsonToBean(string, MoveNewBean.class);
+                items = moveNewBean.getResult().getItems();
+            } else {
+                ToastUtils.showToast("网络请求失败");
+            }
+            System.out.println("response" + response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void event(LoginBeanEvent e) {
+        // TODO: 2017/4/5 更新ui
+        getData();
     }
 
     private void setRecyclerView() {
@@ -75,15 +139,14 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
 
     @Override
     public Object getData() {
+        initRequest();
+        updateData();
+        return data;
+    }
 
+    private void updateData() {
 
-
-        final MoveNewBean moveNewBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_MY, MoveNewBean.class);
-
-        final List<MoveNewBean.ResultBean.ItemsBean> items = moveNewBean.getResult().getItems();
-
-
-        getActivity().runOnUiThread(
+        ThreadUtils.runMain(
                 new Runnable() {
                     @Override
                     public void run() {
@@ -93,23 +156,36 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
                 }
         );
         data.addAll(items);
-        return data;
     }
 
     @Override
     public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
         if (itemData instanceof MoveNewBean.ResultBean.ItemsBean) {
 
-            MoveNewBean.ResultBean.ItemsBean bean = (MoveNewBean.ResultBean.ItemsBean) itemData;
+            final MoveNewBean.ResultBean.ItemsBean bean = (MoveNewBean.ResultBean.ItemsBean) itemData;
 
-            ShowView(holder, bean);
+            holder.getRootView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO: 2017/4/5 点击事件
+                    Intent intent = new Intent(getContext(), MoveDetailActivity.class);
+                    intent.putExtra("bean", bean);
+                    startActivity(intent);
+
+                }
+            });
+
+            ShowView(holder, bean, position);
 
         }
     }
 
-    private void ShowView(FinalRecycleAdapter.ViewHolder holder, MoveNewBean.ResultBean.ItemsBean bean) {
+    private void ShowView(FinalRecycleAdapter.ViewHolder holder, MoveNewBean.ResultBean.ItemsBean bean, final int position) {
+
         ImageView iv_icon = (ImageView) holder.getViewById(R.id.item_move_iv_icon);
         TextView tv_name = (TextView) holder.getViewById(R.id.item_move_tv_name);
+        ImageView iv_official = (ImageView) holder.getViewById(R.id.iv_official);
+
         TextView tv_txt = (TextView) holder.getViewById(R.id.item_move_tv_text);
         TextView tv_date = (TextView) holder.getViewById(R.id.move_tv_date);
         TextView tv_good = (TextView) holder.getViewById(R.id.move_tv_good);
@@ -125,6 +201,12 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
         //头像
 
         Glide.with(getContext()).load(portrait).asBitmap().into(iv_icon);
+
+        //名字
+        String name = author.getName();
+        SpannableString spann = new SpannableString(name);
+//        spann.setSpan(new ImageSpan(R.mipmap));
+        tv_name.setText(name);
 
 
         //时间
@@ -149,7 +231,6 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
             tv_date.setText(d + "天前");
         }
 
-
         //赞
         if (bean.getLikeCount() > 0) {
             tv_good.setText(bean.getLikeCount() + "");
@@ -162,12 +243,8 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
             tv_relay.setText(bean.getStatistics().getTransmit() + "");
         }
 
-//            bean.get
-
         //文本内容
         String content = bean.getContent();
-//            tv_txt.setText(content);
-//            tv_txt.setText(Html.fromHtml(content)); //这个不好，不能点
 
         Spanned spanned = Html.fromHtml(content);
 
@@ -179,18 +256,21 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
         tv_txt.setText(msp);
         tv_txt.setMovementMethod(LinkMovementMethod.getInstance());
 
-        List<MoveNewBean.ResultBean.ItemsBean.ImagesBean> images = bean.getImages();
+
+        final List<MoveNewBean.ResultBean.ItemsBean.ImagesBean> images = bean.getImages();
         gridLayout.setColumnCount(3);
-        int width = gridLayout.getMeasuredWidth();
-        int childWidth = width / 3 - 20;
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(childWidth, childWidth);
-//            layoutParams.setMargins(10, 10, 10, 10);
+//        int width = gridLayout.getMeasuredWidth();
+        WindowManager windowManager = (WindowManager) ((Activity) getContext()).getSystemService(Context.WINDOW_SERVICE);
+        int seernWidth = windowManager.getDefaultDisplay().getWidth();
+        int childWidth = seernWidth / 3 - 40;
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(childWidth, childWidth);
+        layoutParams.setMargins(10, 10, 10, 10);
         gridLayout.removeAllViews();
-        if (images != null && images.size() != 0) {
+        if (images != null && images.size() > 0) {
             //图片
             for (int i = 0; i < images.size(); i++) {
                 ImageView iv = new ImageView(getContext());
-                MoveNewBean.ResultBean.ItemsBean.ImagesBean imagesBean = images.get(i);
+                final MoveNewBean.ResultBean.ItemsBean.ImagesBean imagesBean = images.get(i);
                 String thumb = imagesBean.getThumb();
                 Glide.with(getContext()).load(thumb).asBitmap().into(iv);
                 iv.setLayoutParams(layoutParams);
@@ -199,14 +279,16 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
                 iv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getContext(), "图片" + finalI + "被点击了", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getContext(), ShowImageActivity.class);
+                        int[] arr = {position, finalI, 3};
+                        intent.putExtra("item", arr);
+                        startActivity(intent);
                     }
                 });
                 gridLayout.addView(iv);
             }
-        }  //名字
-        String name = author.getName();
-        tv_name.setText(name);
+        }
+
     }
 
     public long parseTime(String date) {
@@ -227,5 +309,4 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
         String retStrFormatNowDate = sdFormatter.format(nowTime);
         return retStrFormatNowDate;
     }
-
 }

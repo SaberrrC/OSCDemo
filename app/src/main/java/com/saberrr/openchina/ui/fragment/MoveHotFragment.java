@@ -1,5 +1,7 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,9 +12,10 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -20,8 +23,10 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.MoveNewBean;
 import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.ui.activity.MoveDetailActivity;
 import com.saberrr.openchina.ui.activity.ShowImageActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
+import com.saberrr.openchina.utils.ThreadUtils;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -97,11 +102,10 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
         });
         data.addAll(items);
 
-        getActivity().runOnUiThread(
+        ThreadUtils.runMain(
                 new Runnable() {
                     @Override
                     public void run() {
-
                         mAdapter.notifyDataSetChanged();
                     }
                 }
@@ -115,8 +119,17 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
 
         if (itemData instanceof MoveNewBean.ResultBean.ItemsBean) {
 
-            MoveNewBean.ResultBean.ItemsBean bean = (MoveNewBean.ResultBean.ItemsBean) itemData;
+            final MoveNewBean.ResultBean.ItemsBean bean = (MoveNewBean.ResultBean.ItemsBean) itemData;
+            holder.getRootView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO: 2017/4/5 点击事件
+                    Intent intent = new Intent(getContext(), MoveDetailActivity.class);
+                    intent.putExtra("bean", bean);
+                    startActivity(intent);
 
+                }
+            });
             ShowView(holder, bean, position);
 
         }
@@ -141,8 +154,6 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
 
         Glide.with(getContext()).load(portrait).asBitmap().into(iv_icon);
 
-
-        //时间
         //时间
         String pubDate = bean.getPubDate();
         long parseTime = parseTime(pubDate);
@@ -193,10 +204,11 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
 
         List<MoveNewBean.ResultBean.ItemsBean.ImagesBean> images = bean.getImages();
         gridLayout.setColumnCount(3);
-        int width = gridLayout.getMeasuredWidth();
-        int childWidth = width / 3 - 20;
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(childWidth, childWidth);
-//            layoutParams.setMargins(10, 10, 10, 10);
+        WindowManager windowManager = (WindowManager) ((Activity) getContext()).getSystemService(Context.WINDOW_SERVICE);
+        int seernWidth = windowManager.getDefaultDisplay().getWidth();
+        int childWidth = seernWidth / 3 - 40;
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(childWidth, childWidth);
+        layoutParams.setMargins(10, 10, 10, 10);
         gridLayout.removeAllViews();
         if (images != null && images.size() != 0) {
             Log.i(TAG, "onBindViewHolder: 1111111111111111");
@@ -207,6 +219,8 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
                 MoveNewBean.ResultBean.ItemsBean.ImagesBean imagesBean = images.get(i);
                 String thumb = imagesBean.getThumb();
                 Glide.with(getContext()).load(thumb).asBitmap().into(iv);
+//                iv.setImageBitmap(BitmapFactory.decodeStream(thumb.));
+
                 iv.setLayoutParams(layoutParams);
                 iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 final int finalI = i;

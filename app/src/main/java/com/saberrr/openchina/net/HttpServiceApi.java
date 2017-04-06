@@ -22,13 +22,24 @@ public interface HttpServiceApi {
     @POST(Urls.LOGIN)
     Call<ResponseBody> preLogin(@Field("keep_login") String keep_lonin, @Field("username") String username, @Field("pwd") String pwd);
 
+
+
     @GET(Urls.USERINFO)
-    Call<ResponseBody> getUserInfo(@Query("uid") String uid);
-
-
     Call<ResponseBody> getUserInfo(@Header("cookie") String cookie, @Query("uid") String uid);
 
     @GET(Urls.TWEETLIKE)
     Call<ResponseBody> getTweetlike(@Header("cookie") String cookie, @Query("pageIndex") int pageIndex, @Query("pageSize") int pageSize);
+
+
+    @GET(Urls.FANS)
+    Call<ResponseBody> getFans(@Header("cookie") String cookie, @Query("pageIndex") int pageIndex, @Query("uid") String uid, @Query("relation") String relation, @Query("pageSize") int pageSize);
+
+
+    @GET(Urls.MESSAGE)
+    Call<ResponseBody> getMsgs(@Header("cookie") String cookie, @Query("pageIndex") int pageIndex,@Query("uid") String uid , @Query("pageSize") int pageSize);
+
+    @GET(Urls.COMMENT)
+    Call<ResponseBody> getComment(@Header("cookie") String cookie, @Query("catalog") String catalog , @Query("pageIndex") int pageIndex,@Query("uid") String uid , @Query("pageSize") int pageSize);
+
 
 }

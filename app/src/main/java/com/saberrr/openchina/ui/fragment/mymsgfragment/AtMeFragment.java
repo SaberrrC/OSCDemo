@@ -9,7 +9,7 @@ import com.saberrr.openchina.ui.fragment.BaseFragment;
  * Created by 2017 on 2017/4/3.
  */
 
-public class CallMeFragment extends BaseFragment {
+public class AtMeFragment extends BaseFragment {
     @Override
     protected boolean needRefresh() {
         return false;

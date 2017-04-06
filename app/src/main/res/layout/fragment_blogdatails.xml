@@ -1,21 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              >
 
-    <WebView
-        android:id="@+id/wb_bolgdetails"
+    <com.saberrr.openchina.ui.view.MyScrollView
+        android:id="@+id/scrollView_detail"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"></WebView>
+        android:layout_height="match_parent"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/ll_web"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_title_informationdetailwap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="15dp"
+                android:text="ssddaaaassdda"
+                android:textColor="#000"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/tv_time_informationdetailwap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="16dp"
+                android:text="4月5号"/>
+
+            <com.saberrr.openchina.ui.view.MyWebView
+                android:id="@+id/wb_informationdetailwap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"></com.saberrr.openchina.ui.view.MyWebView>
+        </LinearLayout>
+            <com.saberrr.openchina.ui.view.WapRecyclerView
+                android:id="@+id/recyclerView_informationDetail"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"></com.saberrr.openchina.ui.view.WapRecyclerView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"/>
+        </LinearLayout>
+    </com.saberrr.openchina.ui.view.MyScrollView>
 
     <LinearLayout
-    android:background="#000"
-    android:layout_width="match_parent"
-    android:layout_height="30dp">
+        android:id="@+id/ll_bottom_comment"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:layout_height="50dp"
+        android:background="@drawable/edittext_bg"
+        >
+        <EditText
+            android:id="@+id/et_bottom_comment"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:imeOptions="actionSend"
+            android:layout_margin="8dp"
+            android:hint="发表评论"
+            android:background="@drawable/selector_edittext_bg"
+            android:layout_height="30dp"/>
+        <ImageView
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="wrap_content"
+            android:src="@mipmap/ic_fav_normal"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="wrap_content"
+            android:src="@mipmap/ic_share_black_normal"
+            android:layout_height="wrap_content"/>
 
+    </LinearLayout>
 
-</LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

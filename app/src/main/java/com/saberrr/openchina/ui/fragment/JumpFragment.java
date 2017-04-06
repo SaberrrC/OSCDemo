@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.Spannable;
@@ -12,7 +13,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.jumponejump.SendJumpFirstImgBean;
+import com.saberrr.openchina.contact.Fiels;
 import com.saberrr.openchina.faces.DisplayRules;
 import com.saberrr.openchina.faces.FaceBean;
 import com.saberrr.openchina.gloab.AppApplication;
@@ -43,6 +44,8 @@ import com.saberrr.openchina.utils.Utils;
 import com.yuyh.library.imgsel.ImageLoader;
 import com.yuyh.library.imgsel.ImgSelActivity;
 import com.yuyh.library.imgsel.ImgSelConfig;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +86,8 @@ public class JumpFragment extends BaseFragment {
     FlowLayout   mFlImg;
     @BindView(R.id.tv_count)
     TextView     mTvCount;
-    public static final int REQUEST_CODE = 100;
+    public static final int REQUEST_CODE    = 100;
+    public static final int REQUEST_CODE_AT = 101;
     private FacesPagerAdapter mFacesPagerAdapter;
     private              List<String> images         = new ArrayList<>();
     private static final int          MAX_TEXT_COUNT = 140;
@@ -99,6 +103,7 @@ public class JumpFragment extends BaseFragment {
     @Override
     public View createView() {
         View view = creatViewFromId(R.layout.fragment_jumponejump);
+        EventBus.getDefault().register(this);
         ButterKnife.bind(this, view);
         initView();
         setHintKeyboard(true);
@@ -178,10 +183,8 @@ public class JumpFragment extends BaseFragment {
         mEtContent.setText(text);
         mEtContent.setSelection(text.length());
         String[] paths = imagePaths.split("##%##");
-        Log.d("initImages", "initImages: ======" + paths.length);
         List<String> lst = new ArrayList<>();
         for (String path : paths) {
-            Log.d("initImages", "initImages: ======path=====" + path);
             if (StringUtils.isImgUrl(path)) {
                 lst.add(path);
             }
@@ -323,6 +326,12 @@ public class JumpFragment extends BaseFragment {
                 ImgSelActivity.startActivity(this, config, REQUEST_CODE);
                 break;
             case R.id.iv_at:
+                Intent intent = new Intent(getContext(), ShowActivity.class);
+                Bundle bundle = new Bundle();
+                intent.putExtra(Fiels.DtailActivity.CLASSNAME, AtFragment.class);
+                intent.putExtra(Fiels.DtailActivity.TITLE, "选择@好友");
+                intent.putExtra(Fiels.DtailActivity.TOOBARICON, ShowActivity.TITLE_SEND);
+                startActivityForResult(intent, REQUEST_CODE_AT);
                 mLlFaces.setVisibility(View.GONE);
                 break;
             case R.id.iv_topic:
@@ -333,6 +342,7 @@ public class JumpFragment extends BaseFragment {
                 editable.insert(index, TOPIC_TEXT);
                 mEtContent.setSelection(index + 1 + TOPIC_TEXT.indexOf("#"), index + TOPIC_TEXT.lastIndexOf("#"));
                 break;
+
             case R.id.iv_face:
                 mLlFaces.setVisibility(View.VISIBLE);
                 break;
@@ -357,19 +367,30 @@ public class JumpFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
         // 图片选择结果回调
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            List<String> pathList = data.getStringArrayListExtra(ImgSelActivity.INTENT_RESULT);
-            addImage(pathList);
-            StringBuffer sb = new StringBuffer();
-            Log.d("onPause", "onPause: =====" + images.size());
-            for (int i = 0; i < images.size(); i++) {
-                if (i == images.size() - 1) {
-                    sb.append(images.get(i));
-                } else {
-                    sb.append(images.get(i) + "##%##");
-                }
-            }
-            SpUtil.saveString(getContext(), Constant.JUMP_IMAGES, sb.toString());
+            setImage(data);
         }
+        if (requestCode == REQUEST_CODE_AT) {
+            setAtFriend();
+        }
+    }
+
+    private void setAtFriend() {
+        // TODO: 2017-04-06  关注好友
+
+    }
+
+    private void setImage(Intent data) {
+        List<String> pathList = data.getStringArrayListExtra(ImgSelActivity.INTENT_RESULT);
+        addImage(pathList);
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < images.size(); i++) {
+            if (i == images.size() - 1) {
+                sb.append(images.get(i));
+            } else {
+                sb.append(images.get(i) + "##%##");
+            }
+        }
+        SpUtil.saveString(getContext(), Constant.JUMP_IMAGES, sb.toString());
     }
 
     private void addImage(List<String> pathList) {
@@ -379,7 +400,6 @@ public class JumpFragment extends BaseFragment {
         for (int i = 0; i < images.size(); i++) {
             final View view = LayoutInflater.from(AppApplication.appContext).inflate(R.layout.item_image_selected, null, false);
             ImageView imageView = (ImageView) view.findViewById(R.id.iv_img);
-            ImageView iv_del = (ImageView) view.findViewById(R.id.iv_del);
             ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
             layoutParams.width = screenWith / 3;
             layoutParams.height = screenWith / 3;
@@ -457,4 +477,9 @@ public class JumpFragment extends BaseFragment {
             // 最大选择图片数量，默认9
             .maxNum(9).build();
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 }

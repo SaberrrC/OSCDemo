@@ -32,14 +32,14 @@ public class MoveFragment extends BaseFragment {
 
     @Override
     public View createView() {
-        String[] title = {"最新动弹", "热门动弹", "每日乱弹", "我的动弹"};
+        String[] title = {"最新动弹", "热门动弹", "我的动弹"};
         View view = View.inflate(getContext(), R.layout.fragment_move, null);
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.move_new_tabLayout);
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.move_new_viewpager);
         pages.add(new FragmentInfo(new MoveNewFragment(), title[0]));
         pages.add(new FragmentInfo(new MoveHotFragment(), title[1]));
-        pages.add(new FragmentInfo(new MoveNewFragment(), title[2]));
-        pages.add(new FragmentInfo(new MyMoveFragment(), title[3]));
+//        pages.add(new FragmentInfo(new MoveNewFragment(), title[2]));
+        pages.add(new FragmentInfo(new MyMoveFragment(), title[2]));
         viewPager.setAdapter(new MoveAdapter(getChildFragmentManager(), pages));
         tabLayout.setupWithViewPager(viewPager);
         return view;
