@@ -53,6 +53,10 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
         mOnViewAttachListener = onViewAttachListener;
     }
 
+    public static Map<Class,Integer> getMap() {
+        return new HashMap<>();
+    }
+
 
     @Override
     public int getItemViewType(int position) {
