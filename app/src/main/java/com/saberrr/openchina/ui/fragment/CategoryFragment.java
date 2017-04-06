@@ -1,6 +1,5 @@
 package com.saberrr.openchina.ui.fragment;
 
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,15 +10,17 @@ import android.widget.TextView;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.categorybean.CategoryBean;
 import com.saberrr.openchina.bean.categorybean.CategoryItemBean;
+import com.saberrr.openchina.bean.categorybean.EventBusBean;
 import com.saberrr.openchina.bean.categorybean.SoftwareType;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
-import com.saberrr.openchina.ui.adapter.CategoryAdapter;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.ui.fragment.mymsgfragment.CategoryItemFragment;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
 import com.saberrr.openchina.utils.XmlUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ import okhttp3.Response;
  * Created by liuqi on 2017/4/1.
  */
 
-public class CategoryFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener{
+public class CategoryFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
 
     @BindView(R.id.category_recyclerview)
     RecyclerView mCategoryRecyclerview;
@@ -55,11 +56,12 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_category, null);
         ButterKnife.bind(this, view);
         init();
+
         return view;
     }
 
     private void init() {
-        classIntegerHashMap.put(CategoryItemBean.class,R.layout.category_item_layout);
+        classIntegerHashMap.put(CategoryItemBean.class, R.layout.category_item_layout);
         mFinalRecycleAdapter = new FinalRecycleAdapter(datas, classIntegerHashMap, this);
         mCategoryRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mCategoryRecyclerview.setAdapter(mFinalRecycleAdapter);
@@ -108,28 +110,27 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
     @Override
     public Object getData() {
 
-                OkHttpClient okHttpClient = new OkHttpClient();
-                Request request = new Request.Builder().url(Urls.CATEGORY).build();
-                try {
-                    Response response = okHttpClient.newCall(request).execute();
-                    String xml = response.body().string();
-                    //System.out.println(xml);
-                    CategoryBean categoryBean = XmlUtils.toBean(CategoryBean.class, xml.getBytes());
-                    List<SoftwareType> mSoftwareTypes = categoryBean.getSoftwareTypes();
-                    for (int i = 0; i < mSoftwareTypes.size(); i++) {
-                        String name = mSoftwareTypes.get(i).name;
-                        int tag = mSoftwareTypes.get(i).tag;
-                        CategoryItemBean categoryItemBean = new CategoryItemBean();
-                        categoryItemBean.title = name;
-                        categoryItemBean.tag = tag;
-                        datas.add(categoryItemBean);
-                        tagList.add(tag);
-                        //System.out.println(name);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder().url(Urls.CATEGORY).build();
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            String xml = response.body().string();
+            //System.out.println(xml);
+            CategoryBean categoryBean = XmlUtils.toBean(CategoryBean.class, xml.getBytes());
+            List<SoftwareType> mSoftwareTypes = categoryBean.getSoftwareTypes();
+            for (int i = 0; i < mSoftwareTypes.size(); i++) {
+                String name = mSoftwareTypes.get(i).name;
+                int tag = mSoftwareTypes.get(i).tag;
+                CategoryItemBean categoryItemBean = new CategoryItemBean();
+                categoryItemBean.title = name;
+                categoryItemBean.tag = tag;
+                datas.add(categoryItemBean);
+                tagList.add(tag);
+                //System.out.println(name);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         ThreadUtils.runMain(new Runnable() {
@@ -156,10 +157,16 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
         ll_category_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
+                EventBus.getDefault().postSticky(new EventBusBean(tagList, position));
+                /*Bundle bundle = new Bundle();
                 bundle.putIntegerArrayList("tagList",tagList);
                 bundle.putInt("position",position);
-                ShowActivity.startFragmentWithTitle(CategoryItemFragment.class, bundle, "开源软件");
+                ShowActivity.startFragmentWithTitle(CategoryItemFragment.class, bundle, "开源软件");*/
+                //((ShowActivity) getContext()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_categoryFirst,new CategoryItemFragment()).commit();
+
+                //getChildFragmentManager().beginTransaction().replace(R.id.fl_categoryFirst, new CategoryItemFragment()).commit();
+                getFragmentManager().beginTransaction().replace(R.id.fl_categoryFirst,new CategoryItemFragment()).addToBackStack(null).commit();
+
             }
         });
 

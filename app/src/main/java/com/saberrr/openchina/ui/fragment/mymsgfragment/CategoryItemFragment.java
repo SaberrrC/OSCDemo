@@ -11,12 +11,20 @@ import android.widget.TextView;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.categorybean.CategoryBean;
 import com.saberrr.openchina.bean.categorybean.CategoryItemBean;
+import com.saberrr.openchina.bean.categorybean.EventBusBean;
+import com.saberrr.openchina.bean.categorybean.EventBusBean2;
 import com.saberrr.openchina.bean.categorybean.SoftwareType;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.ui.fragment.BaseFragment;
+import com.saberrr.openchina.ui.fragment.CategoryThreeItemFragment;
 import com.saberrr.openchina.utils.ThreadUtils;
+import com.saberrr.openchina.utils.ToastUtils;
 import com.saberrr.openchina.utils.XmlUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,6 +48,8 @@ public class CategoryItemFragment extends BaseFragment implements FinalRecycleAd
     private List<CategoryItemBean> datas = new ArrayList<>();
     private HashMap<Class, Integer> classIntegerHashMap = new HashMap<>();
     private FinalRecycleAdapter mFinalRecycleAdapter;
+    private ArrayList<Integer> tagList = new ArrayList<>();
+    private int position = 0;
 
     @Override
     protected boolean needRefresh() {
@@ -48,10 +58,23 @@ public class CategoryItemFragment extends BaseFragment implements FinalRecycleAd
 
     @Override
     public View createView() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_category, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_category_second, null);
         ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
         init();
         return view;
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void onEvent(EventBusBean eventBusBean) {
+        tagList.addAll(eventBusBean.mIntegerArrayList);
+        position = eventBusBean.position;
     }
 
     private void init() {
@@ -63,11 +86,11 @@ public class CategoryItemFragment extends BaseFragment implements FinalRecycleAd
 
     @Override
     public Object getData() {
-        Bundle bundle = getArguments();
-        ArrayList<Integer> tagList = bundle.getIntegerArrayList("tagList");
-        int position = bundle.getInt("position");
+
         OkHttpClient okHttpClient = new OkHttpClient();
-                Request request = new Request.Builder().url(Urls.DETAIL+tagList.get(position)).build();
+
+        System.out.println(tagList.size());
+        Request request = new Request.Builder().url(Urls.DETAIL+tagList.get(position)).build();
                 try {
                     Response response = okHttpClient.newCall(request).execute();
                     String xml = response.body().string();
@@ -81,6 +104,7 @@ public class CategoryItemFragment extends BaseFragment implements FinalRecycleAd
                         categoryItemBean.title = name;
                         categoryItemBean.tag = tag;
                         datas.add(categoryItemBean);
+                        tagList.add(tag);
                         //System.out.println(name);
                     }
                 } catch (IOException e) {
@@ -101,7 +125,7 @@ public class CategoryItemFragment extends BaseFragment implements FinalRecycleAd
 
 
     @Override
-    public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
+    public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, final int position, Object itemData) {
         TextView textView = (TextView) holder.getViewById(R.id.tv_category_item);
         LinearLayout ll_category_item = (LinearLayout) holder.getViewById(R.id.ll_category_item);
         if (itemData instanceof CategoryItemBean) {
@@ -113,7 +137,8 @@ public class CategoryItemFragment extends BaseFragment implements FinalRecycleAd
         ll_category_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+                EventBus.getDefault().postSticky(new EventBusBean2(tagList, position));
+                getFragmentManager().beginTransaction().replace(R.id.fl_categorySecond,new CategoryThreeItemFragment()).addToBackStack(null).commit();
             }
         });
 
