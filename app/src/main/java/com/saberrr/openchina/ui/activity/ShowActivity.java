@@ -44,7 +44,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     public static final int TITLE_COMMENT = 102;//右边是评论数量
     public static final int TITLE_SEND    = 103;//右边文字 “选择”
     public static final int TITLE_PEOPLE  = 104;//“找人”专用
-    public static final int TITLE_MENU    = 105;//“找人”专用
+    public static final int TITLE_MENU    = 105;//MENU布局
     private TextView    mTvRightToolbar;
     private SearchView  mSearchView;
     private Toolbar     mToolbar;
@@ -158,6 +158,24 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
             throw new RuntimeException("传入标题类型必须是 TITLE_COMMENT ");
         }
 
+    }
+
+    /**
+     * 获取右边toolbar上的textview
+     *
+     * @return
+     */
+    public TextView getRightTextView() {
+        return mTvRightToolbar;
+    }
+
+    /**
+     * shezhitoolr右上角文字
+     *
+     * @param text
+     */
+    public void setvRightToolbarText(String text) {
+        mTvRightToolbar.setText(text);
     }
 
     private OnClickListener mOnClickListener;
