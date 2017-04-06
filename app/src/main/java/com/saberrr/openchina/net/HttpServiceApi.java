@@ -21,8 +21,9 @@ public interface HttpServiceApi {
     @FormUrlEncoded
     @POST(Urls.LOGIN)
     Call<ResponseBody> preLogin(@Field("keep_login") String keep_lonin, @Field("username") String username, @Field("pwd") String pwd);
-
-
+    @FormUrlEncoded
+    @POST(Urls.COMMENT_PUB)
+    Call<ResponseBody> comment(@Header("cookie")String cookie, @Field("sourceId")String sourceId,@Field("type")String type,@Field("content")String content);
 
     @GET(Urls.USERINFO)
     Call<ResponseBody> getUserInfo(@Header("cookie") String cookie, @Query("uid") String uid);
@@ -40,6 +41,7 @@ public interface HttpServiceApi {
 
     @GET(Urls.COMMENT)
     Call<ResponseBody> getComment(@Header("cookie") String cookie, @Query("catalog") String catalog , @Query("pageIndex") int pageIndex,@Query("uid") String uid , @Query("pageSize") int pageSize);
+
 
 
 }

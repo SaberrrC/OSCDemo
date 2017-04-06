@@ -8,8 +8,11 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -27,14 +30,17 @@ import com.saberrr.openchina.bean.comprehensivebean.CommentHead;
 import com.saberrr.openchina.bean.comprehensivebean.InfomationDetailBean;
 import com.saberrr.openchina.bean.comprehensivebean.TitleBean;
 import com.saberrr.openchina.manager.cacheManager.JsonCacheManager;
+import com.saberrr.openchina.net.HttpServiceApi;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.ui.view.MyScrollView;
 import com.saberrr.openchina.ui.view.MyWebView;
 import com.saberrr.openchina.utils.Constant;
+import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.StringUtils;
 import com.saberrr.openchina.utils.ThreadUtils;
+import com.saberrr.openchina.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,12 +48,17 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 /**
  * Created by 丁银晨 on 2017/4/2.
  */
 
-public class InfomationDetailsFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener, ShowActivity.OnClickListener {
+public class InfomationDetailsFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener, ShowActivity.OnClickListener, TextView.OnEditorActionListener {
 
     @BindView(R.id.recyclerView_informationDetail)
     RecyclerView mRecyclerViewInformationDetail;
@@ -91,7 +102,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
         mCount = bundle.getString(Constant.BLOGDETAILSFRAGMENT.COMMENTCOUNT);
         mId = bundle.getInt(Constant.BLOGDETAILSFRAGMENT.ID);
         mType = bundle.getString(Constant.BLOGDETAILSFRAGMENT.TYPE);
-        setCommentCount(mCount);
+
         View view = View.inflate(getContext(), R.layout.fragment_blogdatails, null);
         ButterKnife.bind(this, view);
         init();
@@ -109,7 +120,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
         mRecyclerViewInformationDetail.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerViewInformationDetail.setAdapter(mFinalRecycleAdapter);
         this.setToolbarIconOnClickListener(this);
-
+        mEtBottomComment.setOnEditorActionListener(this);
         initComment();
     }
 
@@ -145,24 +156,13 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
         ValueAnimator valueAnimator = new ValueAnimator();
         if (y - oldy > 0) {
             isOpen = 2;
-            // mLlBottomComment.setVisibility(View.GONE);
             ObjectAnimator.ofFloat(mLlBottomComment, "TranslationY", 0, mHeight).setDuration(500).start();
-            // valueAnimator.setIntValues(0, height);
         } else if (y - oldy <= 0) {
             isOpen = 1;
             ObjectAnimator.ofFloat(mLlBottomComment, "TranslationY", mHeight, 0).setDuration(500).start();
-            //  mLlBottomComment.setVisibility(View.VISIBLE);
-            // valueAnimator.setIntValues(height, 0);
+
         }
-        //        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-        //            @Override
-        //            public void onAnimationUpdate(ValueAnimator animation) {
-        //                int animatedValue = (int) animation.getAnimatedValue();
-        //                mLlBottomComment.setPadding(0, animatedValue, 0, 0);
-        //            }
-        //        });
-        //        valueAnimator.setDuration(1000);
-        //        valueAnimator.start();
+
     }
 
     private void initData() {
@@ -204,7 +204,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
             return null;
         }
         List<InfomationDetailBean.ResultBean.AboutsBean> aboutsBeen = infomationDetailBean.getResult().getAbouts();
-
+        final int commentCount = infomationDetailBean.getResult().getCommentCount();
         bean.add(infomationDetailBean);
 
         // mDatas.add(infomationDetailBean);
@@ -225,6 +225,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
             @Override
             public void run() {
                 initData();
+                setCommentCount(commentCount+"");
                 mFinalRecycleAdapter.notifyDataSetChanged();
             }
         });
@@ -293,5 +294,37 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
     }
 
 
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_SEND) {
+            String content = mEtBottomComment.getText().toString().trim();
+            if (TextUtils.isEmpty(content)) {
+                ToastUtils.showToast("内容不能为空");
+            } else {
+                String cookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
+                if (TextUtils.isEmpty(cookie)) {
+                    ShowActivity.startFragmentWithTitle(LoginFragment.class, null, "登录");
+                } else {
+                    HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
+                    httpServiceApi.comment(cookie, mId + "", mType, content).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            ToastUtils.showToast("发送成功");
+                            mEtBottomComment.setText("");
+                            mLoadingPager.showViewDely(1000);
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                        }
+                    });
+                }
+
+            }
+            return true;
+        }
+        return true;
+    }
 }
 

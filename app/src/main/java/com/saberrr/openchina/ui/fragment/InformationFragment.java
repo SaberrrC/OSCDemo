@@ -204,7 +204,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
                     bundle.putInt(Constant.BLOGDETAILSFRAGMENT.ID, itemsBean.getId());
                     bundle.putString(Constant.BLOGDETAILSFRAGMENT.TYPE,itemsBean.getType()+"");
                     bundle.putString(Constant.BLOGDETAILSFRAGMENT.COMMENTCOUNT, itemsBean.getCommentCount() + "");
-                    ShowActivity.startFragmentWithTitle(InfomationDetailsFragment.class, bundle, "博客详情", ShowActivity.TITLE_COMMENT);
+                    ShowActivity.startFragmentWithTitle(InfomationDetailsFragment.class, bundle, "资讯详情", ShowActivity.TITLE_COMMENT);
                 }
             });
         }
