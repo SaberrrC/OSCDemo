@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 强大的流式布局
@@ -14,208 +15,171 @@ import java.util.ArrayList;
  */
 public class FlowLayout extends ViewGroup {
 
-    private int horizontalSpacing = 15;//水平间距
-    private int verticalSpacing   = 15;//行与行之间的垂直间距
-
-    //用来存放所有的Line对象
-    private ArrayList<Line> lineList = new ArrayList<>();
-
-    public FlowLayout(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
 
     public FlowLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public FlowLayout(Context context) {
-        super(context);
+    @Override
+    protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+        return new MarginLayoutParams(p);
+    }
+
+    @Override
+    public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new MarginLayoutParams(getContext(), attrs);
+    }
+
+    @Override
+    protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
+        return new MarginLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     }
 
     /**
-     * 设置水平间距
-     *
-     * @param horizontalSpacing
-     */
-    public void setHorizontalSpacing(int horizontalSpacing) {
-        this.horizontalSpacing = horizontalSpacing;
-    }
-
-    /**
-     * 设置垂直间距
-     *
-     * @param verticalSpacing
-     */
-    public void setVerticalSpacing(int verticalSpacing) {
-        this.verticalSpacing = verticalSpacing;
-    }
-
-    /**
-     * 分行：遍历所有的子View，判断哪几个子View在同一行(排座位表)
+     * 负责设置子控件的测量模式和大小 根据所有子控件设置自己的宽和高
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        // 获得它的父容器为它设置的测量模式和大小
+        int sizeWidth = MeasureSpec.getSize(widthMeasureSpec);
+        int sizeHeight = MeasureSpec.getSize(heightMeasureSpec);
+        int modeWidth = MeasureSpec.getMode(widthMeasureSpec);
+        int modeHeight = MeasureSpec.getMode(heightMeasureSpec);
 
-        lineList.clear();
 
-        //1.获取FlowLayout的宽度
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        //2.获取用于实际比较的宽度，就是除去2边的padding的宽度
-        int noPaddingWidth = width - getPaddingLeft() - getPaddingRight();
+        // 如果是warp_content情况下，记录宽和高
+        int width = 0;
+        int height = 0;
+        /**
+         * 记录每一行的宽度，width不断取最大宽度
+         */
+        int lineWidth = 0;
+        /**
+         * 每一行的高度，累加至height
+         */
+        int lineHeight = 0;
 
-        //3.遍历所有的子View，拿子View的宽和noPaddingWidth进行比较
-        Line line = new Line();//准备Line对象
-        for (int i = 0; i < getChildCount(); i++) {
-            View childView = getChildAt(i);
-            childView.measure(0, 0);//保证能够获取到宽高
+        int cCount = getChildCount();
 
-            //4.如果当前line中木有子View，则不用比较直接放入line中，因为要保证每行至少有一个子View;
-            if (line.getViewList().size() == 0) {
-                line.addLineView(childView);//直接存入
-            } else if (line.getLineWidth() + horizontalSpacing + childView.getMeasuredWidth() > noPaddingWidth) {
-                //5.如果当前line的宽+水平间距+子View的宽大于noPaddingWidth,则child需要换行
-                //需要先存放好之前的line对象，否则会造成丢失
-                lineList.add(line);
-
-                line = new Line();//创建新的Line，
-                line.addLineView(childView);//将当前child放入新的行中
-            } else {
-                //6.说明当前child应该放入当前Line中
-                line.addLineView(childView);
+        // 遍历每个子元素
+        for (int i = 0; i < cCount; i++) {
+            View child = getChildAt(i);
+            // 测量每一个child的宽和高
+            measureChild(child, widthMeasureSpec, heightMeasureSpec);
+            // 得到child的lp
+            MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+            // 当前子空间实际占据的宽度
+            int childWidth = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
+            // 当前子空间实际占据的高度
+            int childHeight = child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
+            /**
+             * 如果加入当前child，则超出最大宽度，则的到目前最大宽度给width，类加height 然后开启新行
+             */
+            if (lineWidth + childWidth > sizeWidth) {
+                width = Math.max(lineWidth, childWidth);// 取最大的
+                lineWidth = childWidth; // 重新开启新行，开始记录
+                // 叠加当前高度，
+                height += lineHeight;
+                // 开启记录下一行的高度
+                lineHeight = childHeight;
+            } else
+            // 否则累加值lineWidth,lineHeight取最大高度
+            {
+                lineWidth += childWidth;
+                lineHeight = Math.max(lineHeight, childHeight);
+            }
+            // 如果是最后一个，则将当前记录的最大宽度和当前lineWidth做比较
+            if (i == cCount - 1) {
+                width = Math.max(width, lineWidth);
+                height += lineHeight;
             }
 
-            //7.如果当前child是最后的子View，那么需要保存最后的line对象
-            if (i == (getChildCount() - 1)) {
-                lineList.add(line);//保存最后的Line
-            }
         }
+        setMeasuredDimension((modeWidth == MeasureSpec.EXACTLY) ? sizeWidth : width, (modeHeight == MeasureSpec.EXACTLY) ? sizeHeight : height);
 
-        //for循环结束了，lineList存放了所有的Line，而每个Line又记录了自己行所有的VIew;
-        //计算FLowLayout需要的高度
-        int height = getPaddingTop() + getPaddingTop();//先计算上下的padding值
-        for (int i = 0; i < lineList.size(); i++) {
-            height += lineList.get(i).getLineHeight();//再加上所有行的高度
-        }
-        height += (lineList.size() - 1) * verticalSpacing;//最后加上所有的行间距
-
-        //设置当前控件的宽高，或者向父VIew申请宽高
-        setMeasuredDimension(width, height);
     }
 
     /**
-     * 去摆放所有的子View，让每个人真正的坐到自己的位置上
+     * 存储所有的View，按行记录
      */
+    private List<List<View>> mAllViews   = new ArrayList<List<View>>();
+    /**
+     * 记录每一行的最大高度
+     */
+    private List<Integer>    mLineHeight = new ArrayList<Integer>();
+
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
-        for (int i = 0; i < lineList.size(); i++) {
-            Line line = lineList.get(i);//获取Line对象
+        mAllViews.clear();
+        mLineHeight.clear();
 
-            //从第二行开始，每行的top总是比上一行的top多一个行高和垂直间距
-            if (i > 0) {
-                paddingTop += verticalSpacing + lineList.get(i - 1).getLineHeight();
+        int width = getWidth();
+
+        int lineWidth = 0;
+        int lineHeight = 0;
+        // 存储每一行所有的childView
+        List<View> lineViews = new ArrayList<View>();
+        int cCount = getChildCount();
+        // 遍历所有的孩子
+        for (int i = 0; i < cCount; i++) {
+            View child = getChildAt(i);
+            MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+            int childWidth = child.getMeasuredWidth();
+            int childHeight = child.getMeasuredHeight();
+
+            // 如果已经需要换行
+            if (childWidth + lp.leftMargin + lp.rightMargin + lineWidth > width) {
+                // 记录这一行所有的View以及最大高度
+                mLineHeight.add(lineHeight);
+                // 将当前行的childView保存，然后开启新的ArrayList保存下一行的childView
+                mAllViews.add(lineViews);
+                lineWidth = 0;// 重置行宽
+                lineViews = new ArrayList<View>();
             }
+            /**
+             * 如果不需要换行，则累加
+             */
+            lineWidth += childWidth + lp.leftMargin + lp.rightMargin;
+            lineHeight = Math.max(lineHeight, childHeight + lp.topMargin + lp.bottomMargin);
+            lineViews.add(child);
+        }
+        // 记录最后一行
+        mLineHeight.add(lineHeight);
+        mAllViews.add(lineViews);
 
-            ArrayList<View> viewList = line.getViewList();//获取line的view的集合
-
-            //1.获取每行的留白的宽度
-            int remainSpacing = getLineRemainSpacing(line);
-            //2.计算每个view平均得到的值
-            float perSpacing = remainSpacing / viewList.size();
-
-            for (int j = 0; j < viewList.size(); j++) {
-                View childView = viewList.get(j);
-                //3.将得到的perSpacing增加到view的宽度上面
-                int widthSpec = MeasureSpec.makeMeasureSpec((int) (childView.getMeasuredWidth() + perSpacing), MeasureSpec.EXACTLY);
-                childView.measure(widthSpec, 0);
-
-                if (j == 0) {
-                    //如果是每行的第一行，name直接靠左边摆放
-                    childView.layout(paddingLeft, paddingTop, paddingLeft + childView.getMeasuredWidth(), paddingTop + childView.getMeasuredHeight());
-                } else {
-                    //如果不是第一个，需要参考前一个view的right
-                    View preView = viewList.get(j - 1);
-                    //当前view的left是前一个view的right+水平间距
-                    int left = preView.getRight() + horizontalSpacing;
-                    childView.layout(left, preView.getTop(), left + childView.getMeasuredWidth(), preView.getBottom());
+        int left = 0;
+        int top = 0;
+        // 得到总行数
+        int lineNums = mAllViews.size();
+        for (int i = 0; i < lineNums; i++) {
+            // 每一行的所有的views
+            lineViews = mAllViews.get(i);
+            // 当前行的最大高度
+            lineHeight = mLineHeight.get(i);
+            // 遍历当前行所有的View
+            for (int j = 0; j < lineViews.size(); j++) {
+                View child = lineViews.get(j);
+                if (child.getVisibility() == View.GONE) {
+                    continue;
                 }
+                MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+
+                //计算childView的left,top,right,bottom
+                int lc = left + lp.leftMargin;
+                int tc = top + lp.topMargin;
+                int rc = lc + child.getMeasuredWidth();
+                int bc = tc + child.getMeasuredHeight();
+
+
+                child.layout(lc, tc, rc, bc);
+
+                left += child.getMeasuredWidth() + lp.rightMargin + lp.leftMargin;
             }
-        }
-    }
-
-    /**
-     * 获取指定line的留白
-     *
-     * @param line
-     * @return
-     */
-    private int getLineRemainSpacing(Line line) {
-        return getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - line.getLineWidth();
-    }
-
-    /**
-     * 封装每行的数据，包括所有的子View，行的宽高
-     *
-     * @author Administrator
-     */
-    class Line {
-        private ArrayList<View> viewList;//用来存放当前行所有的子View
-        private int             width;//表示所有子View的宽+水平间距
-        private int             height;//行的高度
-
-        public Line() {
-            viewList = new ArrayList<View>();
+            left = 0;
+            top += lineHeight;
         }
 
-        /**
-         * 记录子VIew
-         *
-         * @param child
-         */
-        public void addLineView(View child) {
-            if (!viewList.contains(child)) {
-                viewList.add(child);
-
-                //1.更新Line的width
-                if (viewList.size() == 1) {
-                    //说明添加的是第一个子View，那么line的宽就是子view的宽度
-                    width = child.getMeasuredWidth();
-                } else {
-                    //如果添加的不是第一个子View，那么应该加等于水平间距和子VIew的宽度
-                    width += child.getMeasuredWidth() + horizontalSpacing;
-                }
-                //2.更新line的height
-                height = Math.max(height, child.getMeasuredHeight());
-            }
-        }
-
-        /**
-         * 获取当前行的宽度
-         *
-         * @return
-         */
-        public int getLineWidth() {
-            return width;
-        }
-
-        /**
-         * 获取当前行的高度
-         *
-         * @return
-         */
-        public int getLineHeight() {
-            return height;
-        }
-
-        /**
-         * 获取当前行的所有的子View
-         *
-         * @return
-         */
-        public ArrayList<View> getViewList() {
-            return viewList;
-        }
     }
 
 }

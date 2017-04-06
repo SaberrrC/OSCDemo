@@ -2,16 +2,21 @@ package com.saberrr.openchina.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AnticipateOvershootInterpolator;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.saberrr.openchina.contact.Fiels;
 import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.ui.activity.ShowActivity;
@@ -106,5 +111,42 @@ public class Utils {
         WindowManager wm = getWindowManager();
         int height = wm.getDefaultDisplay().getHeight();
         return height;
+    }
+
+    public static void loadImage(String path, ImageView imageView) {
+        Glide.with(AppApplication.appContext).load(path).into(imageView);
+    }
+
+    public static void loadImage(int id, ImageView imageView) {
+        Glide.with(AppApplication.appContext).load(id).into(imageView);
+    }
+
+    public static View getLayoutView(int id) {
+        return LayoutInflater.from(AppApplication.appContext).inflate(id, null, false);
+    }
+
+    //获取版本名
+    public static String getVersionName(String packageName) {
+        String versionName = "未知";
+        try {
+            //参数一：要查询的应用包信息对应包名,参数二：标记，想获取什么信息，就设置什么标记，（0：基本信息）
+            PackageInfo packageInfo = AppApplication.appContext.getPackageManager().getPackageInfo(packageName, 0);
+            versionName = packageInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return versionName;
+    }
+
+    //获取版本号
+    public static int getVersionCode(String packageName) {
+        int versionCode = 1;
+        try {
+            PackageInfo packageInfo = AppApplication.appContext.getPackageManager().getPackageInfo(packageName, 0);
+            versionCode = packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return versionCode;
     }
 }

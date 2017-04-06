@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:gravity="center"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
               android:background="#ffffff">
-    <TextView
-        android:id="@+id/myTextView"
-        android:layout_width="fill_parent"
+    <ImageView
+        android:id="@+id/shake_img"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="请摇晃手机"
-        android:textSize="30dp"
-        android:textColor="#000000"
-        android:gravity="center"
-        />
-</LinearLayout>
+        android:layout_centerInParent="true"
+        android:contentDescription="@null"
+        android:src="@mipmap/shaking" />
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:visibility="gone" />
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        layout="@layout/list_cell_shake_result"
+        android:visibility="gone" />
+
+</RelativeLayout>

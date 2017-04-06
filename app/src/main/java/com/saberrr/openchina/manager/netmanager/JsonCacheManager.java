@@ -97,8 +97,25 @@ public class JsonCacheManager {
         }
     }
 
+    public String getXML(String url, Map<String, String> headMap, RequestBody body) {
+        String xml = NetManager.getInstance().getJson(url, headMap, body);
+        if (TextUtils.isEmpty(xml)) {
+            return null;
+        } else {
+            return xml;
+        }
+    }
+
     public String getXML(String url, RequestBody body) {
         String xml = NetManager.getInstance().getPostJson(url, body);
+        if (TextUtils.isEmpty(xml)) {
+            return null;
+        } else {
+            return xml;
+        }
+    }
+    public String getXML(String url) {
+        String xml = NetManager.getInstance().getJson(url);
         if (TextUtils.isEmpty(xml)) {
             return null;
         } else {

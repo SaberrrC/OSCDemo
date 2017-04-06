@@ -25,12 +25,11 @@ public class TestFragment1 extends BaseFragment implements FinalRecycleAdapter.O
 
     private RecyclerView mRecyclerView;
 
-    private String[] mStrings = {"String1", "String2", "String3", "String4"};
-    private Integer[] mIntt = {1, 2, 3, 4};
-    private Long[] mObjects = {1L, 2L, 3L, 4L};
-    private List<Object> mDatas;
+    private String[]  mStrings = {"String1", "String2", "String3", "String4"};
+    private Integer[] mIntt    = {1, 2, 3, 4};
+    private Long[]    mObjects = {1L, 2L, 3L, 4L};
+    private List<Object>        mDatas;
     private FinalRecycleAdapter mFinalRecycleAdapter;
-
     @Override
     protected boolean needRefresh() {
         return false;

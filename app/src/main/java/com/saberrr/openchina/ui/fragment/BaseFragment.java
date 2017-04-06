@@ -55,6 +55,11 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
         return mLoadingPager;
     }
 
+    public void setOnBackIconClickListener(ShowActivity.OnBackIconClickListener onBackIconClickListener) {
+        mParentActivity.setOnBackIconClickListener(onBackIconClickListener);
+
+    }
+
     /**
      * 设置顶部Toolbar点击事件
      *
@@ -89,6 +94,10 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
 
     public void setonOptionsItemSelected(ShowActivity.onOptionsItemSelected onOptionsItemSelected) {
         mParentActivity.setonOptionsItemSelected(onOptionsItemSelected);
+    }
+
+    public void setHintKeyboardexception() {
+        mParentActivity.setHintKeyboardexception();
     }
 
     /**

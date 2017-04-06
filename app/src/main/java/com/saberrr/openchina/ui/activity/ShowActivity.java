@@ -53,8 +53,9 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     private ImageView   mIvCommendBG;
     private FrameLayout mFlCommend;
     private TextView    mTvCommend;
-    private int     mTitle_menu       = -1;
-    private boolean touchHintKeyboard = false;
+    private int     mTitle_menu           = -1;
+    private boolean touchHintKeyboard     = false;
+    private boolean hintKeyboardexception = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,17 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public interface OnBackIconClickListener {
+        void onClick(View v);
+    }
+
+    private OnBackIconClickListener mOnBackIconClickListener;
+
+    public void setOnBackIconClickListener(OnBackIconClickListener onBackIconClickListener) {
+        mOnBackIconClickListener = onBackIconClickListener;
     }
 
     //设置toolbar
@@ -89,7 +101,11 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if (mOnBackIconClickListener != null) {
+                    mOnBackIconClickListener.onClick(v);
+                } else {
+                    finish();
+                }
             }
         });
         mToolbar.setTitle(title);
@@ -210,10 +226,17 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mTitle_icon == TITLE_MENU) {
             if (mOnOptionsItemSelected != null) {
-                mOnOptionsItemSelected.onOptionsMenu(item);
+                super.onBackPressed();
+                //mOnOptionsItemSelected.onOptionsMenu(item);
+                return true;
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     public interface onOptionsItemSelected {
@@ -321,8 +344,16 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         this.touchHintKeyboard = touchHintKeyboard;
     }
 
+    public void setHintKeyboardexception() {
+        hintKeyboardexception = true;
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (hintKeyboardexception) {
+            hintKeyboardexception = false;
+            return super.dispatchTouchEvent(ev);
+        }
         if (touchHintKeyboard) {
             if (ev.getAction() == MotionEvent.ACTION_DOWN) {
                 View v = getCurrentFocus();

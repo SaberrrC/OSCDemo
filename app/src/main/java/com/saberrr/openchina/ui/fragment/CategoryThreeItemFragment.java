@@ -9,11 +9,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.bean.categorybean.EventBusBean2;
 import com.saberrr.openchina.bean.recommendbean.RecommendBean;
 import com.saberrr.openchina.bean.recommendbean.RecommendItemBean;
 import com.saberrr.openchina.bean.recommendbean.Software;
@@ -22,6 +22,10 @@ import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.XmlUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,23 +42,25 @@ import okhttp3.Response;
  * Created by liuqi on 2017/4/2.
  */
 
-public class DomesticFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
-    @BindView(R.id.domestic_recyclerview)
-    RecyclerView mDomesticRecyclerview;
-    @BindView(R.id.srl_domestic)
-    SwipeRefreshLayout mSrlDomestic;
+public class CategoryThreeItemFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
+    @BindView(R.id.recommend_recyclerview)
+    RecyclerView mRecommendRecyclerview;
+    @BindView(R.id.srl_recommend)
+    SwipeRefreshLayout mSrlRecommend;
     private List<RecommendItemBean> datas = new ArrayList<>();
+    private ArrayList<String> idList = new ArrayList<>();
     private HashMap<Class, Integer> mHashMap = new HashMap<>();
     private FinalRecycleAdapter mFinalRecycleAdapter;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            mSrlDomestic.setRefreshing(false);
+            mSrlRecommend.setRefreshing(false);
         }
     };
     private int index = 0;
-    private ArrayList<String> idList = new ArrayList<>();
+    private ArrayList<Integer> tagList = new ArrayList<>();
+    private int position = 0;
 
     @Override
     protected boolean needRefresh() {
@@ -63,19 +69,30 @@ public class DomesticFragment extends BaseFragment implements FinalRecycleAdapte
 
     @Override
     public View createView() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_domestic, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_recommend, null);
         ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
         init();
         return view;
     }
 
-    private void init() {
-        mHashMap.put(RecommendItemBean.class, R.layout.domestic_item_layout);
-        mFinalRecycleAdapter = new FinalRecycleAdapter(datas, mHashMap, this);
-        mDomesticRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
-        mDomesticRecyclerview.setAdapter(mFinalRecycleAdapter);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void onEvent(EventBusBean2 eventBusBean2) {
+        tagList.addAll(eventBusBean2.mIntegerArrayList);
+        position = eventBusBean2.position;
+    }
 
-        mSrlDomestic.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+    private void init() {
+        mHashMap.put(RecommendItemBean.class, R.layout.recommend_item_layout);
+        mFinalRecycleAdapter = new FinalRecycleAdapter(datas, mHashMap, this);
+        mRecommendRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecommendRecyclerview.setAdapter(mFinalRecycleAdapter);
+        mSrlRecommend.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 new Thread(new Runnable() {
@@ -89,7 +106,7 @@ public class DomesticFragment extends BaseFragment implements FinalRecycleAdapte
             }
         });
 
-        mDomesticRecyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecommendRecyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -121,8 +138,9 @@ public class DomesticFragment extends BaseFragment implements FinalRecycleAdapte
 
     @Override
     public Object getData() {
+
         OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder().url(Urls.BASE_URL+Urls.PAGEINDEX+index+Urls.DOMESTIC).build();
+        Request request = new Request.Builder().url(Urls.THREECATEGORY+index+"&searchTag="+tagList.get(position)+Urls.PAGESIZE).build();
         try {
             Response response = okHttpClient.newCall(request).execute();
             String xml = response.body().string();
@@ -132,10 +150,11 @@ public class DomesticFragment extends BaseFragment implements FinalRecycleAdapte
             for (int i = 0; i < softwares.size(); i++) {
                 String name = softwares.get(i).getName();
                 String description = softwares.get(i).getDescription();
+                String id = softwares.get(i).getId();
                 RecommendItemBean recommendItemBean = new RecommendItemBean();
                 recommendItemBean.title = name;
                 recommendItemBean.desc = description;
-                idList.add(softwares.get(i).getId());
+                idList.add(id);
                 datas.add(recommendItemBean);
 
 //                System.out.println(name);
@@ -143,6 +162,8 @@ public class DomesticFragment extends BaseFragment implements FinalRecycleAdapte
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
         ThreadUtils.runMain(new Runnable() {
             @Override
             public void run() {
@@ -155,24 +176,25 @@ public class DomesticFragment extends BaseFragment implements FinalRecycleAdapte
 
     @Override
     public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, final int position, Object itemData) {
-        TextView tv_title = (TextView) holder.getViewById(R.id.tv_domestic_item_title);
-        TextView tv_desc = (TextView) holder.getViewById(R.id.tv_domestic_item_desc);
-        LinearLayout ll_domestic_item = (LinearLayout) holder.getViewById(R.id.ll_domestic_item);
+        LinearLayout ll_recommend_item = (LinearLayout) holder.getViewById(R.id.ll_recommend_item);
+        TextView tv_title = (TextView) holder.getViewById(R.id.tv_recommend_item_title);
+        TextView tv_desc = (TextView) holder.getViewById(R.id.tv_recommend_item_desc);
         if (itemData instanceof RecommendItemBean) {
             RecommendItemBean recommendItemBean = (RecommendItemBean) itemData;
             tv_title.setText(recommendItemBean.title);
             tv_desc.setText(recommendItemBean.desc);
         }
-
-        ll_domestic_item.setOnClickListener(new View.OnClickListener() {
+        ll_recommend_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //ToastUtils.showToast("被点击了"+ position);
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList("listName", idList);
                 bundle.putInt("position", position);
                 ShowActivity.startFragmentWithTitle(SoftwareDetailFragment.class, bundle, "软件详情");
             }
         });
+
     }
 
 }

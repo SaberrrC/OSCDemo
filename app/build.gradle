@@ -24,13 +24,6 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile project(':circleImageLib')
-
-
-
-
-
-
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
@@ -44,8 +37,10 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.bartoszlipinski.recyclerviewheader:library:1.2.0'
     compile 'com.yuyh.imgsel:library:1.3.8'
-    compile 'com.android.support.constraint:constraint-layout:1.0.1'
+    compile 'org.kymjs.kjframe:kjframe:2.6'
+    compile 'com.google.zxing:core:3.2.0'
     compile 'com.github.githubwing:DragPhotoView:1.0.1'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile project(':circleImageLib')
 }
