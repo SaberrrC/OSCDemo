@@ -3,9 +3,11 @@ package com.saberrr.openchina.ui.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.saberrr.openchina.manager.uimanager.LoadPager;
 import com.saberrr.openchina.ui.activity.ShowActivity;
@@ -22,6 +24,7 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
     public  LoadPager    mLoadingPager;
     private boolean      mNeedRefresh;
     private ShowActivity mParentActivity;
+    public static Fragment mCurrentFragment;
 
     @Nullable
     @Override
@@ -55,6 +58,20 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
         return mLoadingPager;
     }
 
+    /**
+     * 获取toolbar右边textview
+     *
+     * @return
+     */
+    public TextView getRightTextView() {
+        return mParentActivity.getRightTextView();
+    }
+
+    /**
+     * 左边返回箭头点击事件
+     *
+     * @param onBackIconClickListener
+     */
     public void setOnBackIconClickListener(ShowActivity.OnBackIconClickListener onBackIconClickListener) {
         mParentActivity.setOnBackIconClickListener(onBackIconClickListener);
     }
@@ -75,6 +92,15 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
      */
     public void setOnQueryTextListener(ShowActivity.OnQueryTextListener onQueryTextListener) {
         mParentActivity.setOnQueryTextListener(onQueryTextListener);
+    }
+
+    /**
+     * 设置右边toolbar文字
+     *
+     * @param text
+     */
+    public void setvRightToolbarText(String text) {
+        mParentActivity.setvRightToolbarText(text);
     }
 
     /**
@@ -156,5 +182,8 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
     public void onDestroy() {
         super.onDestroy();
         mParentActivity = null;
+    }
+    public Fragment getCurrentFragment() {
+        return mCurrentFragment;
     }
 }

@@ -1,4 +1,4 @@
-package com.saberrr.openchina.bean.recommendbean;
+package com.saberrr.openchina.bean.comprehensivebean;
 
 import java.util.List;
 

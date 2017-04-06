@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
@@ -16,6 +17,10 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.ImageSpan;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,15 +30,18 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.contact.Fiels;
+import com.saberrr.openchina.faces.DisplayRules;
 import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 
 import java.io.File;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
-    private final static float SCALE    = 0.7f;
-    private final static int   DURATION = 500;
+    private final static float SCALE = 0.7f;
+    private final static int DURATION = 500;
 
     //得到字符串数组信息
     public static String[] getStringArray(int resId) {
@@ -155,6 +163,48 @@ public class Utils {
             e.printStackTrace();
         }
         return versionCode;
+    }
+
+    //显示表情
+    public static Spannable displayEmoji(Resources res, CharSequence s) {
+        return displayEmoji(res, new SpannableString(s));
+    }
+
+    public static Spannable displayEmoji(Resources res, Spannable spannable) {
+        String str = spannable.toString();
+
+        if (!str.contains(":") && !str.contains("[")) {
+            return spannable;
+        }
+
+        Pattern pattern = Pattern.compile("(\\[[^\\[\\]:\\s\\n]+\\])|(:[^:\\[\\]\\s\\n]+:)");
+        Matcher matcher = pattern.matcher(str);
+        while (matcher.find()) {
+            String emojiStr = matcher.group();
+            if (TextUtils.isEmpty(emojiStr))
+                continue;
+            int resId = getEmojiResId(emojiStr);
+            if (resId <= 0) continue;
+            Drawable drawable = res.getDrawable(resId);
+            if (drawable == null) continue;
+            drawable.setBounds(0, 0, 20, 20);
+            ImageSpan span = new ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM);
+            spannable.setSpan(span, matcher.start(), matcher.end(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+
+        return spannable;
+    }
+
+    /**
+     * 获取name对应的资源
+     */
+    public static int getEmojiResId(String name) {
+        Integer res = DisplayRules.getMapAll().get(name);
+        if (res != null) {
+            return res;
+        } else {
+            return -1;
+        }
     }
 
 

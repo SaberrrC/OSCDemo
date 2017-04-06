@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.bean.rockbean.RockBean;
 import com.saberrr.openchina.bean.softwaredetailbean.Software;
 import com.saberrr.openchina.bean.softwaredetailbean.SoftwareDetailBean;
 import com.saberrr.openchina.net.Urls;
@@ -64,6 +65,7 @@ public class ShakeActivity extends AppCompatActivity {
     private int music, music2;//；来设置suondID
     private ShakeListener mShakeListener = null;
     public static long GrouplastUpdateTime;
+    private String mUrl;
 
     /**
      * Called when the activity is first created.
@@ -139,12 +141,11 @@ public class ShakeActivity extends AppCompatActivity {
                         mLlShakeBottom.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                //// TODO: 2017/4/5
+                                // TODO: 2017/4/5
                                 ToastUtils.showToast("详情");
-                                /*Intent intent = new Intent(ShakeActivity.this, SoftwareDetailFragment.class);
                                 Bundle bundle = new Bundle();
 
-                                ShowActivity.startFragmentWithTitle(SoftwareDetailFragment.class,bundle,"软件详情");*/
+                                ShowActivity.startFragmentWithTitle(SoftwareDetailFragment.class,bundle,"软件详情");
                             }
                         });
 
@@ -175,29 +176,23 @@ public class ShakeActivity extends AppCompatActivity {
             @Override
             public void run() {
                 OkHttpClient okHttpClient = new OkHttpClient();
-                Request request = new Request.Builder().url(Urls.SOFTWAREDETAIL + 44976).build();
+                final Request request = new Request.Builder().url(Urls.ROCK).build();
                 try {
                     Response response = okHttpClient.newCall(request).execute();
                     String xml = response.body().string();
-                    SoftwareDetailBean softwareDetailBean = XmlUtils.toBean(SoftwareDetailBean.class, xml.getBytes());
-                    final Software software = softwareDetailBean.getSoftware();
-                    final String title = software.getTitle();
+                    final RockBean rockBean = XmlUtils.toBean(RockBean.class, xml.getBytes());
+                    mUrl = rockBean.getUrl();
                     ThreadUtils.runMain(new Runnable() {
                         @Override
                         public void run() {
-                            new Core.Builder().view(mIvFace).url(software.getLogo())
+                            new Core.Builder().view(mIvFace).url(rockBean.getImage())
                                     .loadBitmapRes(R.mipmap.widget_dface).doTask();
-                            mTvTitle.setText(title);
-                            mTvDescription.setText(software.getExtensionTitle());
-                            String name = software.getName();
-                            if(!TextUtils.isEmpty(name)) {
-                                mTvAuthor.setText(name);
-                            }else {
-                                mTvAuthor.setText("匿名");
-                            }
+                            mTvTitle.setText(rockBean.getTitle());
+                            mTvDescription.setText(rockBean.getDetail());
+                            mTvAuthor.setText(rockBean.getAuthor());
 
-                            mTvCommentCount.setText(software.getRecommended()+"");
-                            mTvTime.setText(software.getRecordtime());
+                            mTvCommentCount.setText(rockBean.getCommentCount()+"");
+                            mTvTime.setText(rockBean.getPubDate());
                         }
                     });
 

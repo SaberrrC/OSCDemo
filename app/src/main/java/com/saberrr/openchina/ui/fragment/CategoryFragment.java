@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -46,6 +47,12 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
     private HashMap<Class, Integer> classIntegerHashMap = new HashMap<>();
     private FinalRecycleAdapter mFinalRecycleAdapter;
 
+
+    @Override
+    public Fragment getCurrentFragment() {
+        return new CategoryFragment();
+    }
+
     @Override
     protected boolean needRefresh() {
         return false;
@@ -56,7 +63,7 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_category, null);
         ButterKnife.bind(this, view);
         init();
-
+        mCurrentFragment = new CategoryFragment();
         return view;
     }
 
@@ -140,6 +147,7 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
             }
         });
 
+
         return "";
     }
 
@@ -165,7 +173,7 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
                 //((ShowActivity) getContext()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_categoryFirst,new CategoryItemFragment()).commit();
 
                 //getChildFragmentManager().beginTransaction().replace(R.id.fl_categoryFirst, new CategoryItemFragment()).commit();
-                getFragmentManager().beginTransaction().replace(R.id.fl_categoryFirst,new CategoryItemFragment()).addToBackStack(null).commit();
+                getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_right_in,R.anim.slide_left_out,R.anim.slide_left_in,R.anim.slide_right_out).replace(R.id.fl_categoryFirst,new CategoryItemFragment()).addToBackStack(null).commit();
 
             }
         });
