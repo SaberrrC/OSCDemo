@@ -34,6 +34,8 @@ public class Urls {
     public static final String PAGESIZE = "&pageSize=20";
     //登录
     public static final String LOGIN = "/action/api/login_validate";
+    public static final String COMMENT_PUB = "/action/apiv2/comment_pub ";
+
 
     //用户信息
     public static final String USERINFO = "/action/api/my_information";
