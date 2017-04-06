@@ -83,19 +83,20 @@ public class MainActivity extends AppCompatActivity {
                 int netCode = Integer.valueOf(vcode);
                 int locolCode = Utils.getVersionCode(getPackageName());
                 if (locolCode < netCode) {
-
                     ThreadUtils.runMain(new Runnable() {
                         @Override
                         public void run() {
                             // 普通
                             String updateLog = updateInfo.getUpdate().getAAndroid().getUpdateLog();
+                            String replace = updateLog.replace("<br/>", "\n");
+                            String log = replace.replace("<br>", "\n");
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                             // 设置图标
                             //                                builder.setIcon(R.drawable.iv3);
                             // 设置标题
                             builder.setTitle("发现新版本");
                             // 设置消息内容
-                            builder.setMessage(updateLog);
+                            builder.setMessage(log);
                             // 点击旁边区域不会消失
                             builder.setCancelable(false);
                             builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
@@ -117,12 +118,8 @@ public class MainActivity extends AppCompatActivity {
                     });
 
                 }
-
-
             }
         });
-
-
     }
 
     private void initToolBar() {
