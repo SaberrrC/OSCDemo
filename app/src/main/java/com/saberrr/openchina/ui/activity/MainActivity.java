@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private String mTextArray[]     = {"综合", "动弹", "", "发现", "我的"};
     private int    mImageArray[]    = {R.drawable.selector_all_bg, R.drawable.selector_dongtan_bg, R.drawable.selector_add_bg, R.drawable.selector_find_bg, R.drawable.selector_mine_bg};
     private long   laatTime         = 0;
+    private String currentId        = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,6 +170,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        mTabhost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                currentId = tabId;
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (currentId != null) {
+            mTabhost.setCurrentTab(Integer.parseInt(currentId));
+        }
     }
 
     @Override
