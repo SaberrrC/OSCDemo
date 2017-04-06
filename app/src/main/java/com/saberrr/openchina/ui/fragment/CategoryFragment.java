@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -46,6 +47,12 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
     private HashMap<Class, Integer> classIntegerHashMap = new HashMap<>();
     private FinalRecycleAdapter mFinalRecycleAdapter;
 
+
+    @Override
+    public Fragment getCurrentFragment() {
+        return new CategoryFragment();
+    }
+
     @Override
     protected boolean needRefresh() {
         return false;
@@ -56,7 +63,7 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_category, null);
         ButterKnife.bind(this, view);
         init();
-
+        mCurrentFragment = new CategoryFragment();
         return view;
     }
 
@@ -139,6 +146,7 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
                 mFinalRecycleAdapter.notifyDataSetChanged();
             }
         });
+
 
         return "";
     }
