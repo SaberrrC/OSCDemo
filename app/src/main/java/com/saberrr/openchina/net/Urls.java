@@ -9,10 +9,13 @@ public class Urls {
     public static String BANNER =BASE_URL+ "action/apiv2/banner?catalog=1";
     public static String NEWS =BASE_URL+ "action/apiv2/news?pageToken=";
     public static String CONTENT =BASE_URL+ "action/apiv2/news?id=";
+    public static String COMMENT1 =BASE_URL+ "action/apiv2/comment?parts=refer,reply&sourceId=";
+    public static String COMMENTTYEP ="&type=";
+
     public static String BLOG =BASE_URL+ "action/apiv2/blog?catalog=";
     public static String BLOGUP ="& pageToken=";
 
-    public static String MOVE_NEW = BASE_URL + "action/apiv2/tweets?type=1";
+
 
     public static String MOVE_NEW = BASE_URL + "action/apiv2/tweets?type=";
     public static String MOVE_HOT = BASE_URL + "action/apiv2/tweets?type=2";

@@ -13,7 +13,8 @@ public class Constant {
         public static final String COMMENTCOUNT = "COMMENTCOUNT";
 
         public static final String TITLE = "TITLE";
-        public static final String ID       = "ID";
+        public static final String ID    = "ID";
+        public static final String TYPE     = "TYPE";
     }
 
     public static final String COOKIE   = "COOKIE";
