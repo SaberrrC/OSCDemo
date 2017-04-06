@@ -49,7 +49,7 @@ public class MyMsgFragment extends BaseFragment {
 
     private void init() {
         // TODO: 2017/4/2 展示数据
-        mDataList.add(new MyMsgInfo(new AtMeFragment(), Title[0]));
+        mDataList.add(new MyMsgInfo(new CommentFragment(), Title[0]));
         mDataList.add(new MyMsgInfo(new CommentFragment(), Title[1]));
         mDataList.add(new MyMsgInfo(new MsgFragment(), Title[2]));
         mDataList.add(new MyMsgInfo(new FansFragment(), Title[3]));

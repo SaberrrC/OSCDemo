@@ -7,15 +7,11 @@ import java.util.List;
 /**
  * Created by 2017 on 2017/4/6.
  */
-@XStreamAlias("oschina")
-public class CommentBean {
-    public String getActiveCount() {
-        return activeCount;
-    }
 
-    public void setActiveCount(String activeCount) {
-        this.activeCount = activeCount;
-    }
+public class AtMeBean {
+
+    @XStreamAlias("activeCount")
+    private String activeCount;
 
     public String getPagesize() {
         return pagesize;
@@ -25,11 +21,19 @@ public class CommentBean {
         this.pagesize = pagesize;
     }
 
+    public String getActiveCount() {
+        return activeCount;
+    }
+
+    public void setActiveCount(String activeCount) {
+        this.activeCount = activeCount;
+    }
+
     public List<Active> getActivies() {
         return activies;
     }
 
-    public void setActivies(List<Active> Activies) {
+    public void setActivies(List<Active> activies) {
         this.activies = activies;
     }
 
@@ -41,8 +45,6 @@ public class CommentBean {
         this.notice = notice;
     }
 
-    @XStreamAlias("activeCount")
-    private String activeCount;
     @XStreamAlias("pagesize")
     private String pagesize;
     @XStreamAlias("activies")
@@ -50,85 +52,8 @@ public class CommentBean {
     @XStreamAlias("notice")
     private Notice notice;
 
-
-    /* <?xml version="1.0" encoding="UTF-8"?>
-     <oschina>
-     <activeCount>0</activeCount>
-     <!-- 总动弹数 -->
-     <pagesize>16</pagesize>
-     <activies>
-     <active>
-     <id>10768680</id>
-     <portrait>https://static.oschina.net/uploads/user/115/231738_50.jpg?t=1488277735000</portrait>
-     <author>
-     <![CDATA[Cookie获取失败]]>
-     </author>
-     <authorid>231738</authorid>
-     <catalog>3</catalog>
-     <objecttype>101</objecttype>
-     <objectcatalog>0</objectcatalog>
-     <objecttitle>
-     <![CDATA[]]>
-     </objecttitle>
-     <appclient>0</appclient>
-     <objectreply>
-     <objectname>
-     <![CDATA[Cookie获取失败]]>
-     </objectname>
-     <objectbody>
-     <![CDATA[gyhuhuhu]]>
-
-     </objectbody>
-     </objectreply>
-     <url></url>
-     <objectID>10768392</objectID>
-     <message>
-     <![CDATA[dddddd]]>
-
-     </message>
-     <commentCount>0</commentCount>
-     <pubDate>2016-10-20 11:46:48</pubDate>
-     <tweetimage></tweetimage>
-     <tweetattach></tweetattach>
-     </active>
-
-     </activies>
-     <notice>
-     <atmeCount>0</atmeCount>
-     <msgCount>0</msgCount>
-     <reviewCount>0</reviewCount>
-     <newFansCount>0</newFansCount>
-     <newLikeCount>0</newLikeCount>
-     </notice>
-     </oschina>*/
     @XStreamAlias("active")
     public class Active {
-        /* <active>
-         <id>10768680</id>
-         <portrait>https://static.oschina.net/uploads/user/115/231738_50.jpg?t=1488277735000</portrait>
-         <author>
-         <![CDATA[Cookie获取失败]]>
-         </author>
-         <authorid>231738</authorid>
-         <catalog>3</catalog>
-         <objecttype>101</objecttype>
-         <objectcatalog>0</objectcatalog>
-         <objecttitle>
-         <![CDATA[]]>
-         </objecttitle>
-         <appclient>0</appclient>
-
-         <url></url>
-         <objectID>10768392</objectID>
-         <message>
-         <![CDATA[dddddd]]>
-
-         </message>
-         <commentCount>0</commentCount>
-         <pubDate>2016-10-20 11:46:48</pubDate>
-         <tweetimage></tweetimage>
-         <tweetattach></tweetattach>
-         </active>*/
         @XStreamAlias("id")
         private String id;
         @XStreamAlias("portrait")
@@ -161,8 +86,6 @@ public class CommentBean {
         private String tweetimage;
         @XStreamAlias("tweetattach")
         private String tweetattach;
-        @XStreamAlias("objectreply")
-        private Objectreply objectreply;
 
         public String getId() {
             return id;
@@ -291,52 +214,50 @@ public class CommentBean {
         public void setTweetattach(String tweetattach) {
             this.tweetattach = tweetattach;
         }
-
-        public Objectreply getObjectreply() {
-            return objectreply;
-        }
-
-        public void setObjectreply(Objectreply objectreply) {
-            this.objectreply = objectreply;
-        }
-
-        @XStreamAlias("objectreply")
-        public class Objectreply {
-            /*<objectreply>
-        <objectname>
-        <![CDATA[Cookie获取失败]]>
-        </objectname>
-        <objectbody>
-        <![CDATA[gyhuhuhu]]>
-
-        </objectbody>
-        </objectreply>*/
-
-            @XStreamAlias("objectname")
-            private String objectname;
-            @XStreamAlias("objectbody")
-            private String objectbody;
-
-            public String getObjectname() {
-                return objectname;
-            }
-
-            public void setObjectname(String objectname) {
-                this.objectname = objectname;
-            }
-
-            public String getObjectbody() {
-                return objectbody;
-            }
-
-            public void setObjectbody(String objectbody) {
-                this.objectbody = objectbody;
-            }
-        }
-
-
     }
 
+
+    /*<?xml version="1.0" encoding="UTF-8"?>
+    <oschina>
+    <activeCount>0</activeCount>
+    <!-- 总动弹数 -->
+    <pagesize>5</pagesize>
+    <activies>
+    <active>
+    <id>10744607</id>
+    <portrait></portrait>
+    <author>
+    <![CDATA[骑着猪的绿皮车]]>
+    </author>
+    <authorid>2958135</authorid>
+    <catalog>1</catalog>
+    <objecttype>16</objecttype>
+    <objectcatalog>0</objectcatalog>
+    <objecttitle>
+    <![CDATA[OVM-V1.2 版发布，新增实时监控、支持一键升级]]>
+    </objecttitle>
+    <appclient>0</appclient>
+    <url></url>
+    <objectID>78170</objectID>
+    <message>
+    <![CDATA[引用来自“android_自由”的评论呵呵哒。。。奥特曼qeruiihs]]>
+
+    </message>
+    <commentCount>25</commentCount>
+    <pubDate>2016-10-18 15:51:03</pubDate>
+    <tweetimage></tweetimage>
+    <tweetattach></tweetattach>
+    </active>
+
+    </activies>
+    <notice>
+    <atmeCount>0</atmeCount>
+    <msgCount>0</msgCount>
+    <reviewCount>0</reviewCount>
+    <newFansCount>0</newFansCount>
+    <newLikeCount>0</newLikeCount>
+    </notice>
+    </oschina>*/
     @XStreamAlias("notice")
     public class Notice {
       /*  <notice>

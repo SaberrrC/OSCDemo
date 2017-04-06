@@ -150,10 +150,8 @@ public class FansFragment extends BaseFragment implements FinalRecycleAdapter.On
     }
 
     //子线程
-    private void getNetData(boolean isRefresh) {
-        if (isRefresh) {
-            mItemList.clear();
-        }
+    private void getNetData(final boolean isRefresh) {
+
         if (TextUtils.isEmpty(mCookie)) {
             ThreadUtils.runMain(new Runnable() {
                 @Override
@@ -170,36 +168,35 @@ public class FansFragment extends BaseFragment implements FinalRecycleAdapter.On
             try {
                 Response<ResponseBody> response = httpServiceApi.getFans(mCookie, mItemList.size()/Constant.PAGESIZE, mUserid , direc , Constant.PAGESIZE).execute();
                 String result = response.body().string();
-                System.out.println(result);
+//                System.out.println(result);
 
                 FansBean fansBean = XmlUtils.toBean(FansBean.class, result.getBytes());
-                List<FansBean.Friend> friends = fansBean.getFriends();
-                System.out.println(friends.size());
-                mItemList.addAll(friends);
-                System.out.println(mItemList.size());
+                final List<FansBean.Friend> friends = fansBean.getFriends();
+//                System.out.println(friends.size());
+                ThreadUtils.runMain(new Runnable() {
+                    @Override
+                    public void run() {
 
-                if (mItemList.size() == 0) {
-                    ThreadUtils.runMain(new Runnable() {
-                        @Override
-                        public void run() {
+                        if (isRefresh && friends.size() != 0) {
+                            mItemList.clear();
+                        }
+
+                        mItemList.addAll(friends);
+                        if (mItemList.size() == 0) {
                             mLyerror.setVisibility(View.VISIBLE);
-                            mRvTweet.setVisibility(View.GONE);
+                            mSrl.setVisibility(View.GONE);
                             mTvResult.setText("当前无数据");
                             mSrl.setRefreshing(false);
-                        }
-                    });
+                        } else {
 
-                } else {
-                    ThreadUtils.runMain(new Runnable() {
-                        @Override
-                        public void run() {
                             mLyerror.setVisibility(View.GONE);
-                            mRvTweet.setVisibility(View.VISIBLE);
+                            mSrl.setVisibility(View.VISIBLE);
                             mRecycleAdapter.notifyDataSetChanged();
                             mSrl.setRefreshing(false);
                         }
-                    });
-                }
+                    }
+
+                });
 
             } catch (IOException e) {
                 e.printStackTrace();

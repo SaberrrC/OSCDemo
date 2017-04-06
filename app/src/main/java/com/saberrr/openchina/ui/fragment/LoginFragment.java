@@ -65,7 +65,8 @@ public class LoginFragment extends BaseFragment {
     public View createView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_login, null);
         ButterKnife.bind(this, view);
-
+        mUsername = SpUtil.getString(getContext(), Constant.USERNAME, "");
+        mEtUername.setText(mUsername);
         return view;
     }
 
@@ -114,6 +115,7 @@ public class LoginFragment extends BaseFragment {
 
                                         SpUtil.saveString(getContext(), Constant.USERID, loginBean.getUser().getUid());
                                         SpUtil.saveString(getContext(), Constant.PWD, mPwd);
+                                        SpUtil.saveString(getContext(), Constant.USERNAME, mUsername);
 
                                         EventBus.getDefault().postSticky(event);
                                         getActivity().finish();
