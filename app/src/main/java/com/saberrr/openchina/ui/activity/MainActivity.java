@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private int     mImageArray[]    = {R.drawable.selector_all_bg, R.drawable.selector_dongtan_bg, R.drawable.selector_add_bg, R.drawable.selector_find_bg, R.drawable.selector_mine_bg};
     private long    laatTime         = 0;
     private String  currentId        = null;
-    private boolean isFirstEnter     = true;
+    private boolean isFirstEnter     = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

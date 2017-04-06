@@ -323,6 +323,8 @@ public class JumpFragment extends BaseFragment {
                 ImgSelActivity.startActivity(this, config, REQUEST_CODE);
                 break;
             case R.id.iv_at:
+//                ShowActivity.startFragmentfor(AtFragment.class, Bundle);
+//                ShowActivity.startFragment();
                 mLlFaces.setVisibility(View.GONE);
                 break;
             case R.id.iv_topic:
@@ -333,6 +335,7 @@ public class JumpFragment extends BaseFragment {
                 editable.insert(index, TOPIC_TEXT);
                 mEtContent.setSelection(index + 1 + TOPIC_TEXT.indexOf("#"), index + TOPIC_TEXT.lastIndexOf("#"));
                 break;
+
             case R.id.iv_face:
                 mLlFaces.setVisibility(View.VISIBLE);
                 break;
@@ -379,7 +382,6 @@ public class JumpFragment extends BaseFragment {
         for (int i = 0; i < images.size(); i++) {
             final View view = LayoutInflater.from(AppApplication.appContext).inflate(R.layout.item_image_selected, null, false);
             ImageView imageView = (ImageView) view.findViewById(R.id.iv_img);
-            ImageView iv_del = (ImageView) view.findViewById(R.id.iv_del);
             ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
             layoutParams.width = screenWith / 3;
             layoutParams.height = screenWith / 3;
