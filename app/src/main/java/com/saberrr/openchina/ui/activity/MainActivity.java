@@ -54,11 +54,12 @@ public class MainActivity extends AppCompatActivity {
     FragmentTabHost mTabhost;
     @BindView(R.id.iv_add)
     ImageView       mIvAdd;
-    private Class  mFragmentArray[] = {ComprehensiveFragment.class, MoveFragment.class, TestFragment2.class, FindFragment.class, MyFragment.class};
-    private String mTextArray[]     = {"综合", "动弹", "", "发现", "我的"};
-    private int    mImageArray[]    = {R.drawable.selector_all_bg, R.drawable.selector_dongtan_bg, R.drawable.selector_add_bg, R.drawable.selector_find_bg, R.drawable.selector_mine_bg};
-    private long   laatTime         = 0;
-    private String currentId        = null;
+    private Class   mFragmentArray[] = {ComprehensiveFragment.class, MoveFragment.class, TestFragment2.class, FindFragment.class, MyFragment.class};
+    private String  mTextArray[]     = {"综合", "动弹", "", "发现", "我的"};
+    private int     mImageArray[]    = {R.drawable.selector_all_bg, R.drawable.selector_dongtan_bg, R.drawable.selector_add_bg, R.drawable.selector_find_bg, R.drawable.selector_mine_bg};
+    private long    laatTime         = 0;
+    private String  currentId        = null;
+    private boolean isFirstEnter     = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,53 +74,56 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         //版本比对
-        ThreadUtils.runSub(new Runnable() {
-            @Override
-            public void run() {
-                String xml = JsonCacheManager.getInstance().getXML(Urls.MOBILEAPPVERSION);
-                final UpdateInfo updateInfo = XmlUtils.toBean(UpdateInfo.class, xml.getBytes());
-                System.out.println(updateInfo.toString());
-                String vcode = updateInfo.getUpdate().getAAndroid().getVersionCode();
-                int netCode = Integer.valueOf(vcode);
-                int locolCode = Utils.getVersionCode(getPackageName());
-                if (locolCode < netCode) {
-                    ThreadUtils.runMain(new Runnable() {
-                        @Override
-                        public void run() {
-                            // 普通
-                            String updateLog = updateInfo.getUpdate().getAAndroid().getUpdateLog();
-                            String replace = updateLog.replace("<br/>", "\n");
-                            String log = replace.replace("<br>", "\n");
-                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            // 设置图标
-                            //                                builder.setIcon(R.drawable.iv3);
-                            // 设置标题
-                            builder.setTitle("发现新版本");
-                            // 设置消息内容
-                            builder.setMessage(log);
-                            // 点击旁边区域不会消失
-                            builder.setCancelable(false);
-                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+        if (isFirstEnter) {
+            isFirstEnter = false;
+            ThreadUtils.runSub(new Runnable() {
+                @Override
+                public void run() {
+                    String xml = JsonCacheManager.getInstance().getXML(Urls.MOBILEAPPVERSION);
+                    final UpdateInfo updateInfo = XmlUtils.toBean(UpdateInfo.class, xml.getBytes());
+                    System.out.println(updateInfo.toString());
+                    String vcode = updateInfo.getUpdate().getAAndroid().getVersionCode();
+                    int netCode = Integer.valueOf(vcode);
+                    int locolCode = Utils.getVersionCode(getPackageName());
+                    if (locolCode < netCode) {
+                        ThreadUtils.runMain(new Runnable() {
+                            @Override
+                            public void run() {
+                                // 普通
+                                String updateLog = updateInfo.getUpdate().getAAndroid().getUpdateLog();
+                                String replace = updateLog.replace("<br/>", "\n");
+                                String log = replace.replace("<br>", "\n");
+                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                // 设置图标
+                                //                                builder.setIcon(R.drawable.iv3);
+                                // 设置标题
+                                builder.setTitle("发现新版本");
+                                // 设置消息内容
+                                builder.setMessage(log);
+                                // 点击旁边区域不会消失
+                                builder.setCancelable(true);
+                                builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
 
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(getApplication(), "您保存了您的菊花！", Toast.LENGTH_SHORT).show();
-                                    dialog.dismiss();
-                                }
-                            });
-                            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            builder.show();
-                        }
-                    });
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(getApplication(), "您保存了您的菊花！", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                });
+                                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                builder.show();
+                            }
+                        });
 
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void initToolBar() {
