@@ -74,7 +74,7 @@ public class FansFragment extends BaseFragment implements FinalRecycleAdapter.On
     private FinalRecycleAdapter mRecycleAdapter;
     private int[] genderRid = {0 , R.mipmap.ic_male,R.mipmap.ic_female};
     private String mUserid;
-
+    private String direc = "0";
     @Override
     protected boolean needRefresh() {
 
@@ -86,6 +86,11 @@ public class FansFragment extends BaseFragment implements FinalRecycleAdapter.On
 
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_tweetlike, null);
         ButterKnife.bind(this, view);
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            direc = "1";
+        }
         init();
 
         return view;
@@ -163,7 +168,7 @@ public class FansFragment extends BaseFragment implements FinalRecycleAdapter.On
         } else {
             HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
             try {
-                Response<ResponseBody> response = httpServiceApi.getFans(mCookie, mItemList.size()/Constant.PAGESIZE, mUserid , "0" , Constant.PAGESIZE).execute();
+                Response<ResponseBody> response = httpServiceApi.getFans(mCookie, mItemList.size()/Constant.PAGESIZE, mUserid , direc , Constant.PAGESIZE).execute();
                 String result = response.body().string();
                 System.out.println(result);
 

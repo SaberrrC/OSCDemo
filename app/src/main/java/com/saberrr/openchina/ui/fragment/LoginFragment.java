@@ -55,6 +55,7 @@ public class LoginFragment extends BaseFragment {
     private String mUsername;
     private String mPwd;
 
+
     @Override
     protected boolean needRefresh() {
         return false;
@@ -64,6 +65,7 @@ public class LoginFragment extends BaseFragment {
     public View createView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_login, null);
         ButterKnife.bind(this, view);
+
         return view;
     }
 

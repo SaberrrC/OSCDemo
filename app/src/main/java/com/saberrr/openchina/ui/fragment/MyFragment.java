@@ -22,6 +22,7 @@ import com.saberrr.openchina.event.LoginBeanEvent;
 import com.saberrr.openchina.net.HttpServiceApi;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
+import com.saberrr.openchina.ui.fragment.mymsgfragment.FansFragment;
 import com.saberrr.openchina.ui.view.SolarSystemView;
 import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.SpUtil;
@@ -135,6 +136,7 @@ public class MyFragment extends BaseFragment {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.frag_my, null);
         ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
+
         return view;
     }
 
@@ -294,23 +296,46 @@ public class MyFragment extends BaseFragment {
                 break;
             case R.id.ll_followers:
                 ToastUtils.showToast("关注");
+                Bundle bu = new Bundle();
+                ShowActivity.startFragmentWithTitle(FansFragment.class, bu, "关注");
                 break;
             case R.id.ll_fans:
+                ShowActivity.startFragmentWithTitle(FansFragment.class, null, "粉丝");
                 ToastUtils.showToast("粉丝");
 
                 break;
             case R.id.rl_my_msg:
+                if (isOnline) {
+                    ShowActivity.startFragmentWithTitle(MyMsgFragment.class, null, "消息中心");
+                } else {
+                    ShowActivity.startFragmentWithTitle(LoginFragment.class, null, "登录");
+                }
                 ToastUtils.showToast("我的消息");
-                ShowActivity.startFragmentWithTitle(MyMsgFragment.class, null, "消息中心");
 
                 break;
             case R.id.rl_my_blog:
+                if (isOnline) {
+//                    ShowActivity.startFragmentWithTitle(MyMsgFragment.class, null, "消息中心");
+                } else {
+                    ShowActivity.startFragmentWithTitle(LoginFragment.class, null, "登录");
+                }
+
                 ToastUtils.showToast("我的微博");
                 break;
             case R.id.rl_my_team:
+                if (isOnline) {
+//                    ShowActivity.startFragmentWithTitle(MyMsgFragment.class, null, "消息中心");
+                } else {
+                    ShowActivity.startFragmentWithTitle(LoginFragment.class, null, "登录");
+                }
                 ToastUtils.showToast("我的团队");
                 break;
             case R.id.rl_my_event:
+                if (isOnline) {
+//                    ShowActivity.startFragmentWithTitle(MyMsgFragment.class, null, "消息中心");
+                } else {
+                    ShowActivity.startFragmentWithTitle(LoginFragment.class, null, "登录");
+                }
                 ToastUtils.showToast("我的活动");
                 break;
             case R.id.rl_my_setting:
