@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -44,8 +45,6 @@ import com.saberrr.openchina.utils.Utils;
 import com.yuyh.library.imgsel.ImageLoader;
 import com.yuyh.library.imgsel.ImgSelActivity;
 import com.yuyh.library.imgsel.ImgSelConfig;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
@@ -103,7 +102,6 @@ public class JumpFragment extends BaseFragment {
     @Override
     public View createView() {
         View view = creatViewFromId(R.layout.fragment_jumponejump);
-        EventBus.getDefault().register(this);
         ButterKnife.bind(this, view);
         initView();
         setHintKeyboard(true);
@@ -158,23 +156,19 @@ public class JumpFragment extends BaseFragment {
                 }
             }
         });
-        /*final View view = LayoutInflater.from(AppApplication.appContext).inflate(R.layout.item_image_selected, null, false);
-        ImageView imageView = (ImageView) view.findViewById(R.id.iv_img);
-        ImageView iv_del = (ImageView) view.findViewById(R.id.iv_del);
-        iv_del.setVisibility(View.GONE);
-        view.setOnClickListener(new View.OnClickListener() {
+        //键盘事件
+        mEtContent.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View v) {
-                ImgSelActivity.startActivity(JumpFragment.this, config, REQUEST_CODE);
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    //如果发送事件
+                    sendContentImages();
+                    return true;
+                }
+
+                return false;
             }
         });
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
-        layoutParams.width = screenWith / 3;
-        layoutParams.height = screenWith / 3;
-        view.setLayoutParams(layoutParams);
-        Utils.loadImage(R.mipmap.ic_tweet_add, imageView);
-        mFlImg.addView(view);*/
     }
 
     private void initImages() {
@@ -200,6 +194,7 @@ public class JumpFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+        //        EventBus.getDefault().register(this);
         initImages();
     }
 
@@ -207,101 +202,108 @@ public class JumpFragment extends BaseFragment {
         setToolbarIconOnClickListener(new ShowActivity.OnClickListener() {
             @Override
             public void onClick() {
-                mCookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
-                if (TextUtils.isEmpty(mCookie)) {
-                    ShowActivity.startFragment(LoginFragment.class, null);
+                sendContentImages();
+            }
+        });
+    }
+
+    private void sendContentImages() {
+        mCookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
+        if (TextUtils.isEmpty(mCookie)) {
+            ShowActivity.startFragment(LoginFragment.class, null);
+        }
+        ThreadUtils.runSub(new Runnable() {
+            @Override
+            public void run() {
+                /**
+                 * POST /action/apiv2/tweet HTTP/1.1\\r\\n
+                 *
+                 * 文字  application/x-www-form-urlencoded; charset=UTF-8
+                 */
+                String content = mEtContent.getText().toString();
+                String cookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
+
+                if (TextUtils.isEmpty(cookie)) {
+                    ShowActivity.startFragmentWithTitle(LoginFragment.class, null, "登录");
+                    return;
                 }
-                ThreadUtils.runSub(new Runnable() {
-                    @Override
-                    public void run() {
-                        /**
-                         * POST /action/apiv2/tweet HTTP/1.1\\r\\n
-                         *
-                         * 文字  application/x-www-form-urlencoded; charset=UTF-8
-                         */
-                        String content = mEtContent.getText().toString();
-                        String cookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
-
-                        if (TextUtils.isEmpty(cookie)) {
-                            ShowActivity.startFragmentWithTitle(LoginFragment.class, null, "登录");
-                            return;
-                        }
-                        if (TextUtils.isEmpty(content)) {
-                            ToastUtils.showToast("内容不能为空");
-                            return;
-                        }
-                        if (images.size() == 0) { //纯文字
+                if (TextUtils.isEmpty(content)) {
+                    ToastUtils.showToast("内容不能为空");
+                    return;
+                }
+                if (images.size() == 0) { //纯文字
+                    try {
+                        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                        RequestBody body = new FormBody.Builder().add(CONTENT, content).build();
+                        Request request = new Request.Builder().url(Urls.SEND_JUMP_TEXT)//纯文字地址
+                                .addHeader(COOKIE, mCookie).post(body).build();
+                        Response response = okHttpClient.newCall(request).execute();
+                        String string = response.body().string();
+                        System.out.println(string);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        ToastUtils.showToast("发送失败");
+                    }
+                } else {//文字加图片
+                    // TODO: 2017-04-06
+                    for (int i = 0; i < images.size(); i++) {
+                        ToastUtils.showToast("正在发送第" + (i + 1) + "张");
+                        if (i == 0) {
                             try {
+                                //创建一个要上传的图片
+                                File file = new File(images.get(i));
                                 OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-                                RequestBody body = new FormBody.Builder().add(CONTENT, content).build();
-                                Request request = new Request.Builder().url(Urls.SEND_JUMP_TEXT)//纯文字地址
-                                        .addHeader(COOKIE, mCookie).post(body).build();
+                                RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)//传送的类型
+                                        .addFormDataPart(RESOURCE, file.getName(), MultipartBody.create(MediaType.parse("application/octet-stream"), file)).build();
+                                Request request = new Request.Builder().addHeader(COOKIE, mCookie).post(body).url(Urls.SEND_JUMP_IMAGE).build();
                                 Response response = okHttpClient.newCall(request).execute();
-                                String string = response.body().string();
-                                System.out.println(string);
+                                String json = response.body().string();
+                                System.out.println(json);
+                                SendJumpFirstImgBean sendJumpFirstImgBean = GsonTools.changeGsonToBean(json, SendJumpFirstImgBean.class);
+                                //拿到token
+                                token = sendJumpFirstImgBean.getResult().getToken();
                             } catch (IOException e) {
                                 e.printStackTrace();
-                                ToastUtils.showToast("发送失败");
                             }
-                        } else {//文字加图片
-                            // TODO: 2017-04-06
-                            for (int i = 0; i < images.size(); i++) {
-                                ToastUtils.showToast("正在发送第" + (i + 1) + "张");
-                                if (i == 0) {
-                                    try {
-                                        //创建一个要上传的图片
-                                        File file = new File(images.get(i));
-                                        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-                                        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)//传送的类型
-                                                .addFormDataPart(RESOURCE, file.getName(), MultipartBody.create(MediaType.parse("application/octet-stream"), file)).build();
-                                        Request request = new Request.Builder().addHeader(COOKIE, mCookie).post(body).url(Urls.SEND_JUMP_IMAGE).build();
-                                        Response response = okHttpClient.newCall(request).execute();
-                                        String json = response.body().string();
-                                        System.out.println(json);
-                                        SendJumpFirstImgBean sendJumpFirstImgBean = GsonTools.changeGsonToBean(json, SendJumpFirstImgBean.class);
-                                        //拿到token
-                                        token = sendJumpFirstImgBean.getResult().getToken();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                } else { //第二张
-                                    try {
-                                        //创建一个要上传的图片
-                                        File file = new File(images.get(i));
-                                        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-                                        //
-                                        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)//传送的类型
-                                                .addFormDataPart(RESOURCE, file.getName(), MultipartBody.create(MediaType.parse("application/octet-stream"), file)).addFormDataPart(TOKEN, token).build();
-                                        Request request = new Request.Builder().addHeader(COOKIE, mCookie).post(body).url(Urls.SEND_JUMP_IMAGE).build();
-                                        Response response = okHttpClient.newCall(request).execute();
-                                        String json = response.body().string();
-                                        System.out.println(json);
-                                        SendJumpFirstImgBean sendJumpFirstImgBean = GsonTools.changeGsonToBean(json, SendJumpFirstImgBean.class);
-                                        //拿到token
-                                        token = sendJumpFirstImgBean.getResult().getToken();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                            //发文字
+                        } else { //第二张
                             try {
+                                //创建一个要上传的图片
+                                File file = new File(images.get(i));
                                 OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-                                RequestBody body = new FormBody.Builder().add(IMAGES, token).add(CONTENT, content).build();
-                                Request request = new Request.Builder().url("http://www.oschina.net/action/apiv2/tweet").addHeader(COOKIE, mCookie).post(body).build();
+                                //
+                                RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)//传送的类型
+                                        .addFormDataPart(RESOURCE, file.getName(), MultipartBody.create(MediaType.parse("application/octet-stream"), file)).addFormDataPart(TOKEN, token).build();
+                                Request request = new Request.Builder().addHeader(COOKIE, mCookie).post(body).url(Urls.SEND_JUMP_IMAGE).build();
                                 Response response = okHttpClient.newCall(request).execute();
-                                String string = response.body().string();
-                                System.out.println(string);
-
+                                String json = response.body().string();
+                                System.out.println(json);
+                                SendJumpFirstImgBean sendJumpFirstImgBean = GsonTools.changeGsonToBean(json, SendJumpFirstImgBean.class);
+                                //拿到token
+                                token = sendJumpFirstImgBean.getResult().getToken();
                             } catch (IOException e) {
                                 e.printStackTrace();
-                                ToastUtils.showToast("发送失败");
                             }
-                            ToastUtils.showToast("发送成功");
-
                         }
                     }
-                });
+                    //发文字
+                    try {
+                        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                        RequestBody body = new FormBody.Builder().add(IMAGES, token).add(CONTENT, content).build();
+                        Request request = new Request.Builder().url("http://www.oschina.net/action/apiv2/tweet").addHeader(COOKIE, mCookie).post(body).build();
+                        Response response = okHttpClient.newCall(request).execute();
+                        String string = response.body().string();
+                        System.out.println(string);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        ToastUtils.showToast("发送失败");
+                    }
+                    ToastUtils.showToast("发送成功");
+                    mEtContent.getEditableText().clear();
+                    mFlImg.removeAllViews();
+                    images.clear();
+                    getActivity().finish();
+                }
             }
         });
     }
@@ -480,6 +482,6 @@ public class JumpFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+        //        EventBus.getDefault().unregister(this);
     }
 }
