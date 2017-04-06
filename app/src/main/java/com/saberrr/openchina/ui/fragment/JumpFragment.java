@@ -12,6 +12,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.DensityUtil;
 import com.saberrr.openchina.utils.GsonTools;
 import com.saberrr.openchina.utils.SpUtil;
+import com.saberrr.openchina.utils.StringUtils;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
 import com.saberrr.openchina.utils.Utils;
@@ -151,7 +153,7 @@ public class JumpFragment extends BaseFragment {
                 }
             }
         });
-        final View view = LayoutInflater.from(AppApplication.appContext).inflate(R.layout.item_image_selected, null, false);
+        /*final View view = LayoutInflater.from(AppApplication.appContext).inflate(R.layout.item_image_selected, null, false);
         ImageView imageView = (ImageView) view.findViewById(R.id.iv_img);
         ImageView iv_del = (ImageView) view.findViewById(R.id.iv_del);
         iv_del.setVisibility(View.GONE);
@@ -167,13 +169,35 @@ public class JumpFragment extends BaseFragment {
         layoutParams.height = screenWith / 3;
         view.setLayoutParams(layoutParams);
         Utils.loadImage(R.mipmap.ic_tweet_add, imageView);
-        mFlImg.addView(view);
+        mFlImg.addView(view);*/
+    }
 
+    private void initImages() {
+        String text = SpUtil.getString(getContext(), Constant.JUMP_TEXT, "");
+        String imagePaths = SpUtil.getString(getContext(), Constant.JUMP_IMAGES, "");
+        mEtContent.setText(text);
+        mEtContent.setSelection(text.length());
+        String[] paths = imagePaths.split("##%##");
+        Log.d("initImages", "initImages: ======" + paths.length);
+        List<String> lst = new ArrayList<>();
+        for (String path : paths) {
+            Log.d("initImages", "initImages: ======path=====" + path);
+            if (StringUtils.isImgUrl(path)) {
+                lst.add(path);
+            }
+        }
+        addImage(lst);
     }
 
     @Override
     public Object getData() {
         return "";
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        initImages();
     }
 
     private void initToolbar() {
@@ -279,6 +303,12 @@ public class JumpFragment extends BaseFragment {
         });
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        SpUtil.saveString(getContext(), Constant.JUMP_TEXT, mEtContent.getText().toString());
+    }
+
     @OnClick({R.id.tv_count, R.id.iv_pic, R.id.iv_at, R.id.iv_topic, R.id.iv_face, R.id.tv_qq, R.id.tv_emoji, R.id.iv_del})
     public void onClick(View view) {
 
@@ -328,53 +358,67 @@ public class JumpFragment extends BaseFragment {
         // 图片选择结果回调
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             List<String> pathList = data.getStringArrayListExtra(ImgSelActivity.INTENT_RESULT);
-            images.clear();
-            images.addAll(pathList);
-            mFlImg.removeAllViews();
+            addImage(pathList);
+            StringBuffer sb = new StringBuffer();
+            Log.d("onPause", "onPause: =====" + images.size());
             for (int i = 0; i < images.size(); i++) {
-                final View view = LayoutInflater.from(AppApplication.appContext).inflate(R.layout.item_image_selected, null, false);
-                ImageView imageView = (ImageView) view.findViewById(R.id.iv_img);
-                ImageView iv_del = (ImageView) view.findViewById(R.id.iv_del);
-                ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
-                layoutParams.width = screenWith / 3;
-                layoutParams.height = screenWith / 3;
-                view.setLayoutParams(layoutParams);
-                final int finalI = i;
-                final String path = images.get(i);
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mFlImg.removeView(v);
-                        //                        images.remove()
-                        for (int i1 = 0; i1 < images.size(); i1++) {
-                            if (path == images.get(i1)) {
-                                images.remove(i1--);
-                            }
+                if (i == images.size() - 1) {
+                    sb.append(images.get(i));
+                } else {
+                    sb.append(images.get(i) + "##%##");
+                }
+            }
+            SpUtil.saveString(getContext(), Constant.JUMP_IMAGES, sb.toString());
+        }
+    }
+
+    private void addImage(List<String> pathList) {
+        images.clear();
+        images.addAll(pathList);
+        mFlImg.removeAllViews();
+        for (int i = 0; i < images.size(); i++) {
+            final View view = LayoutInflater.from(AppApplication.appContext).inflate(R.layout.item_image_selected, null, false);
+            ImageView imageView = (ImageView) view.findViewById(R.id.iv_img);
+            ImageView iv_del = (ImageView) view.findViewById(R.id.iv_del);
+            ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+            layoutParams.width = screenWith / 3;
+            layoutParams.height = screenWith / 3;
+            view.setLayoutParams(layoutParams);
+            final int finalI = i;
+            final String path = images.get(i);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mFlImg.removeView(v);
+                    //                        images.remove()
+                    for (int i1 = 0; i1 < images.size(); i1++) {
+                        if (path == images.get(i1)) {
+                            images.remove(i1--);
                         }
                     }
-                });
-                Utils.loadImage(images.get(i), imageView);
-                mFlImg.addView(view);
-            }
-            if (images.size() < 9) {
-                final View view = LayoutInflater.from(AppApplication.appContext).inflate(R.layout.item_image_selected, null, false);
-                ImageView imageView = (ImageView) view.findViewById(R.id.iv_img);
-                ImageView iv_del = (ImageView) view.findViewById(R.id.iv_del);
-                iv_del.setVisibility(View.GONE);
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ImgSelActivity.startActivity(JumpFragment.this, config, REQUEST_CODE);
-                    }
-                });
-                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
-                layoutParams.width = screenWith / 3;
-                layoutParams.height = screenWith / 3;
-                view.setLayoutParams(layoutParams);
-                Utils.loadImage(R.mipmap.ic_tweet_add, imageView);
-                mFlImg.addView(view);
-            }
+                }
+            });
+            Utils.loadImage(images.get(i), imageView);
+            mFlImg.addView(view);
+        }
+        if (images.size() < 9) {
+            final View view = LayoutInflater.from(AppApplication.appContext).inflate(R.layout.item_image_selected, null, false);
+            ImageView imageView = (ImageView) view.findViewById(R.id.iv_img);
+            ImageView iv_del = (ImageView) view.findViewById(R.id.iv_del);
+            iv_del.setVisibility(View.GONE);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ImgSelActivity.startActivity(JumpFragment.this, config, REQUEST_CODE);
+                }
+            });
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+            layoutParams.width = screenWith / 3;
+            layoutParams.height = screenWith / 3;
+            view.setLayoutParams(layoutParams);
+            Utils.loadImage(R.mipmap.ic_tweet_add, imageView);
+            mFlImg.addView(view);
         }
     }
 
