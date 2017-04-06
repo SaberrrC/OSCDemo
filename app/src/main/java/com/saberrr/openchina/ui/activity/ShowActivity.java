@@ -78,6 +78,17 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public interface OnBackIconClickListener {
+        void onClick(View v);
+    }
+
+    private OnBackIconClickListener mOnBackIconClickListener;
+
+    public void setOnBackIconClickListener(OnBackIconClickListener onBackIconClickListener) {
+        mOnBackIconClickListener = onBackIconClickListener;
     }
 
     //设置toolbar
@@ -90,7 +101,11 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if (mOnBackIconClickListener != null) {
+                    mOnBackIconClickListener.onClick(v);
+                } else {
+                    finish();
+                }
             }
         });
         mToolbar.setTitle(title);
@@ -211,10 +226,17 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mTitle_icon == TITLE_MENU) {
             if (mOnOptionsItemSelected != null) {
-                mOnOptionsItemSelected.onOptionsMenu(item);
+                super.onBackPressed();
+                //mOnOptionsItemSelected.onOptionsMenu(item);
+                return true;
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     public interface onOptionsItemSelected {

@@ -30,8 +30,25 @@ public class ThreadUtils {
         }
     });
 
+    private static Executor sExecutorMore       = new ThreadPoolExecutor(
+            5,
+            9,
+            5,
+            TimeUnit.MINUTES,
+            new SynchronousQueue<Runnable>(),
+            new RejectedExecutionHandler() {
+                @Override
+                public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+                    ToastUtils.showToast("操作太频繁，请稍后再试");
+                }
+            });
+
     public static void runSub(Runnable runnable) {
         sExecutor.execute(runnable);
+    }
+
+    public static void runBigSub(Runnable runnable) {
+        sExecutorMore.execute(runnable);
     }
 
     public static void runMain(Runnable runnable) {
