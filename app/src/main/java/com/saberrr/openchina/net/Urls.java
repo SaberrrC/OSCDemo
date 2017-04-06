@@ -46,6 +46,7 @@ public class Urls {
 
     //获取apk版本信息
     public static final String MOBILEAPPVERSION = BASE_URL + "MobileAppVersion.xml";
+    public static final String ROCK = BASE_URL + "action/api/rock_rock";
 
 
     //粉丝
