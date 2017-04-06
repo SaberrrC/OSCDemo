@@ -16,9 +16,17 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.MoveNewBean;
 import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.utils.Constant;
+import com.saberrr.openchina.utils.GsonTools;
+import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.ToastUtils;
 
+import java.io.IOException;
 import java.util.List;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static com.saberrr.openchina.R.id.viewPager;
 
@@ -75,7 +83,6 @@ public class ShowImageActivity extends AppCompatActivity {
                 }
             });
             mViewPager.setCurrentItem(mInts[1]);
-//            }
         }
     };
 
@@ -88,7 +95,31 @@ public class ShowImageActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                MoveNewBean dataBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_NEW + mInts[2], MoveNewBean.class);
+                MoveNewBean dataBean = null;
+                if (mInts[2] == 3) {
+                    String cookie = SpUtil.getString(ShowImageActivity.this, Constant.COOKIE, "");
+                    String userid = SpUtil.getString(ShowImageActivity.this, Constant.USERID, "");
+                    try {
+                        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                        Request request = new Request.Builder().url("http://www.oschina.net/action/apiv2/tweets?authorId=" + userid).addHeader("cookie", cookie).get().build();
+
+                        Response response = okHttpClient.newCall(request).execute();
+                        if (response.code() == 200) {
+
+                            String string = response.body().string();
+                            dataBean = GsonTools.parseJsonToBean(string, MoveNewBean.class);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        ToastUtils.showToast("网络错误");
+                    }
+                } else {
+                    dataBean = JsonCacheManager.getInstance().getDataBean(Urls.MOVE_NEW + mInts[2], MoveNewBean.class);
+                }
+                if (dataBean == null) {
+                    ToastUtils.showToast("空了");
+                }
                 List<MoveNewBean.ResultBean.ItemsBean.ImagesBean> images = dataBean.getResult().getItems().get(mInts[0]).getImages();
                 Message msg = new Message();
                 msg.obj = images;

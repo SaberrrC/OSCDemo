@@ -5,28 +5,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        >
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"/>
+            android:id="@+id/iv_icon"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            />
 
         <TextView
+            android:id="@+id/tv_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
+            android:textSize="16dp"/>
     </LinearLayout>
 
     <TextView
         android:id="@+id/tv_txt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="文本内容"/>
+        android:layout_margin="10dp"
+        android:text="文本内容"
+        android:textColor="#000000"
+        android:textSize="14dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,48 +47,89 @@
 
         <TextView
             android:id="@+id/tv_date"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="时间"/>
-
-        <ImageView
-            android:id="@+id/iv_good"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_thumbup_normal"/>
-
-        <ImageView
-            android:id="@+id/iv_commend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_comment_30"
+            android:layout_weight="1"
+            android:text="时间"
             />
 
-        <ImageView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_documents"/>
+            android:orientation="horizontal">
 
+
+            <ImageView
+                android:id="@+id/iv_good"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:src="@mipmap/ic_thumbup_normal"/>
+
+            <ImageView
+                android:id="@+id/iv_commend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:src="@mipmap/ic_comment_30"
+                />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:src="@mipmap/ic_documents"/>
+        </LinearLayout>
     </LinearLayout>
+
+    <!--<android.support.design.widget.TabLayout-->
+    <!--android:id="@+id/detail_tabLayout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"/>-->
+
+    <!--<android.support.v4.view.ViewPager-->
+    <!--android:id="@+id/detail_viewPager"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"/>-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/t_zan"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/bottom_detail_bg"
             android:gravity="center"
             android:text="赞（0）"/>
 
         <Button
+            android:id="@+id/bt_common"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/bottom_detail_bg"
             android:gravity="center"
             android:text="评论（0）"/>
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/lv_zan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ListView
+            android:id="@+id/lv_common"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
 
 </LinearLayout>
