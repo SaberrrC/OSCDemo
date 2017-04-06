@@ -21,37 +21,30 @@
         android:layout_toRightOf="@id/iv_header"
         android:text="用户名"
         android:textColor="@color/colorPrimary"/>
+<ImageView
+    android:layout_margin="2dp"
+    android:id="@+id/iv_gender"
+    android:layout_toRightOf="@id/tv_username"
+    android:layout_width="16dp"
+    android:layout_height="16dp"
+    android:src="@mipmap/ic_female"/>
 
     <TextView
-        android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:text="时间"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_username"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_toRightOf="@id/iv_header"
-        android:text="赞了我的动弹"
-        />
-
-
-    <TextView
-
-        android:background="@drawable/shape_content_bg"
-        android:id="@+id/tv_myself"
-        android:padding="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/tv_locaton"
+        android:text="北京"
         android:layout_alignLeft="@id/tv_username"
-        android:layout_below="@id/iv_header"
-        android:text="我自己"
-        android:layout_marginBottom="10dp"
-        />
+        android:layout_below="@id/tv_username"
+        android:layout_marginTop="10dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_strength"
+        android:text="北京"
+        android:layout_alignLeft="@id/tv_username"
+        android:layout_below="@id/tv_username"
+        android:layout_marginTop="35dp"/>
 
     <TextView
         android:layout_marginTop="5dp"

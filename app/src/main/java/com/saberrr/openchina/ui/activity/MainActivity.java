@@ -1,24 +1,37 @@
 package com.saberrr.openchina.ui.activity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.bean.updatainfo.UpdateInfo;
+import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
+import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.fragment.ComprehensiveFragment;
 import com.saberrr.openchina.ui.fragment.FindFragment;
 import com.saberrr.openchina.ui.fragment.JumpFragment;
+import com.saberrr.openchina.ui.fragment.LoginFragment;
 import com.saberrr.openchina.ui.fragment.MoveFragment;
 import com.saberrr.openchina.ui.fragment.MyFragment;
 import com.saberrr.openchina.ui.fragment.TestFragment2;
+import com.saberrr.openchina.utils.Constant;
+import com.saberrr.openchina.utils.SpUtil;
+import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
+import com.saberrr.openchina.utils.Utils;
+import com.saberrr.openchina.utils.XmlUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,10 +54,12 @@ public class MainActivity extends AppCompatActivity {
     FragmentTabHost mTabhost;
     @BindView(R.id.iv_add)
     ImageView       mIvAdd;
-    private Class  mFragmentArray[] = {ComprehensiveFragment.class, MoveFragment.class, TestFragment2.class, FindFragment.class, MyFragment.class};
-    private String mTextArray[]     = {"综合", "动弹", "", "发现", "我的"};
-    private int    mImageArray[]    = {R.drawable.selector_all_bg, R.drawable.selector_dongtan_bg, R.drawable.selector_add_bg, R.drawable.selector_find_bg, R.drawable.selector_mine_bg};
-    private long   laatTime         = 0;
+    private Class   mFragmentArray[] = {ComprehensiveFragment.class, MoveFragment.class, TestFragment2.class, FindFragment.class, MyFragment.class};
+    private String  mTextArray[]     = {"综合", "动弹", "", "发现", "我的"};
+    private int     mImageArray[]    = {R.drawable.selector_all_bg, R.drawable.selector_dongtan_bg, R.drawable.selector_add_bg, R.drawable.selector_find_bg, R.drawable.selector_mine_bg};
+    private long    laatTime         = 0;
+    private String  currentId        = null;
+    private boolean isFirstEnter     = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +68,62 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initToolBar();
         initView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //版本比对
+        if (isFirstEnter) {
+            isFirstEnter = false;
+            ThreadUtils.runSub(new Runnable() {
+                @Override
+                public void run() {
+                    String xml = JsonCacheManager.getInstance().getXML(Urls.MOBILEAPPVERSION);
+                    final UpdateInfo updateInfo = XmlUtils.toBean(UpdateInfo.class, xml.getBytes());
+                    System.out.println(updateInfo.toString());
+                    String vcode = updateInfo.getUpdate().getAAndroid().getVersionCode();
+                    int netCode = Integer.valueOf(vcode);
+                    int locolCode = Utils.getVersionCode(getPackageName());
+                    if (locolCode < netCode) {
+                        ThreadUtils.runMain(new Runnable() {
+                            @Override
+                            public void run() {
+                                // 普通
+                                String updateLog = updateInfo.getUpdate().getAAndroid().getUpdateLog();
+                                String replace = updateLog.replace("<br/>", "\n");
+                                String log = replace.replace("<br>", "\n");
+                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                // 设置图标
+                                //                                builder.setIcon(R.drawable.iv3);
+                                // 设置标题
+                                builder.setTitle("发现新版本");
+                                // 设置消息内容
+                                builder.setMessage(log);
+                                // 点击旁边区域不会消失
+                                builder.setCancelable(true);
+                                builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(getApplication(), "您保存了您的菊花！", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                });
+                                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                builder.show();
+                            }
+                        });
+
+                    }
+                }
+            });
+        }
     }
 
     private void initToolBar() {
@@ -92,9 +163,28 @@ public class MainActivity extends AppCompatActivity {
         mIvAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowActivity.startFragmentWithTitle(JumpFragment.class, null, "弹一弹", ShowActivity.TITLE_SEND);
+                String cookie = SpUtil.getString(MainActivity.this, Constant.COOKIE, "");
+                if (TextUtils.isEmpty(cookie)) {
+                    ShowActivity.startFragment(LoginFragment.class, null);
+                } else {
+                    ShowActivity.startFragmentWithTitle(JumpFragment.class, null, "弹一弹", ShowActivity.TITLE_SEND);
+                }
             }
         });
+        mTabhost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                currentId = tabId;
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (currentId != null) {
+            mTabhost.setCurrentTab(Integer.parseInt(currentId));
+        }
     }
 
     @Override

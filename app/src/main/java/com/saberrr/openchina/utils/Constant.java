@@ -5,16 +5,22 @@ package com.saberrr.openchina.utils;
  */
 
 public class Constant {
+    public static String JUMP_IMAGES = "JUMP_IMAGES";
+
     public static class BLOGDETAILSFRAGMENT {
-        public static final String HREF      = "HREF";
+
+        public static final String HREF         = "HREF";
         public static final String COMMENTCOUNT = "COMMENTCOUNT";
 
         public static final String TITLE = "TITLE";
         public static final String ID       = "ID";
     }
 
-    public static final String COOKIE = "COOKIE";
-    public static final String USERID = "USERID";
-    public static final String PWD = "PWD";
-    public static final int PAGESIZE = 20;
+    public static final String COOKIE   = "COOKIE";
+
+    public static final String USERID   = "USERID";
+    public static final String PWD      = "PWD";
+    public static final int    PAGESIZE = 20;
+
+    public static String JUMP_TEXT = "JUMP_TEXT";
 }

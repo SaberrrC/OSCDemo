@@ -9,15 +9,16 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <TextView
-                android:background="#ffffff"
+
                 android:id="@+id/tv_softwaredetail_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#ffffff"
                 android:drawableRight="@mipmap/ic_label_recommend"
                 android:padding="10dp"
                 android:textColor="#0C0C0C"
@@ -27,6 +28,85 @@
                 android:id="@+id/wv_softwaredetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></WebView>
+
+            <TextView
+                android:textColor="#4D4D4D"
+                android:id="@+id/tv_softwaredetail_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:padding="10dp"
+                android:textSize="18sp"
+                android:visibility="gone"/>
+
+            <TextView
+                android:textColor="#4D4D4D"
+                android:visibility="gone"
+                android:id="@+id/tv_softwaredetail_agreement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:padding="10dp"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:textColor="#4D4D4D"
+                android:visibility="gone"
+                android:id="@+id/tv_softwaredetail_language"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:padding="10dp"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:textColor="#4D4D4D"
+                android:visibility="gone"
+                android:id="@+id/tv_softwaredetail_system"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:padding="10dp"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:textColor="#4D4D4D"
+                android:visibility="gone"
+                android:id="@+id/tv_softwaredetail_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:padding="10dp"
+                android:textSize="18sp"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <Button
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#ffffff"
+                    android:text="软件首页"
+                    android:background="#557DBA"
+                    android:id="@+id/bt_softwareTop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <Button
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#ffffff"
+                    android:text="软件文档"
+                    android:background="#557DBA"
+                    android:id="@+id/bt_softwareWord"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <Button
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#ffffff"
+                    android:text="软件下载"
+                    android:background="#557DBA"
+                    android:id="@+id/bt_softwareDown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
 
 
         </LinearLayout>

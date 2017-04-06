@@ -1,6 +1,9 @@
 package com.saberrr.openchina.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,6 +47,14 @@ public class RecommendFragment extends BaseFragment implements FinalRecycleAdapt
     private ArrayList<String> idList = new ArrayList<>();
     private HashMap<Class, Integer> mHashMap = new HashMap<>();
     private FinalRecycleAdapter mFinalRecycleAdapter;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            mSrlRecommend.setRefreshing(false);
+        }
+    };
+    private int index = 0;
 
     @Override
     protected boolean needRefresh() {
@@ -63,13 +74,54 @@ public class RecommendFragment extends BaseFragment implements FinalRecycleAdapt
         mFinalRecycleAdapter = new FinalRecycleAdapter(datas, mHashMap, this);
         mRecommendRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecommendRecyclerview.setAdapter(mFinalRecycleAdapter);
+        mSrlRecommend.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SystemClock.sleep(3000);
+                        mHandler.sendEmptyMessage(0);
+                    }
+                }).start();
 
+            }
+        });
+
+        mRecommendRecyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                //上拉加载更多的功能
+                //1. 底部显示
+                //2. 去加载数据
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                //获取最后一位可见的条目
+                int lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition();
+                //最后一个可见条目是集合条目最后一位
+                if (lastVisibleItemPosition == datas.size() - 1 && newState == RecyclerView.SCROLL_STATE_IDLE
+                        ) {
+                    System.out.println("上拉加载更多");
+                    index++;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getData();
+
+                        }
+                    }).start();
+
+                }
+
+
+            }
+        });
     }
 
     @Override
     public Object getData() {
         OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder().url(Urls.RECOMMEND).build();
+        Request request = new Request.Builder().url(Urls.BASE_URL+Urls.PAGEINDEX+index+Urls.RECOMMEND).build();
         try {
             Response response = okHttpClient.newCall(request).execute();
             String xml = response.body().string();
@@ -118,7 +170,7 @@ public class RecommendFragment extends BaseFragment implements FinalRecycleAdapt
             public void onClick(View v) {
                 //ToastUtils.showToast("被点击了"+ position);
                 Bundle bundle = new Bundle();
-                bundle.putStringArrayList("recommendList", idList);
+                bundle.putStringArrayList("listName", idList);
                 bundle.putInt("position", position);
                 ShowActivity.startFragmentWithTitle(SoftwareDetailFragment.class, bundle, "软件详情");
             }
@@ -126,11 +178,4 @@ public class RecommendFragment extends BaseFragment implements FinalRecycleAdapt
 
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.bind(this, rootView);
-        return rootView;
-    }
 }

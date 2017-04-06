@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.saberrr.openchina.manager.uimanager.LoadPager;
 import com.saberrr.openchina.ui.activity.ShowActivity;
@@ -56,6 +57,24 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
     }
 
     /**
+     * 获取toolbar右边textview
+     *
+     * @return
+     */
+    public TextView getRightTextView() {
+        return mParentActivity.getRightTextView();
+    }
+
+    /**
+     * 左边返回箭头点击事件
+     *
+     * @param onBackIconClickListener
+     */
+    public void setOnBackIconClickListener(ShowActivity.OnBackIconClickListener onBackIconClickListener) {
+        mParentActivity.setOnBackIconClickListener(onBackIconClickListener);
+    }
+
+    /**
      * 设置顶部Toolbar点击事件
      *
      * @param onClickListener 传入点击监听 处理对应操作
@@ -71,6 +90,15 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
      */
     public void setOnQueryTextListener(ShowActivity.OnQueryTextListener onQueryTextListener) {
         mParentActivity.setOnQueryTextListener(onQueryTextListener);
+    }
+
+    /**
+     * 设置右边toolbar文字
+     *
+     * @param text
+     */
+    public void setvRightToolbarText(String text) {
+        mParentActivity.setvRightToolbarText(text);
     }
 
     /**

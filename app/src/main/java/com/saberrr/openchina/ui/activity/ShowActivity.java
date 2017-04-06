@@ -44,7 +44,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     public static final int TITLE_COMMENT = 102;//右边是评论数量
     public static final int TITLE_SEND    = 103;//右边文字 “选择”
     public static final int TITLE_PEOPLE  = 104;//“找人”专用
-    public static final int TITLE_MENU    = 105;//“找人”专用
+    public static final int TITLE_MENU    = 105;//MENU布局
     private TextView    mTvRightToolbar;
     private SearchView  mSearchView;
     private Toolbar     mToolbar;
@@ -78,6 +78,17 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public interface OnBackIconClickListener {
+        void onClick(View v);
+    }
+
+    private OnBackIconClickListener mOnBackIconClickListener;
+
+    public void setOnBackIconClickListener(OnBackIconClickListener onBackIconClickListener) {
+        mOnBackIconClickListener = onBackIconClickListener;
     }
 
     //设置toolbar
@@ -90,7 +101,11 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if (mOnBackIconClickListener != null) {
+                    mOnBackIconClickListener.onClick(v);
+                } else {
+                    finish();
+                }
             }
         });
         mToolbar.setTitle(title);
@@ -143,6 +158,24 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
             throw new RuntimeException("传入标题类型必须是 TITLE_COMMENT ");
         }
 
+    }
+
+    /**
+     * 获取右边toolbar上的textview
+     *
+     * @return
+     */
+    public TextView getRightTextView() {
+        return mTvRightToolbar;
+    }
+
+    /**
+     * shezhitoolr右上角文字
+     *
+     * @param text
+     */
+    public void setvRightToolbarText(String text) {
+        mTvRightToolbar.setText(text);
     }
 
     private OnClickListener mOnClickListener;
@@ -211,10 +244,17 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mTitle_icon == TITLE_MENU) {
             if (mOnOptionsItemSelected != null) {
-                mOnOptionsItemSelected.onOptionsMenu(item);
+                super.onBackPressed();
+                //mOnOptionsItemSelected.onOptionsMenu(item);
+                return true;
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     public interface onOptionsItemSelected {

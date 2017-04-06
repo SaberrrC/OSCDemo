@@ -1,17 +1,14 @@
 package com.saberrr.openchina.ui.fragment.mymsgfragment;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.SpannedString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -38,7 +35,6 @@ import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.StringUtils;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
-import com.saberrr.openchina.utils.Utils;
 import com.saberrr.openchina.utils.XmlUtils;
 
 import java.io.IOException;
@@ -65,6 +61,8 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
     TextView mTvResult;
     @BindView(R.id.ly_error)
     LinearLayout mLyerror;
+    @BindView(R.id.srl)
+    SwipeRefreshLayout mSrl;
     private String mCookie;
     private List<TweetLikeBean.Mytweet> mItemList = new ArrayList();
     private FinalRecycleAdapter mRecycleAdapter;
@@ -100,7 +98,6 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
                     ThreadUtils.runSub(new Runnable() {
                         @Override
                         public void run() {
-
                             getNetData(true);
                         }
                     });
@@ -113,6 +110,19 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
         mRecycleAdapter = new FinalRecycleAdapter(mItemList, map, this);
         mRvTweet.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvTweet.setAdapter(mRecycleAdapter);
+        mSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ThreadUtils.runSub(new Runnable() {
+                    @Override
+                    public void run() {
+                        getNetData(true);
+
+                    }
+                });
+            }
+        });
+        mSrl.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
 
     }
 
@@ -136,13 +146,14 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
                     mLyerror.setVisibility(View.VISIBLE);
                     mRvTweet.setVisibility(View.GONE);
                     mTvResult.setText("当前未登录");
+                    mSrl.setRefreshing(false);
                 }
             });
 
         } else {
             HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
             try {
-                Response<ResponseBody> response = httpServiceApi.getTweetlike(mCookie, 0, 20).execute();
+                Response<ResponseBody> response = httpServiceApi.getTweetlike(mCookie, mItemList.size()/Constant.PAGESIZE, Constant.PAGESIZE).execute();
                 String result = response.body().string();
                 System.out.println(result);
 
@@ -152,20 +163,47 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
                 System.out.println(likeList.size());
                 mItemList.addAll(likeList);
                 System.out.println(mItemList.size());
+                if (mItemList.size() == 0) {
+                    ThreadUtils.runMain(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLyerror.setVisibility(View.VISIBLE);
+                            mRvTweet.setVisibility(View.GONE);
+                            mTvResult.setText("当前无数据");
+                            mSrl.setRefreshing(false);
+                        }
+                    });
 
-                ThreadUtils.runMain(new Runnable() {
-                    @Override
-                    public void run() {
-                        mLyerror.setVisibility(View.GONE);
-                        mRvTweet.setVisibility(View.VISIBLE);
-                        mRecycleAdapter.notifyDataSetChanged();
-                    }
-                });
+                } else {
+                    ThreadUtils.runMain(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLyerror.setVisibility(View.GONE);
+                            mRvTweet.setVisibility(View.VISIBLE);
+                            mRecycleAdapter.notifyDataSetChanged();
+                            mSrl.setRefreshing(false);
+                        }
+                    });
+                }
+
 
             } catch (IOException e) {
                 e.printStackTrace();
+                if (mItemList.size() == 0) {
+                    ThreadUtils.runMain(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLyerror.setVisibility(View.VISIBLE);
+                            mRvTweet.setVisibility(View.GONE);
+                            mTvResult.setText("网络错误");
+                            mSrl.setRefreshing(false);
+                        }
+                    });
+
+                }
 
             }
+
         }
 
 
@@ -175,16 +213,17 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
     @Override
     public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, final int position, Object itemData) {
 
-
-        TextView username = (TextView) holder.getViewById(R.id.tv_username);
-        username.setText(mItemList.get(position).getUser().getName());
-        username.setOnClickListener(new View.OnClickListener() {
+        View rootView = holder.getRootView();
+        rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastUtils.showToast("点击了用户名，跳转进账户中心" +mItemList.get(position).getUser().getUid());
+                ToastUtils.showToast("点击了条目，跳转到动弹详情" + mItemList.get(position).getTweet().getId());
 
             }
         });
+        TextView username = (TextView) holder.getViewById(R.id.tv_username);
+        username.setText(mItemList.get(position).getUser().getName());
+
 
 
         final ImageView ivheader = (ImageView) holder.getViewById(R.id.iv_header);
@@ -192,7 +231,7 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
             @Override
             public void onClick(View v) {
 
-                ToastUtils.showToast("点击了头像，跳转进账户中心" +mItemList.get(position).getUser().getUid());
+                ToastUtils.showToast("点击了头像，跳转进账户中心" + mItemList.get(position).getUser().getUid());
             }
         });
 
@@ -226,14 +265,7 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
         String string = author + ":" + mItemList.get(position).getTweet().getBody();
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(string);
         spannableStringBuilder.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 0, author.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        myself.setMovementMethod(LinkMovementMethod.getInstance());
-        spannableStringBuilder.setSpan(new TextClick() {
-            @Override
-            public void onClick(View widget) {
-                super.onClick(widget);
-                ToastUtils.showToast("点击了自己，跳转进账户中心" +  mItemList.get(position).getTweet().getAuthor());
-            }
-        }, 0, author.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
         myself.setText(spannableStringBuilder);
 
 
@@ -246,11 +278,6 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
 
     }
 
-    private class TextClick extends ClickableSpan {
-        @Override
-        public void onClick(View widget) {
 
 
-        }
-    }
 }
