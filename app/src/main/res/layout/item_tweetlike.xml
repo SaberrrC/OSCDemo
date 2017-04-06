@@ -20,7 +20,7 @@
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/iv_header"
         android:text="用户名"
-        android:textColor="@color/colorPrimaryDark"/>
+        android:textColor="@color/colorPrimary"/>
 
     <TextView
         android:id="@+id/tv_time"
@@ -42,7 +42,7 @@
 
     <TextView
 
-        android:background="#2000"
+        android:background="@drawable/shape_content_bg"
         android:id="@+id/tv_myself"
         android:padding="5dp"
         android:layout_width="match_parent"

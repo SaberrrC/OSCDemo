@@ -38,4 +38,8 @@ public interface HttpServiceApi {
     @GET(Urls.MESSAGE)
     Call<ResponseBody> getMsgs(@Header("cookie") String cookie, @Query("pageIndex") int pageIndex,@Query("uid") String uid , @Query("pageSize") int pageSize);
 
+    @GET(Urls.COMMENT)
+    Call<ResponseBody> getComment(@Header("cookie") String cookie, @Query("catalog") String catalog , @Query("pageIndex") int pageIndex,@Query("uid") String uid , @Query("pageSize") int pageSize);
+
+
 }

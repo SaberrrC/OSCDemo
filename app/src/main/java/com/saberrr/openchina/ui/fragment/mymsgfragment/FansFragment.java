@@ -154,7 +154,7 @@ public class FansFragment extends BaseFragment implements FinalRecycleAdapter.On
                 @Override
                 public void run() {
                     mLyerror.setVisibility(View.VISIBLE);
-                    mRvTweet.setVisibility(View.GONE);
+                    mSrl.setVisibility(View.GONE);
                     mTvResult.setText("当前未登录");
                     mSrl.setRefreshing(false);
                 }
@@ -173,22 +173,35 @@ public class FansFragment extends BaseFragment implements FinalRecycleAdapter.On
                 mItemList.addAll(friends);
                 System.out.println(mItemList.size());
 
-                ThreadUtils.runMain(new Runnable() {
-                    @Override
-                    public void run() {
-                        mLyerror.setVisibility(View.GONE);
-                        mRvTweet.setVisibility(View.VISIBLE);
-                        mRecycleAdapter.notifyDataSetChanged();
-                        mSrl.setRefreshing(false);
-                    }
-                });
+                if (mItemList.size() == 0) {
+                    ThreadUtils.runMain(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLyerror.setVisibility(View.VISIBLE);
+                            mRvTweet.setVisibility(View.GONE);
+                            mTvResult.setText("当前无数据");
+                            mSrl.setRefreshing(false);
+                        }
+                    });
+
+                } else {
+                    ThreadUtils.runMain(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLyerror.setVisibility(View.GONE);
+                            mRvTweet.setVisibility(View.VISIBLE);
+                            mRecycleAdapter.notifyDataSetChanged();
+                            mSrl.setRefreshing(false);
+                        }
+                    });
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
 
                 if (mItemList.size() == 0) {
                     mLyerror.setVisibility(View.VISIBLE);
-                    mRvTweet.setVisibility(View.GONE);
+                    mSrl.setVisibility(View.GONE);
                     mTvResult.setText("网络错误");
                     mSrl.setRefreshing(false);
                 }
@@ -254,11 +267,5 @@ public class FansFragment extends BaseFragment implements FinalRecycleAdapter.On
         strength.setText(mItemList.get(position).getExpertise());
     }
 
-    private class TextClick extends ClickableSpan {
-        @Override
-        public void onClick(View widget) {
 
-
-        }
-    }
 }

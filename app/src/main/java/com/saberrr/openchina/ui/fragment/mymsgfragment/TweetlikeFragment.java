@@ -223,13 +223,7 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
         });
         TextView username = (TextView) holder.getViewById(R.id.tv_username);
         username.setText(mItemList.get(position).getUser().getName());
-        username.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToastUtils.showToast("点击了用户名，跳转进账户中心" + mItemList.get(position).getUser().getUid());
 
-            }
-        });
 
 
         final ImageView ivheader = (ImageView) holder.getViewById(R.id.iv_header);
@@ -271,14 +265,7 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
         String string = author + ":" + mItemList.get(position).getTweet().getBody();
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(string);
         spannableStringBuilder.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 0, author.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        myself.setMovementMethod(LinkMovementMethod.getInstance());
-        spannableStringBuilder.setSpan(new TextClick() {
-            @Override
-            public void onClick(View widget) {
-                super.onClick(widget);
-                ToastUtils.showToast("点击了自己，跳转进账户中心" + mItemList.get(position).getTweet().getAuthor());
-            }
-        }, 0, author.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
         myself.setText(spannableStringBuilder);
 
 
@@ -292,11 +279,5 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
     }
 
 
-    private class TextClick extends ClickableSpan {
-        @Override
-        public void onClick(View widget) {
 
-
-        }
-    }
 }

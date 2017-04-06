@@ -217,6 +217,7 @@ public class MyFragment extends BaseFragment {
                     }
 
                 });
+                isOnline = false;
             }
         });
 
@@ -354,6 +355,8 @@ public class MyFragment extends BaseFragment {
                             mIvAvtarOnline.setImageDrawable(circularBitmapDrawable);
                         }
                     });
+
+                    isOnline = true;
                     initSolar();
                 } catch (Exception e) {
                     setOffLineView();

@@ -32,6 +32,7 @@
 
 
     <RelativeLayout
+        android:id="@+id/rl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_username"
@@ -75,6 +76,11 @@
             />
 
     </RelativeLayout>
-
+    <TextView
+        android:layout_below="@id/rl"
+        android:layout_marginTop="5dp"
+        android:background="#2000"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
 
 </RelativeLayout>

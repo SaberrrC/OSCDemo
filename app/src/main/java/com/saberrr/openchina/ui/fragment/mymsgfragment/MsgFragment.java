@@ -155,7 +155,7 @@ public class MsgFragment extends BaseFragment implements FinalRecycleAdapter.OnV
                 @Override
                 public void run() {
                     mLyerror.setVisibility(View.VISIBLE);
-                    mRvTweet.setVisibility(View.GONE);
+                    mSrl.setVisibility(View.GONE);
                     mTvResult.setText("当前未登录");
                     mSrl.setRefreshing(false);
                 }
@@ -178,7 +178,7 @@ public class MsgFragment extends BaseFragment implements FinalRecycleAdapter.OnV
                     @Override
                     public void run() {
                         mLyerror.setVisibility(View.GONE);
-                        mRvTweet.setVisibility(View.VISIBLE);
+                        mSrl.setVisibility(View.VISIBLE);
                         mRecycleAdapter.notifyDataSetChanged();
                         mSrl.setRefreshing(false);
                     }
@@ -189,7 +189,7 @@ public class MsgFragment extends BaseFragment implements FinalRecycleAdapter.OnV
 
                 if (mItemList.size() == 0) {
                     mLyerror.setVisibility(View.VISIBLE);
-                    mRvTweet.setVisibility(View.GONE);
+                    mSrl.setVisibility(View.GONE);
                     mTvResult.setText("网络错误");
                     mSrl.setRefreshing(false);
                 }
@@ -218,6 +218,13 @@ public class MsgFragment extends BaseFragment implements FinalRecycleAdapter.OnV
 
 
         final ImageView ivheader = (ImageView) holder.getViewById(R.id.iv_header);
+        ivheader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ToastUtils.showToast("点击了头像，跳转进账户中心" + mItemList.get(position).getFriendid());
+            }
+        });
         if (TextUtils.isEmpty(mItemList.get(position).getPortrait())) {
             Glide.with(getContext()).load(R.mipmap.widget_dface).asBitmap().centerCrop().into(new BitmapImageViewTarget(ivheader) {
                 @Override

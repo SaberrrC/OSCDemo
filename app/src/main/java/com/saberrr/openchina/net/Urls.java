@@ -39,4 +39,7 @@ public class Urls {
     public static final String FANS = "/action/api/friends_list";
     //消息
     public static final String MESSAGE = "/action/api/message_list";
+    //评论 ， @我
+    public static final String COMMENT = "/action/api/active_list";
+
 }
