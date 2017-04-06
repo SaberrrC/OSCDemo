@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.saberrr.openchina.bean.IContactAdapter;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,13 +17,14 @@ import java.util.Map;
  * Created by admin on 2017/2/22.
  */
 
-public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapter.ViewHolder> {
+public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapter.ViewHolder> implements IContactAdapter {
     private List<? extends Object> mDatas;
     private OnViewAttachListener mOnViewAttachListener;
     private Map<Class, Integer> mClassIntegerHashMap = new HashMap<>();
     private static final int LOADMORE = 0;
     private boolean needLoadMore = false;
     private int loadLayout = -1;
+    private List<String> strings;
 
     /**
      * 获取map
@@ -114,6 +117,16 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
     public void notifyDataSetChangedNew(List<Object> datas) {
         mDatas = datas;
         notifyDataSetChanged();
+    }
+
+    @Override
+    public List<String> getData() {
+        return strings;
+    }
+
+    public void  setStringList(List<String> strings) {
+        this.strings = strings;
+
     }
 
     public interface OnViewAttachListener {

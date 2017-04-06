@@ -19,7 +19,7 @@ public class FriendInfoBean {
     }
 
     @XStreamAlias("friend")
-    private class Friends {
+    public class Friends {
         /**
          * <name>
          * <![CDATA[ MLeo ]]>

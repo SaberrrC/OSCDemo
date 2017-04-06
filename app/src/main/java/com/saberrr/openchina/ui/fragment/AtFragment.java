@@ -2,6 +2,7 @@ package com.saberrr.openchina.ui.fragment;
 
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -19,12 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Saberrr on 2017-04-06.
  */
 
-public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
+public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener{
     @BindView(R.id.et_at)
     EditText      mEtAt;
     @BindView(R.id.cl_at)
@@ -39,7 +41,8 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
 
     @Override
     public View createView() {
-        View view = creatViewFromId(R.layout.fragment_at);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_at, null, false);
+        ButterKnife.bind(this, view);
         TextView rightTextView = getRightTextView();
         rightTextView.setText("确定");
         setToolbarIconOnClickListener(new ShowActivity.OnClickListener() {
@@ -50,11 +53,21 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
         });
 
         Map<Class, Integer> map = FinalRecycleAdapter.getMap();
-        map.put(FriendInfoBean.class, R.layout.contact_layout);
+        map.put(FriendInfoBean.class, R.layout.list_item_contact);
         mInfos.add(new FriendInfoBean());
         mInfos.add(new FriendInfoBean());
         mInfos.add(new FriendInfoBean());
         mFinalRecycleAdapter = new FinalRecycleAdapter(mInfos, map, this);
+        List<String> names = new ArrayList<>();
+       /* for (Object info : mInfos) {
+            FriendInfoBean friendInfoBean = (FriendInfoBean) info;
+            String name = friendInfoBean.getFriend().getName();
+            names.add(name);
+        }*/
+        for (int i = 0; i < 30; i++) {
+            names.add(i + "");
+        }
+        mFinalRecycleAdapter.setStringList(names);
         mClAt.setAdapter(mFinalRecycleAdapter);
 
         return view;

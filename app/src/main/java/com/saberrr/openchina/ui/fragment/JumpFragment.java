@@ -417,7 +417,6 @@ public class JumpFragment extends BaseFragment {
             layoutParams.width = screenWith / 3;
             layoutParams.height = screenWith / 3;
             view.setLayoutParams(layoutParams);
-            final int finalI = i;
             final String path = images.get(i);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
