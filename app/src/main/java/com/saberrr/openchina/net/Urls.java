@@ -23,7 +23,8 @@ public class Urls {
     public static final String HOT = "&searchTag=view&pageSize=20";
     public static final String DOMESTIC = "&searchTag=list_cn&pageSize=20";
     public static final String SOFTWAREDETAIL = BASE_URL + "action/api/software_detail?id=";
-
+    public static final String THREECATEGORY = BASE_URL + "action/api/softwaretag_list?pageIndex=";
+    public static final String PAGESIZE = "&pageSize=20";
     //登录
     public static final String LOGIN = "/action/api/login_validate";
     //用户信息

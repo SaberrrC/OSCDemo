@@ -78,6 +78,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+
     }
 
     public interface OnBackIconClickListener {
@@ -225,10 +226,17 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mTitle_icon == TITLE_MENU) {
             if (mOnOptionsItemSelected != null) {
-                mOnOptionsItemSelected.onOptionsMenu(item);
+                super.onBackPressed();
+                //mOnOptionsItemSelected.onOptionsMenu(item);
+                return true;
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     public interface onOptionsItemSelected {
