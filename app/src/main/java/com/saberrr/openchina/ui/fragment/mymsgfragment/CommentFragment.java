@@ -7,8 +7,10 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -36,6 +38,7 @@ import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.StringUtils;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
+import com.saberrr.openchina.utils.Utils;
 import com.saberrr.openchina.utils.XmlUtils;
 
 import java.io.IOException;
@@ -138,10 +141,8 @@ public class CommentFragment extends BaseFragment implements FinalRecycleAdapter
     }
 
     //子线程
-    private void getNetData(boolean isRefresh) {
-        if (isRefresh) {
-            mItemList.clear();
-        }
+    private void getNetData(final boolean isRefresh) {
+
         if (TextUtils.isEmpty(mCookie)) {
             ThreadUtils.runMain(new Runnable() {
                 @Override
@@ -156,38 +157,39 @@ public class CommentFragment extends BaseFragment implements FinalRecycleAdapter
         } else {
             HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
             try {
-                Response<ResponseBody> response = httpServiceApi.getComment(mCookie,"3", mItemList.size()/Constant.PAGESIZE,mUserid, Constant.PAGESIZE).execute();
+                Response<ResponseBody> response = httpServiceApi.getComment(mCookie, "3", mItemList.size() / Constant.PAGESIZE, mUserid, Constant.PAGESIZE).execute();
                 String result = response.body().string();
-                System.out.println(result);
-
-
+//                System.out.println(result);
                 CommentBean commentBean = XmlUtils.toBean(CommentBean.class, result.getBytes());
-                List<CommentBean.Active> activies = commentBean.getActivies();
-                System.out.println(activies.size());
-                mItemList.addAll(activies);
-                System.out.println(mItemList.size());
-                if (mItemList.size() == 0) {
-                    ThreadUtils.runMain(new Runnable() {
-                        @Override
-                        public void run() {
+                final List<CommentBean.Active> activies = commentBean.getActivies();
+//                System.out.println(activies.size());
+
+//                System.out.println(mItemList.size());
+
+                ThreadUtils.runMain(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (isRefresh && activies.size() != 0) {
+                            mItemList.clear();
+                        }
+
+                        mItemList.addAll(activies);
+                        if (mItemList.size() == 0) {
                             mLyerror.setVisibility(View.VISIBLE);
                             mSrl.setVisibility(View.GONE);
                             mTvResult.setText("当前无数据");
                             mSrl.setRefreshing(false);
-                        }
-                    });
+                        } else {
 
-                } else {
-                    ThreadUtils.runMain(new Runnable() {
-                        @Override
-                        public void run() {
                             mLyerror.setVisibility(View.GONE);
                             mSrl.setVisibility(View.VISIBLE);
                             mRecycleAdapter.notifyDataSetChanged();
                             mSrl.setRefreshing(false);
                         }
-                    });
-                }
+                    }
+
+                });
 
 
             } catch (IOException e) {
@@ -262,20 +264,44 @@ public class CommentFragment extends BaseFragment implements FinalRecycleAdapter
         }
 
 
-        TextView content = (TextView) holder.getViewById(R.id.tv_content);
-        content.setText(mItemList.get(position).getMessage().trim());
+        TextView event = (TextView) holder.getViewById(R.id.tv_event);
+        event.setText(Utils.parseActiveAction(mItemList.get(position).getObjecttype(),mItemList.get(position).getObjectcatalog(),mItemList.get(position).getObjecttitle()));
 
+        TextView content = (TextView) holder.getViewById(R.id.tv_content);
+        String body = mItemList.get(position).getMessage();
+        if (body == null) {
+            content.setVisibility(View.GONE);
+
+        } else {
+            content.setVisibility(View.VISIBLE);
+            Spanned span = Html.fromHtml(body.trim());
+            Spannable spannable = Utils.displayEmoji(getContext().getResources(), span);
+            content.setText(spannable);
+        }
 
 
         TextView myself = (TextView) holder.getViewById(R.id.tv_myself);
 
+
+        CommentBean.Active.Objectreply objectreply = mItemList.get(position).getObjectreply();
+        if (objectreply == null) {
+            myself.setVisibility(View.GONE);
+        } else {
+            myself.setVisibility(View.VISIBLE);
+            SpannableStringBuilder text = Utils.parseActiveReply(objectreply.getObjectname().trim(), objectreply.getObjectbody().trim());
+            Spannable spannable = Utils.displayEmoji(getContext().getResources(), text);
+            myself.setText(spannable);
+
+        }
+
+
+/*
         String myname = mItemList.get(position).getObjectreply().getObjectname();
         String string = myname + ":" + mItemList.get(position).getObjectreply().getObjectbody().trim();
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(string);
         spannableStringBuilder.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 0, myname.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        myself.setText(spannableStringBuilder);
-
+        myself.setText(spannableStringBuilder);*/
 
 //        myself.setText(mItemList.get(position).getTweet().getAuthor() + ":" + mItemList.get(position).getTweet().getBody());
 
@@ -298,7 +324,6 @@ public class CommentFragment extends BaseFragment implements FinalRecycleAdapter
         platform.setText(plat);
 
     }
-
 
 
 }

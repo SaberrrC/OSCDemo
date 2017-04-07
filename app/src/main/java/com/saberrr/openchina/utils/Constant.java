@@ -5,6 +5,7 @@ package com.saberrr.openchina.utils;
  */
 
 public class Constant {
+    public static final String USERNAME = "USERNAME";
     public static String JUMP_IMAGES = "JUMP_IMAGES";
 
     public static class BLOGDETAILSFRAGMENT {

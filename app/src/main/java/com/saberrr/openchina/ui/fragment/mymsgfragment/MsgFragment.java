@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.transition.Transition;
+import android.support.transition.TransitionSet;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -146,10 +148,8 @@ public class MsgFragment extends BaseFragment implements FinalRecycleAdapter.OnV
     }
 
     //子线程
-    private void getNetData(boolean isRefresh) {
-        if (isRefresh) {
-            mItemList.clear();
-        }
+    private void getNetData(final boolean isRefresh) {
+
         if (TextUtils.isEmpty(mCookie)) {
             ThreadUtils.runMain(new Runnable() {
                 @Override
@@ -166,22 +166,35 @@ public class MsgFragment extends BaseFragment implements FinalRecycleAdapter.OnV
             try {
                 Response<ResponseBody> response = httpServiceApi.getMsgs(mCookie, mItemList.size()/Constant.PAGESIZE, mUserid , Constant.PAGESIZE).execute();
                 String result = response.body().string();
-                System.out.println(result);
+//                System.out.println(result);
 
                 MsgBean msgBean = XmlUtils.toBean(MsgBean.class, result.getBytes());
-                List<MsgBean.Message> messages = msgBean.getMessage();
-                System.out.println(messages.size());
-                mItemList.addAll(messages);
-                System.out.println(mItemList.size());
-
+                final List<MsgBean.Message> messages = msgBean.getMessage();
+//                System.out.println(messages.size());
                 ThreadUtils.runMain(new Runnable() {
                     @Override
                     public void run() {
-                        mLyerror.setVisibility(View.GONE);
-                        mSrl.setVisibility(View.VISIBLE);
-                        mRecycleAdapter.notifyDataSetChanged();
-                        mSrl.setRefreshing(false);
+
+
+                        if (isRefresh && messages.size() != 0) {
+                            mItemList.clear();
+                        }
+
+                        mItemList.addAll(messages);
+                        if (mItemList.size() == 0) {
+                            mLyerror.setVisibility(View.VISIBLE);
+                            mSrl.setVisibility(View.GONE);
+                            mTvResult.setText("当前无数据");
+                            mSrl.setRefreshing(false);
+                        } else {
+
+                            mLyerror.setVisibility(View.GONE);
+                            mSrl.setVisibility(View.VISIBLE);
+                            mRecycleAdapter.notifyDataSetChanged();
+                            mSrl.setRefreshing(false);
+                        }
                     }
+
                 });
 
             } catch (IOException e) {
@@ -258,13 +271,19 @@ public class MsgFragment extends BaseFragment implements FinalRecycleAdapter.OnV
 
 
         TextView content = (TextView) holder.getViewById(R.id.tv_chat_content);
-        content.setText(mItemList.get(position).getContent());
+        String text = mItemList.get(position).getContent();
+        Spannable spannable = Utils.displayEmoji(getContext().getResources(), text);
+        content.setText(spannable);
+
+
 
         TextView time = (TextView) holder.getViewById(R.id.tv_time);
         time.setText(StringUtils.friendly_time(mItemList.get(position).getPubDate()));
 
         TextView count = (TextView) holder.getViewById(R.id.tv_chat_count);
         count.setText(mItemList.get(position).getMessageCount()+"条私信");
+
+
     }
 
 

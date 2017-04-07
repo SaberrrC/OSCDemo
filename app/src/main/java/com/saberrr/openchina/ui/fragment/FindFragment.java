@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.scan.zxing.android.CaptureActivity;
 import com.saberrr.openchina.ui.activity.ShakeActivity;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 
@@ -65,6 +66,9 @@ public class FindFragment extends BaseFragment {
 
                 break;
             case R.id.scan:
+                Intent scan = new Intent(getActivity(), CaptureActivity.class);
+                startActivity(scan);
+
 
                 break;
             case R.id.shake:

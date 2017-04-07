@@ -140,9 +140,9 @@ public class CommentBean {
         @XStreamAlias("catalog")
         private String catalog;
         @XStreamAlias("objecttype")
-        private String objecttype;
+        private int objecttype;
         @XStreamAlias("objectcatalog")
-        private String objectcatalog;
+        private int objectcatalog;
         @XStreamAlias("objecttitle")
         private String objecttitle;
         @XStreamAlias("appclient")
@@ -204,19 +204,19 @@ public class CommentBean {
             this.catalog = catalog;
         }
 
-        public String getObjecttype() {
+        public int getObjecttype() {
             return objecttype;
         }
 
-        public void setObjecttype(String objecttype) {
+        public void setObjecttype(int objecttype) {
             this.objecttype = objecttype;
         }
 
-        public String getObjectcatalog() {
+        public int getObjectcatalog() {
             return objectcatalog;
         }
 
-        public void setObjectcatalog(String objectcatalog) {
+        public void setObjectcatalog(int objectcatalog) {
             this.objectcatalog = objectcatalog;
         }
 

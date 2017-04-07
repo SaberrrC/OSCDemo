@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.Spannable;
@@ -26,7 +25,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.jumponejump.SendJumpFirstImgBean;
-import com.saberrr.openchina.contact.Fiels;
 import com.saberrr.openchina.faces.DisplayRules;
 import com.saberrr.openchina.faces.FaceBean;
 import com.saberrr.openchina.gloab.AppApplication;
@@ -328,12 +326,7 @@ public class JumpFragment extends BaseFragment {
                 ImgSelActivity.startActivity(this, config, REQUEST_CODE);
                 break;
             case R.id.iv_at:
-                Intent intent = new Intent(getContext(), ShowActivity.class);
-                Bundle bundle = new Bundle();
-                intent.putExtra(Fiels.DtailActivity.CLASSNAME, AtFragment.class);
-                intent.putExtra(Fiels.DtailActivity.TITLE, "选择@好友");
-                intent.putExtra(Fiels.DtailActivity.TOOBARICON, ShowActivity.TITLE_SEND);
-                startActivityForResult(intent, REQUEST_CODE_AT);
+                ShowActivity.startFragmentWithTitle(AtFragment.class,null,"选择@好友",ShowActivity.TITLE_SEND);
                 mLlFaces.setVisibility(View.GONE);
                 break;
             case R.id.iv_topic:

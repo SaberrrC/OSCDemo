@@ -35,6 +35,7 @@ import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.StringUtils;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
+import com.saberrr.openchina.utils.Utils;
 import com.saberrr.openchina.utils.XmlUtils;
 
 import java.io.IOException;
@@ -135,10 +136,8 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
     }
 
     //子线程
-    private void getNetData(boolean isRefresh) {
-        if (isRefresh) {
-            mItemList.clear();
-        }
+    private void getNetData(final boolean isRefresh) {
+
         if (TextUtils.isEmpty(mCookie)) {
             ThreadUtils.runMain(new Runnable() {
                 @Override
@@ -155,36 +154,36 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
             try {
                 Response<ResponseBody> response = httpServiceApi.getTweetlike(mCookie, mItemList.size()/Constant.PAGESIZE, Constant.PAGESIZE).execute();
                 String result = response.body().string();
-                System.out.println(result);
+//                System.out.println(result);
 
 
                 TweetLikeBean tweetLikeBean = XmlUtils.toBean(TweetLikeBean.class, result.getBytes());
-                List<TweetLikeBean.Mytweet> likeList = tweetLikeBean.getLikeList();
-                System.out.println(likeList.size());
-                mItemList.addAll(likeList);
-                System.out.println(mItemList.size());
-                if (mItemList.size() == 0) {
-                    ThreadUtils.runMain(new Runnable() {
-                        @Override
-                        public void run() {
+                final List<TweetLikeBean.Mytweet> likeList = tweetLikeBean.getLikeList();
+//                System.out.println(likeList.size());
+                ThreadUtils.runMain(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (isRefresh && likeList.size() != 0) {
+                            mItemList.clear();
+                        }
+
+                        mItemList.addAll(likeList);
+                        if (mItemList.size() == 0) {
                             mLyerror.setVisibility(View.VISIBLE);
-                            mRvTweet.setVisibility(View.GONE);
+                            mSrl.setVisibility(View.GONE);
                             mTvResult.setText("当前无数据");
                             mSrl.setRefreshing(false);
-                        }
-                    });
+                        } else {
 
-                } else {
-                    ThreadUtils.runMain(new Runnable() {
-                        @Override
-                        public void run() {
                             mLyerror.setVisibility(View.GONE);
-                            mRvTweet.setVisibility(View.VISIBLE);
+                            mSrl.setVisibility(View.VISIBLE);
                             mRecycleAdapter.notifyDataSetChanged();
                             mSrl.setRefreshing(false);
                         }
-                    });
-                }
+                    }
+
+                });
 
 
             } catch (IOException e) {
@@ -261,12 +260,18 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
 
         TextView myself = (TextView) holder.getViewById(R.id.tv_myself);
 
-        String author = mItemList.get(position).getTweet().getAuthor();
+
+        SpannableStringBuilder text = Utils.parseActiveReply(mItemList.get(position).getTweet().getAuthor(), mItemList.get(position).getTweet().getBody());
+        Spannable spannable = Utils.displayEmoji(getContext().getResources(), text);
+
+        myself.setText(spannable);
+
+        /*String author = mItemList.get(position).getTweet().getAuthor();
         String string = author + ":" + mItemList.get(position).getTweet().getBody();
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(string);
         spannableStringBuilder.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 0, author.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        myself.setText(spannableStringBuilder);
+        myself.setText(spannableStringBuilder);*/
 
 
 //        myself.setText(mItemList.get(position).getTweet().getAuthor() + ":" + mItemList.get(position).getTweet().getBody());
