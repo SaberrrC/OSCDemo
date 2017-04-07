@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         mIvIconToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("搜索界面");
+                //showToast("搜索界面");
                 startActivity(new Intent(MainActivity.this,SearchActivity.class));
             }
         });
