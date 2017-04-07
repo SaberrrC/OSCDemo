@@ -1,6 +1,8 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -48,6 +51,8 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Created by Saberrr on 2017-04-06.
@@ -58,6 +63,9 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
     EditText      mEtAt;
     @BindView(R.id.cl_at)
     ContactLayout mClAt;
+    @BindView(R.id.iv_no)
+    ImageView     mIvNo;
+    Unbinder unbinder;
     private List<Object> mInfos = new ArrayList<>();
     private FinalRecycleAdapter mFinalRecycleAdapter;
     private String                       TAG   = "AtFragment";
@@ -110,6 +118,20 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
         String xml = JsonCacheManager.getInstance().getXML(Urls.ATFRIENDS + "uid=" + SpUtil.getString(getContext(), Constant.USERID, "") + "&relation=1&all=1");
         FriendInfoBean friendInfoBean = XmlUtils.toBean(FriendInfoBean.class, xml.getBytes());
         final List<FriendInfoBean.Friends> friends = friendInfoBean.getFriends();
+        ThreadUtils.runMain(new Runnable() {
+            @Override
+            public void run() {
+                if (friends.size() == 0) {
+                    mIvNo.setVisibility(View.VISIBLE);
+                    mClAt.setVisibility(View.INVISIBLE);
+                    mClAt.setEnabled(false);
+                } else {
+                    mIvNo.setVisibility(View.GONE);
+                    mClAt.setVisibility(View.VISIBLE);
+                    mClAt.setEnabled(true);
+                }
+            }
+        });
         for (FriendInfoBean.Friends friend : friends) {
             friend.first = getSpells(StringUtils.getFirst(getSpells(friend.getName()))).toUpperCase();
         }
@@ -291,4 +313,37 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
     }
 
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        unbinder = ButterKnife.bind(this, rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
+    @OnClick(R.id.iv_no)
+    public void onClick() {
+
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("正在刷新好友列表...");
+        progressDialog.show();
+        ThreadUtils.runSub(new Runnable() {
+            @Override
+            public void run() {
+                getData();
+                ThreadUtils.runMainDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                    }
+                },1000);
+            }
+        });
+
+    }
 }

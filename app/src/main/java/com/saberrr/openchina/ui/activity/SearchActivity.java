@@ -24,7 +24,6 @@ import com.saberrr.openchina.ui.adapter.KeywordAdapter;
 import com.saberrr.openchina.ui.adapter.OswViewPagerAdapter;
 import com.saberrr.openchina.ui.fragment.BestNewFragment;
 import com.saberrr.openchina.ui.fragment.DomesticFragment;
-import com.saberrr.openchina.ui.fragment.FindUserFragment;
 import com.saberrr.openchina.ui.fragment.HotFragment;
 import com.saberrr.openchina.ui.fragment.RecommendFragment;
 import com.saberrr.openchina.ui.fragment.mymsgfragment.SearchSoftwareFragment;
@@ -35,7 +34,6 @@ import com.saberrr.openchina.utils.Utils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import butterknife.BindView;
