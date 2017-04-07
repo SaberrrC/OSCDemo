@@ -1,6 +1,7 @@
 package com.saberrr.openchina.ui.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.AlertDialog;
@@ -133,7 +134,8 @@ public class MainActivity extends AppCompatActivity {
         mIvIconToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("搜索界面");
+                //showToast("搜索界面");
+                startActivity(new Intent(MainActivity.this,SearchActivity.class));
             }
         });
         mIvIconToolbar.setImageResource(R.mipmap.btn_search_normal);
