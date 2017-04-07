@@ -1,6 +1,8 @@
 package com.saberrr.openchina.ui.fragment;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -15,6 +17,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.LoginBean;
 import com.saberrr.openchina.bean.UserInfo;
@@ -23,6 +30,7 @@ import com.saberrr.openchina.net.HttpServiceApi;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.fragment.mymsgfragment.FansFragment;
+import com.saberrr.openchina.ui.view.ScanMapDialog;
 import com.saberrr.openchina.ui.view.SolarSystemView;
 import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.SpUtil;
@@ -32,6 +40,9 @@ import com.saberrr.openchina.utils.XmlUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -122,7 +133,8 @@ public class MyFragment extends BaseFragment {
     RelativeLayout mRl;
 
     private boolean isOnline;
-    private int[] genderRid = {0 , R.mipmap.ic_male,R.mipmap.ic_female};
+    private int[] genderRid = {0, R.mipmap.ic_male, R.mipmap.ic_female};
+    private String mUserid;
     private LoginBean mLoginBean;
 
 
@@ -174,14 +186,14 @@ public class MyFragment extends BaseFragment {
     //子线程
     private void checkLogin() {
         String cookie = SpUtil.getString(getContext(), Constant.COOKIE, "");
-        String userid = SpUtil.getString(getContext(), Constant.USERID, "");
+        mUserid = SpUtil.getString(getContext(), Constant.USERID, "");
         System.out.println(cookie);
 
 
-        if (checkUseridAndCookie(cookie, userid)) {
+        if (checkUseridAndCookie(cookie, mUserid)) {
             HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
             try {
-                Response<ResponseBody> response = httpServiceApi.getUserInfo(cookie, userid).execute();
+                Response<ResponseBody> response = httpServiceApi.getUserInfo(cookie, mUserid).execute();
                 String result = response.body().string();
                 System.out.println(result);
                 UserInfo userInfo = XmlUtils.toBean(UserInfo.class, result.getBytes());
@@ -287,6 +299,15 @@ public class MyFragment extends BaseFragment {
 
                 break;
             case R.id.iv_mark_online:
+                ToastUtils.showToast("二维码");
+                //二维码
+                Bitmap prbitmap = generateBitmap("http://my.oschina.net/u/" +mUserid, 200, 200);
+                Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+                Bitmap bitmap = addLogo(prbitmap, logoBitmap);
+                ScanMapDialog scanMapDialog = new ScanMapDialog(getContext());
+                scanMapDialog.setImaget(bitmap);
+                scanMapDialog.show();
+
                 break;
             case R.id.ll_score:
                 ToastUtils.showToast("积分");
@@ -392,6 +413,48 @@ public class MyFragment extends BaseFragment {
 
     }
 
+    private Bitmap addLogo(Bitmap qrBitmap, Bitmap logoBitmap) {
+        int qrBitmapWidth = qrBitmap.getWidth();
+        int qrBitmapHeight = qrBitmap.getHeight();
+        int logoBitmapWidth = logoBitmap.getWidth();
+        int logoBitmapHeight = logoBitmap.getHeight();
+        Bitmap blankBitmap = Bitmap.createBitmap(qrBitmapWidth, qrBitmapHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(blankBitmap);
+        canvas.drawBitmap(qrBitmap, 0, 0, null);
+        canvas.save(Canvas.ALL_SAVE_FLAG);
+        float scaleSize = 1.0f;
+        while ((logoBitmapWidth / scaleSize) > (qrBitmapWidth / 5) || (logoBitmapHeight / scaleSize) > (qrBitmapHeight / 5)) {
+            scaleSize *= 2;
+        }
+        float sx = 1.0f / scaleSize;
+        canvas.scale(sx, sx, qrBitmapWidth / 2, qrBitmapHeight / 2);
+        canvas.drawBitmap(logoBitmap, (qrBitmapWidth - logoBitmapWidth) / 2, (qrBitmapHeight - logoBitmapHeight) / 2, null);
+        canvas.restore();
+        return blankBitmap;
+    }
+
+    private Bitmap generateBitmap(String content, int width, int height) {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        Map<EncodeHintType, String> hints = new HashMap<>();
+        hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+        try {
+            BitMatrix encode = qrCodeWriter.encode(content, BarcodeFormat.QR_CODE, width, height, hints);
+            int[] pixels = new int[width * height];
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    if (encode.get(j, i)) {
+                        pixels[i * width + j] = 0x00000000;
+                    } else {
+                        pixels[i * width + j] = 0xffffffff;
+                    }
+                }
+            }
+            return Bitmap.createBitmap(pixels, 0, width, width, height, Bitmap.Config.RGB_565);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
 }
