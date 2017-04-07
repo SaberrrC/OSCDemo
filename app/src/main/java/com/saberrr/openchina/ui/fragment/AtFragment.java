@@ -109,6 +109,9 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
 
     @Override
     public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
+        if (position == mInfos.size() - 1) {
+            ToastUtils.showToast("到底了");
+        }
         final FriendInfoBean.Friends friend = (FriendInfoBean.Friends) itemData;
         TextView tvSection = (TextView) holder.getViewById(R.id.tv_section);
         if (position == 0) {
@@ -117,7 +120,7 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
             FriendInfoBean.Friends lastFriend = (FriendInfoBean.Friends) mInfos.get(position - 1);
             String spells = getSpells(friend.getName());
             String lastSpells = getSpells(lastFriend.getName());
-            Log.d(TAG, "onBindViewHolder: ======="+ spells + "============" +lastSpells );
+            Log.d(TAG, "onBindViewHolder: =======" + spells + "============" + lastSpells);
         }
 
 
@@ -138,15 +141,11 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
 
     }
 
-    static final int GB_SP_DIFF = 160;
+    static final int    GB_SP_DIFF      = 160;
     // 存放国标一级汉字不同读音的起始区位码
-    static final int[] secPosValueList = { 1601, 1637, 1833, 2078, 2274, 2302,
-            2433, 2594, 2787, 3106, 3212, 3472, 3635, 3722, 3730, 3858, 4027,
-            4086, 4390, 4558, 4684, 4925, 5249, 5600 };
+    static final int[]  secPosValueList = {1601, 1637, 1833, 2078, 2274, 2302, 2433, 2594, 2787, 3106, 3212, 3472, 3635, 3722, 3730, 3858, 4027, 4086, 4390, 4558, 4684, 4925, 5249, 5600};
     // 存放国标一级汉字不同读音的起始区位码对应读音
-    static final char[] firstLetter = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
-            'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'w', 'x',
-            'y', 'z' };
+    static final char[] firstLetter     = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'w', 'x', 'y', 'z'};
 
     public static String getSpells(String characters) {
         StringBuffer buffer = new StringBuffer();
@@ -155,7 +154,7 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
             char ch = characters.charAt(i);
             if ((ch >> 7) == 0) {
                 // 判断是否为汉字，如果左移7为为0就不是汉字，否则是汉字
-              return StringUtils.getFirst(characters);
+                return StringUtils.getFirst(characters);
             } else {
                 char spell = getFirstLetter(ch);
                 buffer.append(String.valueOf(spell));
@@ -195,16 +194,13 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
         }
         secPosValue = bytes[0] * 100 + bytes[1];
         for (i = 0; i < 23; i++) {
-            if (secPosValue >= secPosValueList[i]
-                    && secPosValue < secPosValueList[i + 1]) {
+            if (secPosValue >= secPosValueList[i] && secPosValue < secPosValueList[i + 1]) {
                 result = firstLetter[i];
                 break;
             }
         }
         return result;
     }
-
-
 
 
 }
