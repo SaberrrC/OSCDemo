@@ -331,7 +331,8 @@ public class JumpFragment extends BaseFragment {
                                 OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
                                 //
                                 RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)//传送的类型
-                                        .addFormDataPart(RESOURCE, file.getName(), MultipartBody.create(MediaType.parse("application/octet-stream"), file)).addFormDataPart(TOKEN, token).build();
+                                        .addFormDataPart(RESOURCE, file.getName(), MultipartBody.create(MediaType.parse("application/octet-stream"), file))
+                                        .addFormDataPart(TOKEN, token).build();
                                 Request request = new Request.Builder().addHeader(COOKIE, mCookie).post(body).url(Urls.SEND_JUMP_IMAGE).build();
                                 Response response = okHttpClient.newCall(request).execute();
                                 String json = response.body().string();
