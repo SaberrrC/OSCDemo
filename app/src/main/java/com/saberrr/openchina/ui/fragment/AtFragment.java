@@ -1,30 +1,45 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ImageSpan;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.FriendInfoBean;
+import com.saberrr.openchina.event.SelectedFriendsEvent;
 import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.ui.view.ContactLayout;
 import com.saberrr.openchina.utils.Constant;
+import com.saberrr.openchina.utils.DensityUtil;
 import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.StringUtils;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.XmlUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -69,17 +84,19 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
             @Override
             public void onClick(View v) {
                 // TODO: 2017-04-07
+                StringBuilder sb = new StringBuilder();
+                for (FriendInfoBean.Friends name : names) {
+                    sb.append("@" + name.getName() + " ");
+                }
+                Log.d(TAG, "text: ==============" + sb.toString());
+                EventBus.getDefault().post(new SelectedFriendsEvent(names));
+
+                getActivity().finish();
             }
         });
         Map<Class, Integer> map = FinalRecycleAdapter.getMap();
         map.put(FriendInfoBean.Friends.class, R.layout.list_item_contact);
         mFinalRecycleAdapter = new FinalRecycleAdapter(mInfos, map, this);
-       /* List<String> names = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            names.add(i + "");
-        }
-        mFinalRecycleAdapter.setStringList(names);*/
-
         RecyclerView recyclerView = mClAt.getRecyclerView();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setInitialPrefetchItemCount(15);
@@ -94,7 +111,7 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
         FriendInfoBean friendInfoBean = XmlUtils.toBean(FriendInfoBean.class, xml.getBytes());
         final List<FriendInfoBean.Friends> friends = friendInfoBean.getFriends();
         for (FriendInfoBean.Friends friend : friends) {
-            friend.first = StringUtils.getFirst(getSpells(friend.getName()));
+            friend.first = getSpells(StringUtils.getFirst(getSpells(friend.getName()))).toUpperCase();
         }
         mInfos.addAll(friends);
         Collections.sort(mInfos, new Comparator<Object>() {
@@ -141,33 +158,75 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
         TextView tvUsername = (TextView) holder.getViewById(R.id.tv_username);
         final CheckBox cbCheck = (CheckBox) holder.getViewById(R.id.cb_check);
         ImageView ivIcon = (ImageView) holder.getViewById(R.id.iv_icon);
+        LinearLayout llItem = (LinearLayout) holder.getViewById(R.id.ll_item);
         tvUsername.setText(friend.getName());
         Glide.with(AppApplication.appContext).load(friend.getPortrait()).placeholder(R.mipmap.ic_noicon).into(ivIcon);
-
-        View rootView = holder.getRootView();
         if (names.size() >= 14) {
-            rootView.setOnClickListener(null);
+            llItem.setOnClickListener(null);
             cbCheck.setEnabled(false);
         } else {
-            rootView.setOnClickListener(new View.OnClickListener() {
+            llItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     cbCheck.setChecked(!friend.checked);
                     friend.checked = !friend.checked;
                     if (names.contains(friend)) {
                         names.remove(friend);
+                        delIcon();
                     } else {
                         names.add(friend);
+                        //点击添加头像到输入框
+                        addIcon(friend);
                     }
                     if (names.size() != 0) {
                         mRightTextView.setText("确定(" + names.size() + "/14)");
                     } else {
                         mRightTextView.setText("确定");
                     }
-
                 }
             });
         }
+    }
+
+    private void delIcon() {
+        int keyCode = KeyEvent.KEYCODE_DEL;
+        KeyEvent keyEventDown = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
+        KeyEvent keyEventUp = new KeyEvent(KeyEvent.ACTION_UP, keyCode);
+        mEtAt.onKeyDown(keyCode, keyEventDown);
+        mEtAt.onKeyUp(keyCode, keyEventUp);
+    }
+
+    private void addIcon(final FriendInfoBean.Friends friend) {
+        ThreadUtils.runSub(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final int index = mEtAt.getSelectionStart();
+                    final Editable editable = mEtAt.getText();
+                    //设置图片
+                    Drawable drawable = null;
+                    if (TextUtils.isEmpty(friend.getPortrait())) {
+                        drawable = getResources().getDrawable(R.mipmap.ic_noicon);
+                    } else {
+                        drawable = Drawable.createFromStream(new URL(friend.getPortrait()).openStream(), "src");
+                    }
+                    drawable.setBounds(0, 0, DensityUtil.dip2px(40), DensityUtil.dip2px(40));
+                    String fullName = "@" + friend.getName() + " ";
+                    final Spannable msp = new SpannableString(fullName);
+                    msp.setSpan(new ImageSpan(drawable), 0, fullName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    ThreadUtils.runMain(new Runnable() {
+                        @Override
+                        public void run() {
+                            editable.insert(index, msp);
+                        }
+                    });
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
     static final int    GB_SP_DIFF      = 160;
