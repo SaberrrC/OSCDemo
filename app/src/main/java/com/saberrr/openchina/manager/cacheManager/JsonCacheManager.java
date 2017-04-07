@@ -1,6 +1,7 @@
 package com.saberrr.openchina.manager.cacheManager;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.saberrr.openchina.manager.netmanager.NetManager;
 import com.saberrr.openchina.utils.GsonTools;
@@ -39,7 +40,13 @@ public class JsonCacheManager {
         if (TextUtils.isEmpty(json)) {
             return null;
         } else {
-            return GsonTools.changeGsonToBean(json, bean);
+            Log.d("缓存==", "getDataBean: ======" + json);
+            try {
+                return GsonTools.changeGsonToBean(json, bean);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 
@@ -57,7 +64,12 @@ public class JsonCacheManager {
         if (TextUtils.isEmpty(json)) {
             return null;
         } else {
-            return GsonTools.changeGsonToBean(json, bean);
+            try {
+                return GsonTools.changeGsonToBean(json, bean);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 
@@ -75,7 +87,12 @@ public class JsonCacheManager {
         if (TextUtils.isEmpty(json)) {
             return null;
         } else {
-            return GsonTools.changeGsonToBean(json, bean);
+            try {
+                return GsonTools.changeGsonToBean(json, bean);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 
@@ -94,7 +111,12 @@ public class JsonCacheManager {
         if (TextUtils.isEmpty(json)) {
             return null;
         } else {
-            return GsonTools.changeGsonToList(json, t);
+            try {
+                return GsonTools.changeGsonToList(json, t);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 
@@ -112,7 +134,12 @@ public class JsonCacheManager {
         if (TextUtils.isEmpty(json)) {
             return null;
         } else {
-            return GsonTools.changeGsonToList(json, t);
+            try {
+                return GsonTools.changeGsonToList(json, t);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 
@@ -130,7 +157,12 @@ public class JsonCacheManager {
         if (TextUtils.isEmpty(json)) {
             return null;
         } else {
-            return GsonTools.changeGsonToList(json, t);
+            try {
+                return GsonTools.changeGsonToList(json, t);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 }

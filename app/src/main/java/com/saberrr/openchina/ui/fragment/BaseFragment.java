@@ -21,10 +21,10 @@ import java.util.List;
 
 public abstract class BaseFragment extends android.support.v4.app.Fragment {
 
-    public  LoadPager    mLoadingPager;
-    private boolean      mNeedRefresh;
-    private ShowActivity mParentActivity;
-    public static Fragment mCurrentFragment;
+    public        LoadPager    mLoadingPager;
+    private       boolean      mNeedRefresh;
+    private       ShowActivity mParentActivity;
+    public static Fragment     mCurrentFragment;
 
     @Nullable
     @Override
@@ -51,12 +51,7 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
 
             @Override
             public Object getNetData() {
-                try {
-                    return getData();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
+                return getData();
             }
         };
 
@@ -70,6 +65,15 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
      */
     public TextView getRightTextView() {
         return mParentActivity.getRightTextView();
+    }
+
+    /**
+     * 获取toolbar左边textview
+     *
+     * @return
+     */
+    public TextView getLeftTextView() {
+        return mParentActivity.getLeftTextView();
     }
 
     /**
@@ -188,6 +192,7 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
         super.onDestroy();
         mParentActivity = null;
     }
+
     public Fragment getCurrentFragment() {
         return mCurrentFragment;
     }

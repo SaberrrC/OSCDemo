@@ -45,6 +45,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     public static final int TITLE_SEND    = 103;//右边文字 “选择”
     public static final int TITLE_PEOPLE  = 104;//“找人”专用
     public static final int TITLE_MENU    = 105;//MENU布局
+    public static final int TITLE_LEFT    = 105;//MENU布局
     private TextView    mTvRightToolbar;
     private SearchView  mSearchView;
     private Toolbar     mToolbar;
@@ -56,6 +57,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     private int     mTitle_menu           = -1;
     private boolean touchHintKeyboard     = false;
     private boolean hintKeyboardexception = false;
+    private TextView mTvLeftToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,6 +171,15 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
+     * 获取左边toolbar上的textview
+     *
+     * @return
+     */
+    public TextView getLeftTextView() {
+        return mTvLeftToolbar;
+    }
+
+    /**
      * shezhitoolr右上角文字
      *
      * @param text
@@ -209,6 +220,7 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         mIvIconToolbar = (ImageView) findViewById(R.id.iv_right_icon_toolbar);
         mTvTitleToolbar = (TextView) findViewById(R.id.tv_title_toolbar);
+        mTvLeftToolbar = (TextView) findViewById(R.id.tv_left_toolbar);
         mTvRightToolbar = (TextView) findViewById(R.id.tv_right_toolbar);
         mFlCommend = (FrameLayout) findViewById(R.id.fl_commend);
         mIvCommendBG = (ImageView) findViewById(R.id.iv_commend_bg);

@@ -285,7 +285,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
 
         mHeight1 = mLlWeb.getHeight();
 
-        for (int i = 0; i < mPosition1 - 1; i++) {
+        for (int i = 0; i < mPosition1; i++) {
             height += mRecyclerViewInformationDetail.getChildAt(i).getHeight();
 
         }

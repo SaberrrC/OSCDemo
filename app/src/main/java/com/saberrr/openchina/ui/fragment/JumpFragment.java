@@ -12,6 +12,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +49,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -94,6 +97,7 @@ public class JumpFragment extends BaseFragment {
     private              String       mCookie        = "";
     private              String       token          = "";
     private              int          screenWith     = Utils.getScreenWith();
+    private static final String       TAG            = "JumpFragment";
 
     @Override
     protected boolean needRefresh() {
@@ -172,11 +176,9 @@ public class JumpFragment extends BaseFragment {
         });
     }
 
+
     private void initImages() {
-        String text = SpUtil.getString(getContext(), Constant.JUMP_TEXT, "");
         String imagePaths = SpUtil.getString(getContext(), Constant.JUMP_IMAGES, "");
-        mEtContent.setText(text);
-        mEtContent.setSelection(text.length());
         String[] paths = imagePaths.split("##%##");
         List<String> lst = new ArrayList<>();
         for (String path : paths) {
@@ -196,7 +198,39 @@ public class JumpFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         //        EventBus.getDefault().register(this);
+        initText();
         initImages();
+    }
+
+    private void initText() {
+        String text = SpUtil.getString(getContext(), Constant.JUMP_TEXT, "");
+        // TODO: 2017-04-07 文字转表情
+        String reg_charset = "(?:[\uD83C\uDF00-\uD83D\uDDFF]|[\uD83E\uDD00-\uD83E\uDDFF]|[\uD83D\uDE00-\uD83D\uDE4F]|[\uD83D\uDE80-\uD83D\uDEFF]|[\u2600-\u26FF]\uFE0F?|[\u2700-\u27BF]\uFE0F?|\u24C2\uFE0F?|[\uD83C\uDDE6-\uD83C\uDDFF]{1,2}|[\uD83C\uDD70\uD83C\uDD71\uD83C\uDD7E\uD83C\uDD7F\uD83C\uDD8E\uD83C\uDD91-\uD83C\uDD9A]\uFE0F?|[\u0023\u002A\u0030-\u0039]\uFE0F?\u20E3|[\u2194-\u2199\u21A9-\u21AA]\uFE0F?|[\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55]\uFE0F?|[\u2934\u2935]\uFE0F?|[\u3030\u303D]\uFE0F?|[\u3297\u3299]\uFE0F?|[\uD83C\uDE01\uD83C\uDE02\uD83C\uDE1A\uD83C\uDE2F\uD83C\uDE32-\uD83C\uDE3A\uD83C\uDE50\uD83C\uDE51]\uFE0F?|[\u203C\u2049]\uFE0F?|[\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE]\uFE0F?|[\u00A9\u00AE]\uFE0F?|[\u2122\u2139]\uFE0F?|\uD83C\uDC04\uFE0F?|\uD83C\uDCCF\uFE0F?|[\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA]\uFE0F?)";
+        Log.d(TAG, "initText:======= " + text);
+        Pattern pattern = Pattern.compile(reg_charset);
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            String group = matcher.group();
+            Log.d(TAG, "initText: find ==== " + group);
+        }
+        /**
+         * 1 获取表情的字符串
+         * 2 通过字符串找资源id
+         * 3 替换对应文字为表情
+         */
+
+
+
+       /* //设置图片
+        Drawable drawable = getResources().getDrawable(faceBean.resId);
+        drawable.setBounds(0, 0, DensityUtil.dip2px(25), DensityUtil.dip2px(25));
+        Spannable msp = new SpannableString(faceBean.emojiStr);
+        msp.setSpan(new ImageSpan(drawable), 0, faceBean.emojiStr.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        editable.insert(index, msp);*/
+
+
+        mEtContent.setText(text);
+        mEtContent.setSelection(text.length());
     }
 
     private void initToolbar() {
@@ -326,7 +360,7 @@ public class JumpFragment extends BaseFragment {
                 ImgSelActivity.startActivity(this, config, REQUEST_CODE);
                 break;
             case R.id.iv_at:
-                ShowActivity.startFragmentWithTitle(AtFragment.class,null,"选择@好友",ShowActivity.TITLE_SEND);
+                ShowActivity.startFragmentWithTitle(AtFragment.class, null, "");
                 mLlFaces.setVisibility(View.GONE);
                 break;
             case R.id.iv_topic:
@@ -337,7 +371,6 @@ public class JumpFragment extends BaseFragment {
                 editable.insert(index, TOPIC_TEXT);
                 mEtContent.setSelection(index + 1 + TOPIC_TEXT.indexOf("#"), index + TOPIC_TEXT.lastIndexOf("#"));
                 break;
-
             case R.id.iv_face:
                 mLlFaces.setVisibility(View.VISIBLE);
                 break;
@@ -371,14 +404,6 @@ public class JumpFragment extends BaseFragment {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             setImage(data);
         }
-        if (requestCode == REQUEST_CODE_AT) {
-            setAtFriend();
-        }
-    }
-
-    private void setAtFriend() {
-        // TODO: 2017-04-06  关注好友
-
     }
 
     private void setImage(Intent data) {
@@ -416,6 +441,7 @@ public class JumpFragment extends BaseFragment {
                 public void onClick(View v) {
                     mFlImg.removeView(v);
                     for (int i1 = 0; i1 < images.size(); i1++) {
+
                         if (path == images.get(i1)) {
                             images.remove(i1--);
                         }
@@ -487,5 +513,4 @@ public class JumpFragment extends BaseFragment {
         super.onDestroy();
         //        EventBus.getDefault().unregister(this);
     }
-
 }

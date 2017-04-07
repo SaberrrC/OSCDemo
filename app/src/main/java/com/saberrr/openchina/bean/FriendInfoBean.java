@@ -2,6 +2,7 @@ package com.saberrr.openchina.bean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,10 +19,18 @@ public class FriendInfoBean {
 
     public void setFriend(Friends friend) {
         this.friend = friend;
+        friends.add(friend);
     }
 
-    @XStreamAlias("friend")
-    public List<Friends> friends;
+    public List<Friends> friends = new ArrayList<>();
+
+    public List<Friends> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<Friends> friends) {
+        this.friends = friends;
+    }
 
     @XStreamAlias("friend")
     public class Friends {
@@ -43,7 +52,7 @@ public class FriendInfoBean {
          * </expertise>
          * <gender>1</gender>
          */
-
+        public String first;
         @XStreamAlias("name")
         private String name;
         @XStreamAlias("userid")
@@ -54,6 +63,7 @@ public class FriendInfoBean {
         private String from;
         @XStreamAlias("expertise")
         private String expertise;
+        public boolean checked = false;
 
         public String getName() {
             return name;
@@ -93,6 +103,17 @@ public class FriendInfoBean {
 
         public void setExpertise(String expertise) {
             this.expertise = expertise;
+        }
+
+        @Override
+        public String toString() {
+            return "Friends{" +
+                    "name='" + name + '\'' +
+                    ", userid='" + userid + '\'' +
+                    ", portrait='" + portrait + '\'' +
+                    ", from='" + from + '\'' +
+                    ", expertise='" + expertise + '\'' +
+                    '}';
         }
     }
 }

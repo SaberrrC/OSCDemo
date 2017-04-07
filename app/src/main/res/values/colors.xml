@@ -3,7 +3,7 @@
     <color name="colorPrimary">#24cf5f</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="background_tab_pressed">@color/colorPrimary</color>
-
+    <color name="title">#111111</color>
     <color name="bg_window">#ffe5e5e5</color>
     <color name="bg_page">#ffebebeb</color>
     <color name="bg_tab_pressed">#6633b5e5</color>

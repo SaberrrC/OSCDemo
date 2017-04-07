@@ -1,12 +1,16 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
@@ -40,6 +44,8 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
     private int catalog = 3;
     private FinalRecycleAdapter mFinalRecycleAdapter;
     private String nextPageToken = "";
+    private Bitmap mOriginateBitmap;
+    private Bitmap mRecommendBitmap;
 
     @Override
     protected boolean needRefresh() {
@@ -70,8 +76,8 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
                 super.onScrollStateChanged(recyclerView, newState);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (lastVisibleItemPosition == mDatas.size()-1&& newState == RecyclerView.SCROLL_STATE_DRAGGING){
-                        mLoadingPager.showViewDely(1000);
+                if (lastVisibleItemPosition == mDatas.size() - 1 && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    mLoadingPager.showViewDely(1000);
                 }
             }
 
@@ -80,13 +86,18 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
                 super.onScrolled(recyclerView, dx, dy);
             }
         });
-        mSwipeRefreshLayoutBlog.setColorSchemeColors(Color.RED,Color.BLUE,Color.GREEN);
+        mSwipeRefreshLayoutBlog.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN);
         mSwipeRefreshLayoutBlog.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mLoadingPager.showViewDely(1000);
             }
         });
+
+        mOriginateBitmap = BitmapFactory.decodeResource(getContext().getResources(),
+                R.mipmap.ic_label_originate);
+        mRecommendBitmap = BitmapFactory.decodeResource(getContext().getResources(),
+                R.mipmap.ic_label_recommend);
     }
 
     @Override
@@ -96,25 +107,24 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
             mDatas.clear();
             nextPageToken = "";
         }
-        BlogBodyBean blogBodyBean = JsonCacheManager.getInstance().getDataBean(Urls.BLOG + catalog + Urls.BLOGUP+nextPageToken, BlogBodyBean.class);
-       if (blogBodyBean == null){
-           if (mDatas == null || mDatas.size() == 0){
-               return null;
-           }else {
-               ToastUtils.showToast("没有更多数据");
-           }
-       }else {
-        List<BlogBodyBean.ResultBean.ItemsBean> bodyItem = blogBodyBean.getResult().getItems();
-        nextPageToken = blogBodyBean.getResult().getNextPageToken();
-            if (mDatas == null || mDatas.size() == 0){
+        BlogBodyBean blogBodyBean = JsonCacheManager.getInstance().getDataBean(Urls.BLOG + catalog + Urls.BLOGUP + nextPageToken, BlogBodyBean.class);
+        if (blogBodyBean == null) {
+            if (mDatas == null || mDatas.size() == 0) {
+                return null;
+            } else {
+                ToastUtils.showToast("没有更多数据");
+            }
+        } else {
+            List<BlogBodyBean.ResultBean.ItemsBean> bodyItem = blogBodyBean.getResult().getItems();
+            nextPageToken = blogBodyBean.getResult().getNextPageToken();
+            if (mDatas == null || mDatas.size() == 0) {
 
                 mDatas.add(new BlogHradBean());
                 mDatas.addAll(bodyItem);
-            }else {
+            } else {
                 mDatas.addAll(bodyItem);
             }
-       }
-
+        }
 
 
         ThreadUtils.runMain(new Runnable() {
@@ -147,16 +157,38 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
             TextView tvTimeBlog = (TextView) holder.getViewById(R.id.tv_time_blog);
             TextView tvVisitBlog = (TextView) holder.getViewById(R.id.tv_visit_blog);
             TextView tvCommentBlog = (TextView) holder.getViewById(R.id.tv_comment_blog);
-            ImageView iv_originate = (ImageView) holder.getViewById(R.id.iv_originate);
-            ImageView iv_recommend = (ImageView) holder.getViewById(R.id.iv_recommend);
+            //            ImageView iv_originate = (ImageView) holder.getViewById(R.id.iv_originate);
+            //            ImageView iv_recommend = (ImageView) holder.getViewById(R.id.iv_recommend);
             BlogBodyBean.ResultBean.ItemsBean bean = (BlogBodyBean.ResultBean.ItemsBean) itemData;
-            if (bean.isOriginal()){
-                iv_originate.setVisibility(View.VISIBLE);
+            ImageSpan originateSpan = new ImageSpan(getContext(), mOriginateBitmap);
+            ImageSpan recommendSpan = new ImageSpan(getContext(), mRecommendBitmap);
+
+
+            if (bean.isOriginal()) {
+                if (bean.isRecommend()) {
+                    String text = "[jin] [jian] " + bean.getTitle();
+                    SpannableString spannableString = new SpannableString(text);
+                    spannableString.setSpan(originateSpan, 0, 5, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                    spannableString.setSpan(recommendSpan, 6, 12, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                    tvTitleBlog.setText(spannableString);
+                }else {
+                    String text = "[jin] " + bean.getTitle();
+                    SpannableString spannableString = new SpannableString(text);
+                    spannableString.setSpan(originateSpan, 0, 5, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                    tvTitleBlog.setText(spannableString);
+                }
+            } else {
+                if (bean.isRecommend()){
+                    String text = "[jin] " + bean.getTitle();
+                    SpannableString spannableString = new SpannableString(text);
+                    spannableString.setSpan(recommendSpan, 0, 5, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                    tvTitleBlog.setText(spannableString);
+                }else {
+                    tvTitleBlog.setText(bean.getTitle());
+                }
+
             }
-            if (bean.isRecommend()){
-                iv_recommend.setVisibility(View.VISIBLE);
-            }
-            tvTitleBlog.setText(bean.getTitle());
+
             tvBodyBlog.setText(bean.getBody());
             tvNameBlog.setText(bean.getAuthor());
             tvTimeBlog.setText(StringUtils.friendly_time(bean.getPubDate()));
