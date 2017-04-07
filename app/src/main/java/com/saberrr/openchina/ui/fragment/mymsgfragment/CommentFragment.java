@@ -7,8 +7,10 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -266,10 +268,31 @@ public class CommentFragment extends BaseFragment implements FinalRecycleAdapter
         event.setText(Utils.parseActiveAction(mItemList.get(position).getObjecttype(),mItemList.get(position).getObjectcatalog(),mItemList.get(position).getObjecttitle()));
 
         TextView content = (TextView) holder.getViewById(R.id.tv_content);
-        content.setText(Utils.parseActiveReply("",mItemList.get(position).getMessage().trim()));
+        String body = mItemList.get(position).getMessage();
+        if (body == null) {
+            content.setVisibility(View.GONE);
+
+        } else {
+            content.setVisibility(View.VISIBLE);
+            Spanned span = Html.fromHtml(body.trim());
+            Spannable spannable = Utils.displayEmoji(getContext().getResources(), span);
+            content.setText(spannable);
+        }
+
 
         TextView myself = (TextView) holder.getViewById(R.id.tv_myself);
-        myself.setText(Utils.parseActiveReply(mItemList.get(position).getObjectreply().getObjectname() , mItemList.get(position).getObjectreply().getObjectbody()));
+
+
+        CommentBean.Active.Objectreply objectreply = mItemList.get(position).getObjectreply();
+        if (objectreply == null) {
+            myself.setVisibility(View.GONE);
+        } else {
+            myself.setVisibility(View.VISIBLE);
+            SpannableStringBuilder text = Utils.parseActiveReply(objectreply.getObjectname().trim(), objectreply.getObjectbody().trim());
+            Spannable spannable = Utils.displayEmoji(getContext().getResources(), text);
+            myself.setText(spannable);
+
+        }
 
 
 /*

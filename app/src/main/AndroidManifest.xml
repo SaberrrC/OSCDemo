@@ -42,6 +42,13 @@
         </activity>
         <activity android:name=".scan.ericssonlabs.BarCodeTestActivity">
         </activity>
+        <activity android:name=".ui.activity.UserCenterActivity">
+        </activity>
+        <activity android:name=".scan.zxing.android.CaptureActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@android:style/Theme.NoTitleBar">
+
+        </activity>
     </application>
 
 </manifest>

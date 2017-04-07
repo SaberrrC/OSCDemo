@@ -49,8 +49,16 @@ public class MyMsgFragment extends BaseFragment {
 
     private void init() {
         // TODO: 2017/4/2 展示数据
-        mDataList.add(new MyMsgInfo(new CommentFragment(), Title[0]));
-        mDataList.add(new MyMsgInfo(new CommentFragment(), Title[1]));
+
+
+        AtMeFragment fragment = new AtMeFragment();
+        fragment.setCatalog("2");
+        mDataList.add(new MyMsgInfo(fragment, Title[0]));
+
+        AtMeFragment fragment1 = new AtMeFragment();
+        fragment1.setCatalog("3");
+
+        mDataList.add(new MyMsgInfo(fragment1, Title[1]));
         mDataList.add(new MyMsgInfo(new MsgFragment(), Title[2]));
         mDataList.add(new MyMsgInfo(new FansFragment(), Title[3]));
         mDataList.add(new MyMsgInfo(new TweetlikeFragment(), Title[4]));

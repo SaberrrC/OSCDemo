@@ -7,8 +7,10 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -69,10 +71,16 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
     private List<CommentBean.Active> mItemList = new ArrayList();
     private FinalRecycleAdapter mRecycleAdapter;
     private String mUserid;
+    private String mCatalog;
 
     @Override
     protected boolean needRefresh() {
+
         return false;
+    }
+
+    public void setCatalog(String catalog) {
+        this.mCatalog = catalog;
     }
 
     @Override
@@ -154,7 +162,7 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
         } else {
             HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
             try {
-                Response<ResponseBody> response = httpServiceApi.getComment(mCookie, "2", mItemList.size() / Constant.PAGESIZE, mUserid, Constant.PAGESIZE).execute();
+                Response<ResponseBody> response = httpServiceApi.getComment(mCookie, mCatalog, mItemList.size() / Constant.PAGESIZE, mUserid, Constant.PAGESIZE).execute();
                 String result = response.body().string();
 //                System.out.println(result);
                 CommentBean commentBean = XmlUtils.toBean(CommentBean.class, result.getBytes());
@@ -265,10 +273,36 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
         event.setText(Utils.parseActiveAction(mItemList.get(position).getObjecttype(),mItemList.get(position).getObjectcatalog(),mItemList.get(position).getObjecttitle()));
 
         TextView content = (TextView) holder.getViewById(R.id.tv_content);
-        content.setText(mItemList.get(position).getMessage().trim());
+        String body = mItemList.get(position).getMessage();
+        if (body == null) {
+            content.setVisibility(View.GONE);
+
+        } else {
+            content.setVisibility(View.VISIBLE);
+            /*Spanned span = Html.fromHtml(body.trim());
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(span);
+            Spannable spannable = Utils.displayEmoji(getContext().getResources(), spannableStringBuilder);*/
+
+           /* SpannableStringBuilder spannableStringBuilder = Utils.parseActiveReply("", body.trim());
+            Spannable spannable = Utils.displayEmoji(getContext().getResources(),spannableStringBuilder);*/
+
+            content.setText(body.trim());
+        }
+
 
         TextView myself = (TextView) holder.getViewById(R.id.tv_myself);
-        myself.setText(Utils.parseActiveReply(mItemList.get(position).getObjectreply().getObjectname() , mItemList.get(position).getObjectreply().getObjectbody()));
+
+
+        CommentBean.Active.Objectreply objectreply = mItemList.get(position).getObjectreply();
+        if (objectreply == null) {
+            myself.setVisibility(View.GONE);
+        } else {
+            myself.setVisibility(View.VISIBLE);
+            SpannableStringBuilder text = Utils.parseActiveReply(objectreply.getObjectname().trim(), objectreply.getObjectbody().trim());
+            Spannable spannable = Utils.displayEmoji(getContext().getResources(), text);
+            myself.setText(spannable);
+
+        }
 
 
 /*

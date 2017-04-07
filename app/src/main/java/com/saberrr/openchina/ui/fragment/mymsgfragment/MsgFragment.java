@@ -271,7 +271,11 @@ public class MsgFragment extends BaseFragment implements FinalRecycleAdapter.OnV
 
 
         TextView content = (TextView) holder.getViewById(R.id.tv_chat_content);
-        content.setText(mItemList.get(position).getContent());
+        String text = mItemList.get(position).getContent();
+        Spannable spannable = Utils.displayEmoji(getContext().getResources(), text);
+        content.setText(spannable);
+
+
 
         TextView time = (TextView) holder.getViewById(R.id.tv_time);
         time.setText(StringUtils.friendly_time(mItemList.get(position).getPubDate()));

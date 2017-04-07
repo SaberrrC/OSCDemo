@@ -259,7 +259,12 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
         }
 
         TextView myself = (TextView) holder.getViewById(R.id.tv_myself);
-        myself.setText(Utils.parseActiveReply(mItemList.get(position).getTweet().getAuthor(), mItemList.get(position).getTweet().getBody()));
+
+
+        SpannableStringBuilder text = Utils.parseActiveReply(mItemList.get(position).getTweet().getAuthor(), mItemList.get(position).getTweet().getBody());
+        Spannable spannable = Utils.displayEmoji(getContext().getResources(), text);
+
+        myself.setText(spannable);
 
         /*String author = mItemList.get(position).getTweet().getAuthor();
         String string = author + ":" + mItemList.get(position).getTweet().getBody();
