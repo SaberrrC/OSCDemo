@@ -183,15 +183,15 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
 
             ImageSpan recordImg = new ImageSpan(getContext(),
                     recordBitmap);
-            String text = "[icon]" + itemsBean.getTitle();
+            String text = "[icon] " + itemsBean.getTitle();
             SpannableString spannableString = new SpannableString(text);
             if (StringUtils.isToday(itemsBean.getPubDate())) {
                 spannableString.setSpan(recordImg, 0, 6, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-
+                tvTitleInformation.setText(spannableString);
             } else {
-                spannableString.setSpan("", 0, 6, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                tvTitleInformation.setText(itemsBean.getTitle());
             }
-            tvTitleInformation.setText(spannableString);
+
             tvBodyInformation.setText(itemsBean.getBody());
             tvTimeInformation.setText(StringUtils.friendly_time(itemsBean.getPubDate()));
             tvCommentInformation.setText(itemsBean.getCommentCount() + "");
