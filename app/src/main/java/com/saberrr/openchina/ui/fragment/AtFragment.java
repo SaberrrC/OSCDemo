@@ -2,7 +2,7 @@ package com.saberrr.openchina.ui.fragment;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -16,18 +16,18 @@ import com.saberrr.openchina.bean.FriendInfoBean;
 import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
-import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.ui.view.ContactLayout;
 import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.StringUtils;
 import com.saberrr.openchina.utils.ThreadUtils;
-import com.saberrr.openchina.utils.ToastUtils;
 import com.saberrr.openchina.utils.XmlUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +45,9 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
     ContactLayout mClAt;
     private List<Object> mInfos = new ArrayList<>();
     private FinalRecycleAdapter mFinalRecycleAdapter;
-    private String TAG = "AtFragment";
+    private String                       TAG   = "AtFragment";
+    private List<FriendInfoBean.Friends> names = new ArrayList<>();
+    private TextView mRightTextView;
 
     @Override
     protected boolean needRefresh() {
@@ -56,19 +58,19 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
     public View createView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_at, null, false);
         ButterKnife.bind(this, view);
-        TextView rightTextView = getRightTextView();
-        rightTextView.setVisibility(View.VISIBLE);
-        rightTextView.setText("确定");
+        mRightTextView = getRightTextView();
+        mRightTextView.setVisibility(View.VISIBLE);
+        mRightTextView.setText("确定");
         TextView leftTextView = getLeftTextView();
         leftTextView.setVisibility(View.VISIBLE);
         leftTextView.setText("选择@好友");
-        setToolbarIconOnClickListener(new ShowActivity.OnClickListener() {
+
+        mRightTextView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick() {
-                ToastUtils.showToast("666");
+            public void onClick(View v) {
+                // TODO: 2017-04-07
             }
         });
-
         Map<Class, Integer> map = FinalRecycleAdapter.getMap();
         map.put(FriendInfoBean.Friends.class, R.layout.list_item_contact);
         mFinalRecycleAdapter = new FinalRecycleAdapter(mInfos, map, this);
@@ -91,7 +93,18 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
         String xml = JsonCacheManager.getInstance().getXML(Urls.ATFRIENDS + "uid=" + SpUtil.getString(getContext(), Constant.USERID, "") + "&relation=1&all=1");
         FriendInfoBean friendInfoBean = XmlUtils.toBean(FriendInfoBean.class, xml.getBytes());
         final List<FriendInfoBean.Friends> friends = friendInfoBean.getFriends();
+        for (FriendInfoBean.Friends friend : friends) {
+            friend.first = StringUtils.getFirst(getSpells(friend.getName()));
+        }
         mInfos.addAll(friends);
+        Collections.sort(mInfos, new Comparator<Object>() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                FriendInfoBean.Friends f1 = (FriendInfoBean.Friends) o1;
+                FriendInfoBean.Friends f2 = (FriendInfoBean.Friends) o2;
+                return f1.first.compareToIgnoreCase(f2.first);
+            }
+        });
         ThreadUtils.runMain(new Runnable() {
             @Override
             public void run() {
@@ -109,21 +122,22 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
 
     @Override
     public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
-        if (position == mInfos.size() - 1) {
-            ToastUtils.showToast("到底了");
-        }
         final FriendInfoBean.Friends friend = (FriendInfoBean.Friends) itemData;
         TextView tvSection = (TextView) holder.getViewById(R.id.tv_section);
+        String now = friend.first;
         if (position == 0) {
             tvSection.setVisibility(View.VISIBLE);
+            tvSection.setText(now.toUpperCase());
         } else {
             FriendInfoBean.Friends lastFriend = (FriendInfoBean.Friends) mInfos.get(position - 1);
-            String spells = getSpells(friend.getName());
-            String lastSpells = getSpells(lastFriend.getName());
-            Log.d(TAG, "onBindViewHolder: =======" + spells + "============" + lastSpells);
+            String lastFirst = lastFriend.first;
+            if (TextUtils.equals(now, lastFirst)) {
+                tvSection.setVisibility(View.GONE);
+            } else {
+                tvSection.setVisibility(View.VISIBLE);
+                tvSection.setText(now.toUpperCase());
+            }
         }
-
-
         TextView tvUsername = (TextView) holder.getViewById(R.id.tv_username);
         final CheckBox cbCheck = (CheckBox) holder.getViewById(R.id.cb_check);
         ImageView ivIcon = (ImageView) holder.getViewById(R.id.iv_icon);
@@ -131,14 +145,29 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
         Glide.with(AppApplication.appContext).load(friend.getPortrait()).placeholder(R.mipmap.ic_noicon).into(ivIcon);
 
         View rootView = holder.getRootView();
-        rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cbCheck.setChecked(!friend.checked);
-                friend.checked = !friend.checked;
-            }
-        });
+        if (names.size() >= 14) {
+            rootView.setOnClickListener(null);
+            cbCheck.setEnabled(false);
+        } else {
+            rootView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    cbCheck.setChecked(!friend.checked);
+                    friend.checked = !friend.checked;
+                    if (names.contains(friend)) {
+                        names.remove(friend);
+                    } else {
+                        names.add(friend);
+                    }
+                    if (names.size() != 0) {
+                        mRightTextView.setText("确定(" + names.size() + "/14)");
+                    } else {
+                        mRightTextView.setText("确定");
+                    }
 
+                }
+            });
+        }
     }
 
     static final int    GB_SP_DIFF      = 160;
@@ -160,7 +189,7 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
                 buffer.append(String.valueOf(spell));
             }
         }
-        return buffer.toString();
+        return StringUtils.getFirst(buffer.toString());
     }
 
     // 获取一个汉字的首字母
