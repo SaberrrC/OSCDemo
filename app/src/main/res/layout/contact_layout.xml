@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true">
+        </android.support.v7.widget.RecyclerView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+    <TextView
+        android:id="@+id/tv_float"
+        android:layout_width="80sp"
+        android:layout_height="80sp"
+        android:layout_centerInParent="true"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="M"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        android:visibility="gone"/>
+
+
+    <com.saberrr.openchina.ui.view.SlideBar
+        android:id="@+id/slideBar"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"/>
+
+
+</RelativeLayout>
