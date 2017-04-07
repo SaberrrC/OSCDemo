@@ -108,7 +108,6 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
                 }
             }
         });
-        mToolbar.setTitle(title);
         mIvIconToolbar.setVisibility(View.GONE);
         mTvTitleToolbar.setVisibility(View.GONE);
         mFlCommend.setVisibility(View.GONE);

@@ -9,11 +9,16 @@ import android.widget.TextView;
 
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.FriendInfoBean;
+import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
+import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.ui.view.ContactLayout;
 import com.saberrr.openchina.ui.view.SlideBar;
+import com.saberrr.openchina.utils.Constant;
+import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.ToastUtils;
+import com.saberrr.openchina.utils.XmlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +80,11 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
 
     @Override
     public Object getData() {
+        String xml = JsonCacheManager.getInstance().getXML(Urls.ATFRIENDS + "uid=" + SpUtil.getString(getContext(), Constant.USERID, "") + "&relation=1&all=1");
+        FriendInfoBean friendInfoBean = XmlUtils.toBean(FriendInfoBean.class, xml.getBytes());
+        FriendInfoBean.Friends friend = friendInfoBean.getFriend();
+
+
         return "";
     }
 

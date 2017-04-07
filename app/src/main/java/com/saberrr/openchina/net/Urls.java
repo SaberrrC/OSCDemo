@@ -58,4 +58,6 @@ public class Urls {
     //评论 ， @我
     public static final String COMMENT = "/action/api/active_list";
 
+    //@好友
+    public static final String ATFRIENDS = BASE_URL + "action/api/friends_list?";
 }

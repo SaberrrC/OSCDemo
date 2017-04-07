@@ -8,6 +8,8 @@
         android:id="@+id/et_at"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:hint="搜索"/>
 
     <com.saberrr.openchina.ui.view.ContactLayout

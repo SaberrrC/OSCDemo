@@ -2,6 +2,8 @@ package com.saberrr.openchina.bean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+import java.util.List;
+
 /**
  * Created by Saberrr on 2017-04-06.
  */
@@ -17,6 +19,9 @@ public class FriendInfoBean {
     public void setFriend(Friends friend) {
         this.friend = friend;
     }
+
+    @XStreamAlias("friend")
+    public List<Friends> friends;
 
     @XStreamAlias("friend")
     public class Friends {
