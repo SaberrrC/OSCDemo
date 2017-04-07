@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#f6f6f6"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:weightSum="11"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/shape_edittext_search"
+            android:drawableLeft="@mipmap/btn_search_normal"
+            android:hint="搜索播客、软件、咨询、问答、找人"
+            android:layout_weight="10"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:text="取消"
+            android:layout_margin="5dp"
+            android:background="@null"
+            android:textColor="#6BDC92"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+</LinearLayout>
