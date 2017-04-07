@@ -94,6 +94,7 @@ public class JumpFragment extends BaseFragment {
     private              String       mCookie        = "";
     private              String       token          = "";
     private              int          screenWith     = Utils.getScreenWith();
+    private static final String       TAG            = "JumpFragment";
 
     @Override
     protected boolean needRefresh() {
@@ -172,11 +173,9 @@ public class JumpFragment extends BaseFragment {
         });
     }
 
+
     private void initImages() {
-        String text = SpUtil.getString(getContext(), Constant.JUMP_TEXT, "");
         String imagePaths = SpUtil.getString(getContext(), Constant.JUMP_IMAGES, "");
-        mEtContent.setText(text);
-        mEtContent.setSelection(text.length());
         String[] paths = imagePaths.split("##%##");
         List<String> lst = new ArrayList<>();
         for (String path : paths) {
@@ -196,7 +195,14 @@ public class JumpFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         //        EventBus.getDefault().register(this);
+        initText();
         initImages();
+    }
+
+    private void initText() {
+        String text = SpUtil.getString(getContext(), Constant.JUMP_TEXT, "");
+        mEtContent.setText(text);
+        mEtContent.setSelection(text.length());
     }
 
     private void initToolbar() {
@@ -326,7 +332,7 @@ public class JumpFragment extends BaseFragment {
                 ImgSelActivity.startActivity(this, config, REQUEST_CODE);
                 break;
             case R.id.iv_at:
-                ShowActivity.startFragmentWithTitle(AtFragment.class,null,"选择@好友",ShowActivity.TITLE_SEND);
+                ShowActivity.startFragmentWithTitle(AtFragment.class, null, "");
                 mLlFaces.setVisibility(View.GONE);
                 break;
             case R.id.iv_topic:
@@ -371,14 +377,6 @@ public class JumpFragment extends BaseFragment {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             setImage(data);
         }
-        if (requestCode == REQUEST_CODE_AT) {
-            setAtFriend();
-        }
-    }
-
-    private void setAtFriend() {
-        // TODO: 2017-04-06  关注好友
-
     }
 
     private void setImage(Intent data) {
@@ -416,6 +414,7 @@ public class JumpFragment extends BaseFragment {
                 public void onClick(View v) {
                     mFlImg.removeView(v);
                     for (int i1 = 0; i1 < images.size(); i1++) {
+
                         if (path == images.get(i1)) {
                             images.remove(i1--);
                         }
@@ -487,5 +486,4 @@ public class JumpFragment extends BaseFragment {
         super.onDestroy();
         //        EventBus.getDefault().unregister(this);
     }
-
 }

@@ -31,19 +31,28 @@
             android:padding="5dp">
 
             <ImageView
+                android:id="@+id/iv_icon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@mipmap/ic_launcher"/>
 
             <TextView
                 android:id="@+id/tv_username"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="15dp"
+                android:layout_weight="1"
                 android:text="zhagnsan"
                 android:textSize="16sp"/>
 
+            <CheckBox
+                android:clickable="false"
+                android:id="@+id/cb_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="25sp"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

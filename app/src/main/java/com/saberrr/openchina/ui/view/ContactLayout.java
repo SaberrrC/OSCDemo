@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -61,9 +60,13 @@ public class ContactLayout extends RelativeLayout {
         super.onDraw(canvas);
     }
 
-    public void setAdapter(RecyclerView.Adapter adapter) {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    public void setRecyclerView(RecyclerView.LayoutManager layoutManager,RecyclerView.Adapter adapter) {
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(adapter);
+    }
+
+    public RecyclerView getRecyclerView() {
+        return mRecyclerView;
     }
 
     public void setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener listener) {
