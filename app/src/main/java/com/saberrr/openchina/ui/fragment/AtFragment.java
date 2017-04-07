@@ -125,7 +125,7 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
         final CheckBox cbCheck = (CheckBox) holder.getViewById(R.id.cb_check);
         ImageView ivIcon = (ImageView) holder.getViewById(R.id.iv_icon);
         tvUsername.setText(friend.getName());
-        Glide.with(AppApplication.appContext).load(friend.getPortrait()).into(ivIcon);
+        Glide.with(AppApplication.appContext).load(friend.getPortrait()).placeholder(R.mipmap.ic_noicon).into(ivIcon);
 
         View rootView = holder.getRootView();
         rootView.setOnClickListener(new View.OnClickListener() {

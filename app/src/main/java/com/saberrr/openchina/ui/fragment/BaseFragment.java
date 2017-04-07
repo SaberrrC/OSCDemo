@@ -51,12 +51,7 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
 
             @Override
             public Object getNetData() {
-                try {
-                    return getData();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
+                return getData();
             }
         };
 
