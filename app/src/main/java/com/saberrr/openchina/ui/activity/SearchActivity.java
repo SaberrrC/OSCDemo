@@ -27,9 +27,12 @@ import com.saberrr.openchina.ui.fragment.DomesticFragment;
 import com.saberrr.openchina.ui.fragment.FindUserFragment;
 import com.saberrr.openchina.ui.fragment.HotFragment;
 import com.saberrr.openchina.ui.fragment.RecommendFragment;
+import com.saberrr.openchina.ui.fragment.mymsgfragment.SearchSoftwareFragment;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
 import com.saberrr.openchina.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -67,7 +70,7 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ke
 
     private void init() {
         String[] title = Utils.getStringArray(R.array.tab_names);
-        datas.add(new FragmentInfo(new FindUserFragment(), title[9]));
+        datas.add(new FragmentInfo(new SearchSoftwareFragment(), title[9]));
         datas.add(new FragmentInfo(new RecommendFragment(), title[1]));
         datas.add(new FragmentInfo(new BestNewFragment(), title[0]));
         datas.add(new FragmentInfo(new HotFragment(), title[2]));
@@ -86,7 +89,7 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ke
 
                     final String keyword = v.getText().toString().trim();
                     ToastUtils.showToast("搜索啦" + keyword);
-
+                    EventBus.getDefault().postSticky(keyword);
 
                     if (!TextUtils.isEmpty(keyword)) {
                         ThreadUtils.runMain(new Runnable() {
