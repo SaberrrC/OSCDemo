@@ -11,8 +11,10 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,6 +26,7 @@ import com.saberrr.openchina.bean.rockbean.RockBean;
 import com.saberrr.openchina.bean.softwaredetailbean.Software;
 import com.saberrr.openchina.bean.softwaredetailbean.SoftwareDetailBean;
 import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.ui.fragment.RockSoftwareDetailFragment;
 import com.saberrr.openchina.ui.fragment.SoftwareDetailFragment;
 import com.saberrr.openchina.ui.view.CircleImageView;
 import com.saberrr.openchina.utils.ThreadUtils;
@@ -78,7 +81,25 @@ public class ShakeActivity extends AppCompatActivity {
         mShakeListener = new ShakeListener(this);
         setListeners();
         initState();
+        initActionBar();
 
+    }
+
+    private void initActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("摇一摇");
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     //添加摇一摇声音
@@ -144,8 +165,8 @@ public class ShakeActivity extends AppCompatActivity {
                                 // TODO: 2017/4/5
                                 ToastUtils.showToast("详情");
                                 Bundle bundle = new Bundle();
-
-                                ShowActivity.startFragmentWithTitle(SoftwareDetailFragment.class,bundle,"软件详情");
+                                bundle.putString("url",mUrl);
+                                ShowActivity.startFragmentWithTitle(RockSoftwareDetailFragment.class,bundle,"软件详情");
                             }
                         });
 

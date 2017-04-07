@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.utils.ThreadUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +39,15 @@ public class RockSoftwareDetailFragment extends BaseFragment {
 
     @Override
     public Object getData() {
+        Bundle bundle = getArguments();
+        final String url = bundle.getString("url");
+        ThreadUtils.runMain(new Runnable() {
+            @Override
+            public void run() {
+                mWvLock.loadUrl(url);
+            }
+        });
+
         return "";
     }
 
