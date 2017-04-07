@@ -13,13 +13,15 @@
         <TextView
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
-            android:background="#A0A3A0"
+            android:background="#55B3BABA"
             android:layout_height="40dp"/>
         <TextView
             android:id="@+id/tv_item_viewpager_information"
             android:text="我的字体"
             android:layout_alignParentBottom="true"
-            android:layout_margin="20dp"
+            android:layout_marginLeft="16dp"
+            android:textSize="14sp"
+            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

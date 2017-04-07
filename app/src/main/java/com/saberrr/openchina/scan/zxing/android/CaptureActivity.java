@@ -22,6 +22,8 @@ import com.google.zxing.Result;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.scan.zxing.camera.CameraManager;
 import com.saberrr.openchina.scan.zxing.view.ViewfinderView;
+import com.saberrr.openchina.ui.activity.UserCenterActivity;
+import com.saberrr.openchina.utils.Constant;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -188,12 +190,15 @@ public final class CaptureActivity extends Activity implements
 //            Toast.makeText(this, "扫描成功", Toast.LENGTH_SHORT).show();
 
             Intent intent = getIntent();
-            intent.putExtra("codedContent", rawResult.getText());
-            intent.putExtra("codedBitmap", barcode);
+            String text = rawResult.getText();
+            intent.putExtra("codedContent", text);
+            Bitmap barcode1 = barcode;
+            intent.putExtra("codedBitmap", barcode1);
             setResult(RESULT_OK, intent);
 
-
-
+            Intent resultVeiw = new Intent(this, UserCenterActivity.class);
+            resultVeiw.putExtra(Constant.Url, text);
+            startActivity(resultVeiw);
             finish();
         }
 
