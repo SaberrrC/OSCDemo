@@ -604,4 +604,12 @@ public class StringUtils {
         return df.format(new Date());
     }
 
+    public static String getFirst(String s) {
+        if (TextUtils.isEmpty(s)) {
+            return "搜";
+        }
+        return s.substring(0, 1).toUpperCase();
+    }
+
+
 }

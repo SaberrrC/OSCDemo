@@ -200,7 +200,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
         InfomationDetailBean infomationDetailBean = JsonCacheManager.getInstance().getDataBean(Urls.CONTENT + mId, InfomationDetailBean.class);
         CommentBean commentBean = JsonCacheManager.getInstance().getDataBean(Urls.COMMENT1 + mId + Urls.COMMENTTYEP + mType, CommentBean.class);
 
-        if (infomationDetailBean == null) {
+        if (infomationDetailBean == null||infomationDetailBean.getCode()==404) {
             return null;
         }
         List<InfomationDetailBean.ResultBean.AboutsBean> aboutsBeen = infomationDetailBean.getResult().getAbouts();
@@ -212,7 +212,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
             mDatas.add(new TitleBean());
             mDatas.addAll(aboutsBeen);
         }
-        if (commentBean != null) {
+        if (commentBean != null&&commentBean.getCode() != 404) {
             List<CommentBean.ResultBean.ItemsBean> itemsBeen = commentBean.getResult().getItems();
 
             if (itemsBeen != null && itemsBeen.size() > 0) {

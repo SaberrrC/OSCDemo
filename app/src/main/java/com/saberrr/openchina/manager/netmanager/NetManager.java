@@ -154,5 +154,4 @@ public class NetManager {
             return null;
         }
     }
-
 }

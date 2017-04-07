@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.Spannable;
@@ -26,7 +25,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.jumponejump.SendJumpFirstImgBean;
-import com.saberrr.openchina.contact.Fiels;
 import com.saberrr.openchina.faces.DisplayRules;
 import com.saberrr.openchina.faces.FaceBean;
 import com.saberrr.openchina.gloab.AppApplication;
@@ -63,6 +61,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
+import static com.saberrr.openchina.R.id.iv_del;
 
 /**
  * Created by Saberrr on 2017-04-02.
@@ -87,6 +86,8 @@ public class JumpFragment extends BaseFragment {
     TextView     mTvCount;
     public static final int REQUEST_CODE    = 100;
     public static final int REQUEST_CODE_AT = 101;
+    @BindView(R.id.iv_del)
+    ImageView mIvDel;
     private FacesPagerAdapter mFacesPagerAdapter;
     private              List<String> images         = new ArrayList<>();
     private static final int          MAX_TEXT_COUNT = 140;
@@ -245,7 +246,6 @@ public class JumpFragment extends BaseFragment {
                         ToastUtils.showToast("发送失败");
                     }
                 } else {//文字加图片
-                    // TODO: 2017-04-06
                     for (int i = 0; i < images.size(); i++) {
                         ToastUtils.showToast("正在发送第" + (i + 1) + "张");
                         if (i == 0) {
@@ -292,8 +292,6 @@ public class JumpFragment extends BaseFragment {
                         Request request = new Request.Builder().url("http://www.oschina.net/action/apiv2/tweet").addHeader(COOKIE, mCookie).post(body).build();
                         Response response = okHttpClient.newCall(request).execute();
                         String string = response.body().string();
-                        System.out.println(string);
-
                     } catch (IOException e) {
                         e.printStackTrace();
                         ToastUtils.showToast("发送失败");
@@ -314,7 +312,7 @@ public class JumpFragment extends BaseFragment {
         SpUtil.saveString(getContext(), Constant.JUMP_TEXT, mEtContent.getText().toString());
     }
 
-    @OnClick({R.id.tv_count, R.id.iv_pic, R.id.iv_at, R.id.iv_topic, R.id.iv_face, R.id.tv_qq, R.id.tv_emoji, R.id.iv_del})
+    @OnClick({R.id.tv_count, R.id.iv_pic, R.id.iv_at, R.id.iv_topic, R.id.iv_face, R.id.tv_qq, R.id.tv_emoji, iv_del})
     public void onClick(View view) {
 
         switch (view.getId()) {
@@ -328,12 +326,7 @@ public class JumpFragment extends BaseFragment {
                 ImgSelActivity.startActivity(this, config, REQUEST_CODE);
                 break;
             case R.id.iv_at:
-                Intent intent = new Intent(getContext(), ShowActivity.class);
-                Bundle bundle = new Bundle();
-                intent.putExtra(Fiels.DtailActivity.CLASSNAME, AtFragment.class);
-                intent.putExtra(Fiels.DtailActivity.TITLE, "选择@好友");
-                intent.putExtra(Fiels.DtailActivity.TOOBARICON, ShowActivity.TITLE_SEND);
-                startActivityForResult(intent, REQUEST_CODE_AT);
+                ShowActivity.startFragmentWithTitle(AtFragment.class,null,"选择@好友",ShowActivity.TITLE_SEND);
                 mLlFaces.setVisibility(View.GONE);
                 break;
             case R.id.iv_topic:
@@ -360,6 +353,13 @@ public class JumpFragment extends BaseFragment {
                 KeyEvent keyEventUp = new KeyEvent(KeyEvent.ACTION_UP, keyCode);
                 mEtContent.onKeyDown(keyCode, keyEventDown);
                 mEtContent.onKeyUp(keyCode, keyEventUp);
+                mIvDel.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        mEtContent.getText().clear();
+                        return false;
+                    }
+                });
                 break;
         }
     }
@@ -384,6 +384,10 @@ public class JumpFragment extends BaseFragment {
     private void setImage(Intent data) {
         List<String> pathList = data.getStringArrayListExtra(ImgSelActivity.INTENT_RESULT);
         addImage(pathList);
+        savePath();
+    }
+
+    private void savePath() {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < images.size(); i++) {
             if (i == images.size() - 1) {
@@ -406,18 +410,17 @@ public class JumpFragment extends BaseFragment {
             layoutParams.width = screenWith / 3;
             layoutParams.height = screenWith / 3;
             view.setLayoutParams(layoutParams);
-            final int finalI = i;
             final String path = images.get(i);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mFlImg.removeView(v);
-                    //                        images.remove()
                     for (int i1 = 0; i1 < images.size(); i1++) {
                         if (path == images.get(i1)) {
                             images.remove(i1--);
                         }
                     }
+                    savePath();
                 }
             });
             Utils.loadImage(images.get(i), imageView);
@@ -484,4 +487,5 @@ public class JumpFragment extends BaseFragment {
         super.onDestroy();
         //        EventBus.getDefault().unregister(this);
     }
+
 }
