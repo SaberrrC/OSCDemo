@@ -11,6 +11,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,7 +26,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.bean.FriendInfoBean;
 import com.saberrr.openchina.bean.jumponejump.SendJumpFirstImgBean;
+import com.saberrr.openchina.event.SelectedFriendsEvent;
 import com.saberrr.openchina.faces.DisplayRules;
 import com.saberrr.openchina.faces.FaceBean;
 import com.saberrr.openchina.gloab.AppApplication;
@@ -44,6 +47,10 @@ import com.saberrr.openchina.utils.Utils;
 import com.yuyh.library.imgsel.ImageLoader;
 import com.yuyh.library.imgsel.ImgSelActivity;
 import com.yuyh.library.imgsel.ImgSelConfig;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,6 +105,7 @@ public class JumpFragment extends BaseFragment {
     private              String       token          = "";
     private              int          screenWith     = Utils.getScreenWith();
     private static final String       TAG            = "JumpFragment";
+    private String friends = "";
 
     @Override
     protected boolean needRefresh() {
@@ -108,10 +116,35 @@ public class JumpFragment extends BaseFragment {
     public View createView() {
         View view = creatViewFromId(R.layout.fragment_jumponejump);
         ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
         initView();
         setHintKeyboard(true);
         initToolbar();
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
+    }
+
+    /**获取EditText光标所在的位置*/
+    private int getEditTextCursorIndex(EditText mEditText){
+        return mEditText.getSelectionStart();
+    }
+    /**向EditText指定光标位置插入字符串*/
+    private void insertText(EditText mEditText, String mText){
+        mEditText.getText().insert(getEditTextCursorIndex(mEditText), mText);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getDelectedFriends(SelectedFriendsEvent event) {
+        StringBuilder sb = new StringBuilder();
+        for (FriendInfoBean.Friends name : event.names) {
+            sb.append("@" + name.getName() + " ");
+        }
+        friends = sb.toString();
     }
 
     private void initView() {
@@ -170,7 +203,6 @@ public class JumpFragment extends BaseFragment {
                     sendContentImages();
                     return true;
                 }
-
                 return false;
             }
         });
@@ -218,19 +250,12 @@ public class JumpFragment extends BaseFragment {
          * 2 通过字符串找资源id
          * 3 替换对应文字为表情
          */
-
-
-
-       /* //设置图片
-        Drawable drawable = getResources().getDrawable(faceBean.resId);
-        drawable.setBounds(0, 0, DensityUtil.dip2px(25), DensityUtil.dip2px(25));
-        Spannable msp = new SpannableString(faceBean.emojiStr);
-        msp.setSpan(new ImageSpan(drawable), 0, faceBean.emojiStr.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        editable.insert(index, msp);*/
-
-
+        SpannableString msp = new SpannableString(friends);
+        msp.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 0, friends.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        String text1 = text + friends;
         mEtContent.setText(text);
-        mEtContent.setSelection(text.length());
+        mEtContent.getText().insert(text.length(), msp);
+        mEtContent.setSelection(text1.length());
     }
 
     private void initToolbar() {
@@ -441,7 +466,6 @@ public class JumpFragment extends BaseFragment {
                 public void onClick(View v) {
                     mFlImg.removeView(v);
                     for (int i1 = 0; i1 < images.size(); i1++) {
-
                         if (path == images.get(i1)) {
                             images.remove(i1--);
                         }
