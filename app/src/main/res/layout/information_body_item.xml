@@ -20,6 +20,7 @@
 
     <TextView
         android:id="@+id/tv_body_information"
+        android:textColor="@color/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
@@ -35,6 +36,7 @@
 
         <TextView
             android:id="@+id/tv_time_information"
+            android:textColor="@color/content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -45,6 +47,7 @@
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
             android:gravity="center">
@@ -59,7 +62,7 @@
                 android:id="@+id/tv_comment_information"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textColor="@color/content"
                 android:layout_marginLeft="5dp"
                 android:text="0"/>
         </LinearLayout>

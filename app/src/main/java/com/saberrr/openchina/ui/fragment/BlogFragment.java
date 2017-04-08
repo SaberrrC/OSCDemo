@@ -11,6 +11,7 @@ import android.text.SpannableString;
 import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
@@ -208,8 +209,13 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
         }
         if (itemData instanceof FootBean){
             TextView tvFoot = (TextView) holder.getViewById(R.id.tv_foot);
+            ImageView ivFoot = (ImageView) holder.getViewById(R.id.iv_foot);
             if (isLast){
                 tvFoot.setText("没有更多数据");
+                ivFoot.setVisibility(View.GONE);
+            }else {
+                tvFoot.setText("正在加载...");
+                ivFoot.setVisibility(View.VISIBLE);
             }
         }
 
