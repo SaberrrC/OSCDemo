@@ -8,6 +8,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -41,6 +42,7 @@ import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.StringUtils;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
+import com.saberrr.openchina.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,6 +90,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
     private int mScrollHeight;
     private int mPosition1;
     private int mHeight1;
+    private int size = 0;
 
     @Override
     protected boolean needRefresh() {
@@ -195,11 +198,12 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
 
     @Override
     public Object getData() {
-        mDatas.clear();
-        bean.clear();
+
+
         InfomationDetailBean infomationDetailBean = JsonCacheManager.getInstance().getDataBean(Urls.CONTENT + mId, InfomationDetailBean.class);
         CommentBean commentBean = JsonCacheManager.getInstance().getDataBean(Urls.COMMENT1 + mId + Urls.COMMENTTYEP + mType, CommentBean.class);
-
+        mDatas.clear();
+        bean.clear();
         if (infomationDetailBean == null||infomationDetailBean.getCode()==404) {
             return null;
         }
@@ -211,6 +215,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
         if (aboutsBeen != null && aboutsBeen.size() > 0) {
             mDatas.add(new TitleBean());
             mDatas.addAll(aboutsBeen);
+            size = mDatas.size()-1;
         }
         if (commentBean != null&&commentBean.getCode() != 404) {
             List<CommentBean.ResultBean.ItemsBean> itemsBeen = commentBean.getResult().getItems();
@@ -242,11 +247,14 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
         }
         if (itemData instanceof InfomationDetailBean.ResultBean.AboutsBean) {
             InfomationDetailBean.ResultBean.AboutsBean bean = (InfomationDetailBean.ResultBean.AboutsBean) itemData;
-
+            TextView tvUnderline = (TextView) holder.getViewById(R.id.tv_underline_content);
             RelativeLayout relativeLayoutInforecommend = (RelativeLayout) holder.getViewById(R.id.relativeLayout_inforecommend);
             TextView tvTitelInforecommend = (TextView) holder.getViewById(R.id.tv_titel_inforecommend);
             ImageView ivInforecommend = (ImageView) holder.getViewById(R.id.iv_inforecommend);
             TextView tvCountInforecommend = (TextView) holder.getViewById(R.id.tv_count_inforecommend);
+            if (position == size){
+                tvUnderline.setVisibility(View.INVISIBLE);
+            }
             tvTitelInforecommend.setText(bean.getTitle());
             tvCountInforecommend.setText(bean.getCommentCount() + "");
         }
@@ -273,7 +281,8 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
             });
             tvNameComment.setText(bean.getAuthor());
             tvTimeComment.setText(StringUtils.friendly_time(bean.getPubDate()));
-            tvCommentContent.setText(bean.getContent());
+            Spannable spannable = Utils.displayEmoji(getResources(), bean.getContent());
+            tvCommentContent.setText(spannable);
 
         }
 

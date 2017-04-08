@@ -107,10 +107,12 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
     public Object getData() {
 
         if (mSwipeRefreshLayoutBlog.isRefreshing()) {
-            mDatas.clear();
             nextPageToken = "";
         }
         BlogBodyBean blogBodyBean = JsonCacheManager.getInstance().getDataBean(Urls.BLOG + catalog + Urls.BLOGUP + nextPageToken, BlogBodyBean.class);
+        if (mSwipeRefreshLayoutBlog.isRefreshing()){
+            mDatas.clear();
+        }
         if (blogBodyBean == null) {
             if (mDatas == null || mDatas.size() == 0) {
                 return null;
