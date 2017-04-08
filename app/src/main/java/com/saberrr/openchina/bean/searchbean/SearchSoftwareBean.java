@@ -7,4 +7,5 @@ package com.saberrr.openchina.bean.searchbean;
 public class SearchSoftwareBean {
     public String title;
     public String desc;
+    public String url;
 }

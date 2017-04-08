@@ -46,6 +46,9 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
     private String nextPageToken = "";
     private Bitmap mOriginateBitmap;
     private Bitmap mRecommendBitmap;
+    private Button mButton;
+    private Button mButton2;
+    private Button mButton3;
 
     @Override
     protected boolean needRefresh() {
@@ -141,12 +144,12 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
     @Override
     public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
         if (itemData instanceof BlogHradBean) {
-            Button button = (Button) holder.getViewById(R.id.bt1_blog);
-            Button button2 = (Button) holder.getViewById(R.id.bt2_blog);
-            Button button3 = (Button) holder.getViewById(R.id.bt3_blog);
-            button.setOnClickListener(this);
-            button2.setOnClickListener(this);
-            button3.setOnClickListener(this);
+            mButton = (Button) holder.getViewById(R.id.bt1_blog);
+            mButton2 = (Button) holder.getViewById(R.id.bt2_blog);
+            mButton3 = (Button) holder.getViewById(R.id.bt3_blog);
+            mButton.setOnClickListener(this);
+            mButton2.setOnClickListener(this);
+            mButton3.setOnClickListener(this);
 
         }
         if (itemData instanceof BlogBodyBean.ResultBean.ItemsBean) {
@@ -207,16 +210,35 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
                 catalog = 3;
                 mSwipeRefreshLayoutBlog.setRefreshing(true);
                 mLoadingPager.showViewDely(1000);
+                mButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.blog_button_press));
+                mButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+                mButton2.setBackgroundDrawable(getResources().getDrawable(R.drawable.blog_button_normal));
+                mButton2.setTextColor(getResources().getColor(R.color.button_normol));
+                mButton3.setBackgroundDrawable(getResources().getDrawable(R.drawable.blog_button_normal));
+                mButton3.setTextColor(getResources().getColor(R.color.button_normol));
                 break;
             case R.id.bt2_blog:
                 catalog = 2;
                 mSwipeRefreshLayoutBlog.setRefreshing(true);
                 mLoadingPager.showViewDely(1000);
+                mButton2.setBackgroundDrawable(getResources().getDrawable(R.drawable.blog_button_press));
+                mButton2.setTextColor(getResources().getColor(R.color.colorPrimary));
+                mButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.blog_button_normal));
+                mButton.setTextColor(getResources().getColor(R.color.button_normol));
+                mButton3.setBackgroundDrawable(getResources().getDrawable(R.drawable.blog_button_normal));
+                mButton3.setTextColor(getResources().getColor(R.color.button_normol));
                 break;
             case R.id.bt3_blog:
                 catalog = 1;
                 mSwipeRefreshLayoutBlog.setRefreshing(true);
                 mLoadingPager.showViewDely(1000);
+                mButton3.setBackgroundDrawable(getResources().getDrawable(R.drawable.blog_button_press));
+                mButton3.setTextColor(getResources().getColor(R.color.colorPrimary));
+                mButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.blog_button_normal));
+                mButton.setTextColor(getResources().getColor(R.color.button_normol));
+                mButton2.setBackgroundDrawable(getResources().getDrawable(R.drawable.blog_button_normal));
+                mButton2.setTextColor(getResources().getColor(R.color.button_normol));
+
                 break;
         }
     }
