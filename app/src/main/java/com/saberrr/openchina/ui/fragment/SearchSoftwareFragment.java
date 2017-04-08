@@ -60,11 +60,16 @@ public class SearchSoftwareFragment extends BaseFragment implements FinalRecycle
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public View createView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_search_software, null);
         ButterKnife.bind(this,view);
         init();
-        EventBus.getDefault().register(this);
         return view;
     }
 
@@ -76,6 +81,7 @@ public class SearchSoftwareFragment extends BaseFragment implements FinalRecycle
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void OnEvent(String keyword) {
         mKeyword = keyword;
+        System.out.println(mKeyword);
         ThreadUtils.runSub(new Runnable() {
             @Override
             public void run() {
@@ -83,7 +89,7 @@ public class SearchSoftwareFragment extends BaseFragment implements FinalRecycle
             }
         });
 
-        //EventBus.getDefault().removeAllStickyEvents();
+        EventBus.getDefault().removeStickyEvent(keyword);
     }
 
     private void init() {
@@ -96,7 +102,7 @@ public class SearchSoftwareFragment extends BaseFragment implements FinalRecycle
     @Override
     public Object getData() {
         //System.out.println(mKeyword);
-        datas.clear();
+
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder().url("http://www.oschina.net/action/api/search_list?catalog=software&pageIndex=0&content="+mKeyword+"&pageSize=20").build();
         try {
@@ -105,6 +111,7 @@ public class SearchSoftwareFragment extends BaseFragment implements FinalRecycle
             //System.out.println(xml);
             XmlSearchSoftwareBean xmlSearchSoftwareBean = XmlUtils.toBean(XmlSearchSoftwareBean.class, xml.getBytes());
             List<Result> results = xmlSearchSoftwareBean.getResults();
+            datas.clear();
             for (int i = 0; i < results.size(); i++) {
                 Result result = results.get(i);
                 //System.out.println(result.getTitle());
