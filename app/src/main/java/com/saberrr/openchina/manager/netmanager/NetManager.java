@@ -1,6 +1,11 @@
 package com.saberrr.openchina.manager.netmanager;
 
+import android.text.TextUtils;
+
+import com.saberrr.openchina.utils.GsonTools;
+
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -154,4 +159,23 @@ public class NetManager {
             return null;
         }
     }
+
+    public <T> T getCacheDataBean(String url, Class<T> bean) {
+        String json = CacheManager.getInstance().getCacheData(url);
+        if (TextUtils.isEmpty(json)) {
+            return null;
+        } else {
+            return GsonTools.changeGsonToBean(json, bean);
+        }
+    }
+
+    public <T> List<T> getCacheDataList(String url, Class<T> t) {
+        String json = CacheManager.getInstance().getCacheData(url);
+        if (TextUtils.isEmpty(json)) {
+            return null;
+        } else {
+            return GsonTools.changeGsonToList(json, t);
+        }
+    }
+
 }
