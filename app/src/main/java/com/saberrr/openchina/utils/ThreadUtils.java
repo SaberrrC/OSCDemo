@@ -19,9 +19,9 @@ public class ThreadUtils {
     private static Handler  sHandler        = new Handler(Looper.getMainLooper());//获取主线程的Looper
     private static Executor sExecutor       = new ThreadPoolExecutor(
             1,
-            5,
-            20,
-            TimeUnit.SECONDS,
+            15,
+            2,
+            TimeUnit.MINUTES,
             new SynchronousQueue<Runnable>(),
             new RejectedExecutionHandler() {
         @Override

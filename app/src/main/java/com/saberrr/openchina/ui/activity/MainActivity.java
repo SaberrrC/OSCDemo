@@ -37,8 +37,6 @@ import com.saberrr.openchina.utils.XmlUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.saberrr.openchina.utils.ToastUtils.showToast;
-
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.tv_title_toolbar)
