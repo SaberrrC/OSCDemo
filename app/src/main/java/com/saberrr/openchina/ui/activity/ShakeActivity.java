@@ -3,7 +3,6 @@ package com.saberrr.openchina.ui.activity;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,7 +12,6 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,14 +21,12 @@ import android.widget.TextView;
 
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.rockbean.RockBean;
-import com.saberrr.openchina.bean.softwaredetailbean.Software;
-import com.saberrr.openchina.bean.softwaredetailbean.SoftwareDetailBean;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.fragment.RockSoftwareDetailFragment;
-import com.saberrr.openchina.ui.fragment.SoftwareDetailFragment;
 import com.saberrr.openchina.ui.view.CircleImageView;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
+import com.saberrr.openchina.utils.Utils;
 import com.saberrr.openchina.utils.XmlUtils;
 
 import org.kymjs.kjframe.Core;
@@ -76,6 +72,7 @@ public class ShakeActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.showColoredBars(this);
         setContentView(R.layout.activity_shake);
         ButterKnife.bind(this);
         mShakeListener = new ShakeListener(this);

@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.jude.rollviewpager.RollPagerView;
 import com.jude.rollviewpager.hintview.ColorPointHintView;
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.bean.FootBean;
 import com.saberrr.openchina.bean.InformationBodyBean;
 import com.saberrr.openchina.bean.InformationHearBean;
 import com.saberrr.openchina.gloab.AppApplication;
@@ -54,6 +55,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
     private String nextPageToken = "";
     private Bitmap recordBitmap;
 
+
     @Override
     protected boolean needRefresh() {
         return false;
@@ -75,6 +77,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
 
         layouts.put(InformationHearBean.class, R.layout.news_head);
         layouts.put(InformationBodyBean.ResultBean.ItemsBean.class, R.layout.information_body_item);
+        layouts.put(FootBean.class, R.layout.foot_item);
         mFinalRecycleAdapter = new FinalRecycleAdapter(mDatas, layouts, this);
         mRecyclerView.setAdapter(mFinalRecycleAdapter);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -83,8 +86,8 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
                 super.onScrollStateChanged(recyclerView, newState);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (lastVisibleItemPosition == mDatas.size() - 1 && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                    mLoadingPager.showViewDely(1000);
+                if (lastVisibleItemPosition == mDatas.size() - 1) {
+                    mLoadingPager.showViewDely(0);
                 }
             }
 
@@ -123,16 +126,20 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
     public Object getData() {
 
         if (mSwipeRefreshLayout.isRefreshing()) {
-            mDatas.clear();
             nextPageToken = "";
         }
         InformationHearBean informationHearBean = JsonCacheManager.getInstance().getDataBean(Urls.BANNER, InformationHearBean.class);
         InformationBodyBean informationBodyBean = JsonCacheManager.getInstance().getDataBean(Urls.NEWS + nextPageToken, InformationBodyBean.class);
+        if (mSwipeRefreshLayout.isRefreshing()) {
+            mDatas.clear();
+        }
         if (informationBodyBean == null) {
             if (mDatas == null || mDatas.size() == 0) {
                 return null;
             } else {
                 ToastUtils.showToast("没有更多数据");
+
+                isLast = true;
             }
         } else {
             List<InformationBodyBean.ResultBean.ItemsBean> badyBeanList = informationBodyBean.getResult().getItems();
@@ -141,16 +148,23 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
 
                 mDatas.add(informationHearBean);
                 mDatas.addAll(badyBeanList);
+                mDatas.add(new FootBean());
+                isLast = false;
             } else {
-                mDatas.addAll(badyBeanList);
+                //         mDatas.remove(mDatas.size()-1);
+
+                mDatas.addAll(mDatas.size() - 1, badyBeanList);
+                //                mDatas.add(new FootBean());
+                isLast = false;
             }
         }
 
         ThreadUtils.runMain(new Runnable() {
             @Override
             public void run() {
+
                 mRecyclerView.requestLayout();
-                mFinalRecycleAdapter.notifyDataSetChanged();
+                mFinalRecycleAdapter.notifyItemRangeChanged(0, 10000);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -181,6 +195,18 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
             TextView tvCommentInformation = (TextView) holder.getViewById(R.id.tv_comment_information);
             final InformationBodyBean.ResultBean.ItemsBean itemsBean = (InformationBodyBean.ResultBean.ItemsBean) itemData;
 
+            if (itemsBean.isClick) {
+                tvTitleInformation.setTextColor(getResources().getColor(R.color.readContent));
+                tvBodyInformation.setTextColor(getResources().getColor(R.color.readContent));
+                tvTimeInformation.setTextColor(getResources().getColor(R.color.readContent));
+                tvCommentInformation.setTextColor(getResources().getColor(R.color.readContent));
+            }else {
+                tvTitleInformation.setTextColor(getResources().getColor(R.color.title));
+                tvBodyInformation.setTextColor(getResources().getColor(R.color.content));
+                tvTimeInformation.setTextColor(getResources().getColor(R.color.content));
+                tvCommentInformation.setTextColor(getResources().getColor(R.color.content));
+            }
+
             ImageSpan recordImg = new ImageSpan(getContext(),
                     recordBitmap);
             String text = "[icon] " + itemsBean.getTitle();
@@ -198,15 +224,28 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
             llCommentInformation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    itemsBean.isClick = true;
+                    mFinalRecycleAdapter.notifyDataSetChanged();
                     Bundle bundle = new Bundle();
                     bundle.putString(Constant.BLOGDETAILSFRAGMENT.HREF, itemsBean.getHref());
                     bundle.putString(Constant.BLOGDETAILSFRAGMENT.TITLE, itemsBean.getTitle());
                     bundle.putInt(Constant.BLOGDETAILSFRAGMENT.ID, itemsBean.getId());
-                    bundle.putString(Constant.BLOGDETAILSFRAGMENT.TYPE,itemsBean.getType()+"");
+                    bundle.putString(Constant.BLOGDETAILSFRAGMENT.TYPE, itemsBean.getType() + "");
                     bundle.putString(Constant.BLOGDETAILSFRAGMENT.COMMENTCOUNT, itemsBean.getCommentCount() + "");
                     ShowActivity.startFragmentWithTitle(InfomationDetailsFragment.class, bundle, "资讯详情", ShowActivity.TITLE_COMMENT);
                 }
             });
+        }
+        if (itemData instanceof FootBean) {
+            TextView tvFoot = (TextView) holder.getViewById(R.id.tv_foot);
+            ImageView ivFoot = (ImageView) holder.getViewById(R.id.iv_foot);
+            if (isLast) {
+                tvFoot.setText("没有更多数据");
+                ivFoot.setVisibility(View.GONE);
+            } else {
+                tvFoot.setText("正在加载...");
+                ivFoot.setVisibility(View.VISIBLE);
+            }
         }
 
 

@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,9 +54,14 @@ public class FindUserFragment extends BaseFragment implements FinalRecycleAdapte
         return false;
     }
 
-    @Override
+    /*@Override
     public void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
+    }*/
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         EventBus.getDefault().register(this);
     }
 

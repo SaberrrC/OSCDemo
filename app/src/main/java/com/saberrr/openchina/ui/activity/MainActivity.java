@@ -58,11 +58,12 @@ public class MainActivity extends AppCompatActivity {
     private int     mImageArray[]    = {R.drawable.selector_all_bg, R.drawable.selector_dongtan_bg, R.drawable.selector_add_bg, R.drawable.selector_find_bg, R.drawable.selector_mine_bg};
     private long    laatTime         = 0;
     private String  currentId        = null;
-    private boolean isFirstEnter     = false;
+    private boolean isFirstEnter     = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.showColoredBars(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initToolBar();
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                                 String log = replace.replace("<br>", "\n");
                                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                                 // 设置图标
-                                //                                builder.setIcon(R.drawable.iv3);
+                                // builder.setIcon(R.drawable.iv3);
                                 // 设置标题
                                 builder.setTitle("发现新版本");
                                 // 设置消息内容
@@ -118,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
                                 builder.show();
                             }
                         });
-
                     }
                 }
             });
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //showToast("搜索界面");
-                startActivity(new Intent(MainActivity.this,SearchActivity.class));
+                startActivity(new Intent(MainActivity.this, SearchActivity.class));
             }
         });
         mIvIconToolbar.setImageResource(R.mipmap.btn_search_normal);
@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
         mTabhost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
+                mToolbarMain.setTitle(mTextArray[Integer.parseInt(tabId)]);
                 currentId = tabId;
             }
         });

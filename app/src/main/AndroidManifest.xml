@@ -53,7 +53,7 @@
             android:theme="@style/UserCenter">
         </activity>
         <activity android:name=".ui.activity.SearchActivity"
-            android:theme="@style/FullScreen">
+            android:theme="@style/SearchFullScreen">
 
         </activity>
     </application>

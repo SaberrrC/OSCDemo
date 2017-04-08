@@ -1,5 +1,6 @@
 package com.saberrr.openchina.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -15,11 +16,9 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -40,8 +39,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
-    private final static float SCALE = 0.7f;
-    private final static int DURATION = 500;
+    private final static float SCALE    = 0.7f;
+    private final static int   DURATION = 500;
 
     //得到字符串数组信息
     public static String[] getStringArray(int resId) {
@@ -184,9 +183,11 @@ public class Utils {
             if (TextUtils.isEmpty(emojiStr))
                 continue;
             int resId = getEmojiResId(emojiStr);
-            if (resId <= 0) continue;
+            if (resId <= 0)
+                continue;
             Drawable drawable = res.getDrawable(resId);
-            if (drawable == null) continue;
+            if (drawable == null)
+                continue;
             drawable.setBounds(0, 0, 20, 20);
             ImageSpan span = new ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM);
             spannable.setSpan(span, matcher.start(), matcher.end(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
@@ -208,8 +209,7 @@ public class Utils {
     }
 
 
-    public static SpannableString parseActiveAction(int objecttype,
-                                                    int objectcatalog, String objecttitle) {
+    public static SpannableString parseActiveAction(int objecttype, int objectcatalog, String objecttitle) {
         String title = "";
         int start = 0;
         int end = 0;
@@ -254,27 +254,39 @@ public class Utils {
             start = title.indexOf(objecttitle);
             if (objecttitle.length() > 0 && start > 0) {
                 end = start + objecttitle.length();
-                sp.setSpan(new AbsoluteSizeSpan(14, true), start, end,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                sp.setSpan(
-                        new ForegroundColorSpan(Color.parseColor("#0e5986")),
-                        start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                sp.setSpan(new AbsoluteSizeSpan(14, true), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                sp.setSpan(new ForegroundColorSpan(Color.parseColor("#0e5986")), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
         return sp;
     }
 
-    public static SpannableStringBuilder parseActiveReply(String name,
-                                                          String body) {
+    public static SpannableStringBuilder parseActiveReply(String name, String body) {
         Spanned span = Html.fromHtml(body.trim());
         SpannableStringBuilder sp = new SpannableStringBuilder(name + "：");
         sp.append(span);
         // 设置用户名字体加粗、高亮
         // sp.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0,
         // name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        sp.setSpan(new ForegroundColorSpan(Color.parseColor("#008000")), 0,
-                name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        sp.setSpan(new ForegroundColorSpan(Color.parseColor("#008000")), 0, name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return sp;
+    }
+
+
+    public static void showColoredBars(Activity activity) {
+      /*  activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // 这个属性4.4算是全透明（有的机子是过渡形式的透明），5.0就是半透明了 我的模拟器、真机都是半透明，
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {// 4.4 全透明状态栏
+            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {// 5.0 全透明实现
+            Window window = activity.getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);// calculateStatusColor(Color.WHITE, (int) alphaValue)
+        }*/
     }
 }

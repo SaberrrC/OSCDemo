@@ -20,6 +20,7 @@ import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.GsonTools;
 import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.ToastUtils;
+import com.saberrr.openchina.utils.Utils;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,6 +39,7 @@ public class ShowImageActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.showColoredBars(this);
         setContentView(R.layout.activity_show_image);
 
         init();

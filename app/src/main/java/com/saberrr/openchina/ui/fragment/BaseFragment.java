@@ -25,6 +25,7 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
     private       boolean      mNeedRefresh;
     private       ShowActivity mParentActivity;
     public static Fragment     mCurrentFragment;
+    public boolean isLast = false;
 
     @Nullable
     @Override
@@ -193,7 +194,4 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
         mParentActivity = null;
     }
 
-    public Fragment getCurrentFragment() {
-        return mCurrentFragment;
-    }
 }

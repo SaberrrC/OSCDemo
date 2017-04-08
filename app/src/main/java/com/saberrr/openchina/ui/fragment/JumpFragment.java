@@ -104,7 +104,7 @@ public class JumpFragment extends BaseFragment {
     private              String       token          = "";
     private              int          screenWith     = Utils.getScreenWith();
     private static final String       TAG            = "JumpFragment";
-    private String friends = "";
+    private              String       friends        = "";
 
     @Override
     protected boolean needRefresh() {
@@ -173,7 +173,6 @@ public class JumpFragment extends BaseFragment {
                 Spannable msp = new SpannableString(faceBean.emojiStr);
                 msp.setSpan(new ImageSpan(drawable), 0, faceBean.emojiStr.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 editable.insert(index, msp);
-                ToastUtils.showToast(faceBean.toString());
             }
         });
         mEtContent.addTextChangedListener(new TextWatcher() {
@@ -271,10 +270,8 @@ public class JumpFragment extends BaseFragment {
             //设置图片
             for (int i1 = 0; i1 < FaceBackBean.allByType.size(); i1++) {
                 FaceBean faceBean = FaceBackBean.allByType.get(i1);
-                Log.d(TAG, "initText: faceBean.emojiStr============" + faceBean.toString());
                 if (faceBean.remote == value) {
                     Editable editable = mEtContent.getText();
-                    Log.d(TAG, "initText: emojiStr" + "===========" + FaceBackBean.allByType.get(i1).remote);
                     Drawable drawable = getResources().getDrawable(faceBean.resId);
                     drawable.setBounds(0, 0, DensityUtil.dip2px(25), DensityUtil.dip2px(25));
                     Spannable msp = new SpannableString(faceBean.emojiStr);
@@ -570,7 +567,7 @@ public class JumpFragment extends BaseFragment {
             // “确定”按钮文字颜色
             .btnTextColor(Color.WHITE)
             // 使用沉浸式状态栏
-            //            .statusBarColor(Color.parseColor("#24cf5f"))
+            .statusBarColor(Color.parseColor("#24cf5f"))
             // 返回图标ResId
             .backResId(R.mipmap.btn_back_normal)
             // 标题

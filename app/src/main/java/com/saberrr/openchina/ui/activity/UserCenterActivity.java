@@ -41,6 +41,7 @@ import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.ToastUtils;
 import com.saberrr.openchina.utils.Utils;
 import com.saberrr.openchina.utils.XmlUtils;
+import com.saberrr.openchina.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,6 +97,7 @@ public class UserCenterActivity extends AppCompatActivity implements FinalRecycl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.showColoredBars(this);
         setContentView(R.layout.activity_user_center);
         Intent intent = getIntent();
         mUserid = intent.getStringExtra(Constant.USERID);
