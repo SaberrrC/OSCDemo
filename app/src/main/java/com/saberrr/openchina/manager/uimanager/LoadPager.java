@@ -151,9 +151,9 @@ public abstract class LoadPager extends FrameLayout {
     }
 
     public void changView() {
-        mErrorView.setVisibility(View.INVISIBLE);
-        mLoadingView.setVisibility(View.INVISIBLE);
-        mSuccessView.setVisibility(View.INVISIBLE);
+        mErrorView.setVisibility(View.GONE);
+        mLoadingView.setVisibility(View.GONE);
+        mSuccessView.setVisibility(View.GONE);
         switch (mLOADSTATE) {
             case LOADING:
                 mLoadingView.setVisibility(View.VISIBLE);
