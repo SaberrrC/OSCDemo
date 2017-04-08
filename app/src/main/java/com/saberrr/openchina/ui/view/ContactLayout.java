@@ -73,6 +73,10 @@ public class ContactLayout extends RelativeLayout {
         mSwipeRefreshLayout.setOnRefreshListener(listener);
     }
 
+    public void setRefreshing(boolean refreshing) {
+        mSwipeRefreshLayout.setRefreshing(refreshing);
+    }
+
     public void stopRefresh(final boolean idRefersh) {
         mHandler.postDelayed(new Runnable() {
             @Override
