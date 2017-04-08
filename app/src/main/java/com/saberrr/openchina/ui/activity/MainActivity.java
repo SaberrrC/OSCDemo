@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
         mTabhost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
+                mToolbarMain.setTitle(mTextArray[Integer.parseInt(tabId)]);
                 currentId = tabId;
             }
         });
