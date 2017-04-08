@@ -97,7 +97,6 @@ public class UserCenterActivity extends AppCompatActivity implements FinalRecycl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.showColoredBars(this);
         setContentView(R.layout.activity_user_center);
         Intent intent = getIntent();
         mUserid = intent.getStringExtra(Constant.USERID);
