@@ -200,8 +200,5 @@ public class CategoryThreeItemFragment extends BaseFragment implements FinalRecy
 
     }
 
-    @Override
-    public Fragment getCurrentFragment() {
-        return new CategoryThreeItemFragment();
-    }
+
 }

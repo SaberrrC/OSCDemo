@@ -147,8 +147,5 @@ public class CategoryItemFragment extends BaseFragment implements FinalRecycleAd
 
     }
 
-    @Override
-    public Fragment getCurrentFragment() {
-        return new CategoryItemFragment();
-    }
+
 }
