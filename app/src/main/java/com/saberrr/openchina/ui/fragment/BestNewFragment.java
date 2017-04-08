@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -75,14 +76,16 @@ public class BestNewFragment extends BaseFragment implements FinalRecycleAdapter
         mFinalRecycleAdapter = new FinalRecycleAdapter(datas, mHashMap, this);
         mBestnewRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mBestnewRecyclerview.setAdapter(mFinalRecycleAdapter);
+        mSrlBestnew.setColorSchemeColors(Color.GREEN);
         mSrlBestnew.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        SystemClock.sleep(3000);
+                        SystemClock.sleep(2000);
                         mHandler.sendEmptyMessage(0);
+                        getData();
                     }
                 }).start();
 
