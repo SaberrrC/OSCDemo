@@ -340,6 +340,14 @@ public class JumpFragment extends BaseFragment {
                         Response response = okHttpClient.newCall(request).execute();
                         String string = response.body().string();
                         System.out.println(string);
+                        ToastUtils.showToast("发送成功");
+                        ThreadUtils.runMain(new Runnable() {
+                            @Override
+                            public void run() {
+                                mEtContent.getEditableText().clear();
+                                getActivity().finish();
+                            }
+                        });
                     } catch (IOException e) {
                         e.printStackTrace();
                         ToastUtils.showToast("发送失败");
