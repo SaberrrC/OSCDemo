@@ -134,7 +134,7 @@ public class SearchPostFragment extends BaseFragment implements FinalRecycleAdap
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
                     bundle.putString("url",searchSoftwareBean.url);
-                    ShowActivity.startFragmentWithTitle(RockSoftwareDetailFragment.class,bundle,"软件详情");
+                    ShowActivity.startFragmentWithTitle(RockSoftwareDetailFragment.class,bundle,"问答详情");
                 }
             });
         }
