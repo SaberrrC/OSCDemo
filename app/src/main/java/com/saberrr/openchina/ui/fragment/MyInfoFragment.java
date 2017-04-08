@@ -23,6 +23,7 @@ import com.saberrr.openchina.net.HttpServiceApi;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.SpUtil;
+import com.saberrr.openchina.utils.StringUtils;
 import com.saberrr.openchina.utils.ToastUtils;
 import com.saberrr.openchina.utils.XmlUtils;
 
@@ -176,7 +177,7 @@ public class MyInfoFragment extends BaseFragment {
                     public void run() {
                         mTvUsernameOffline.setText(userInfo.getUser().getName());
                         mTvLocaton.setText(userInfo.getUser().getFrom());
-                        mTvJoinTime.setText(userInfo.getUser().getJointime());
+                        mTvJoinTime.setText(StringUtils.friendly_time(userInfo.getUser().getJointime()));
 
                         mTvPlatform.setText(userInfo.getUser().getDevplatform());
                         mTvStrength.setText(userInfo.getUser().getExpertise());
