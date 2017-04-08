@@ -58,6 +58,7 @@
         <item name="android:contentDescription">face</item>
         <item name="android:src">@mipmap/widget_dface</item>
     </style>
+    
 
 
     <style name="ScanMapDialog" parent="android:style/Theme.Dialog">

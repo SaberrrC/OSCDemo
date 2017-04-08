@@ -52,7 +52,7 @@ public class FriendInfoBean {
          * </expertise>
          * <gender>1</gender>
          */
-
+        public String first;
         @XStreamAlias("name")
         private String name;
         @XStreamAlias("userid")

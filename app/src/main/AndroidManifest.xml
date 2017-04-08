@@ -52,6 +52,10 @@
         <activity android:name=".ui.activity.UserCenterActivity"
             android:theme="@style/FullScreen">
         </activity>
+        <activity android:name=".ui.activity.SearchActivity"
+            android:theme="@style/FullScreen">
+
+        </activity>
     </application>
 
 </manifest>
