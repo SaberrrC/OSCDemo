@@ -7,7 +7,7 @@
     android:id="@+id/tv_informationdetailtitle"
     android:layout_width="match_parent"
     android:padding="10dp"
-    android:background="#9c9c9c"
+    android:background="@drawable/edittext_bg_nomol"
     android:text="相关信息"
     android:layout_height="wrap_content"/>
 </LinearLayout>

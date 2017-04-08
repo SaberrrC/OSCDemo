@@ -15,11 +15,9 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -166,15 +164,15 @@ public class Utils {
     }
 
     //显示表情
-    public static Spannable displayEmoji(Resources res, CharSequence s) {
-        return displayEmoji(res, new SpannableString(s));
-    }
+        public static Spannable displayEmoji(Resources res, CharSequence s) {
+            return displayEmoji(res, new SpannableString(s));
+        }
 
-    public static Spannable displayEmoji(Resources res, Spannable spannable) {
-        String str = spannable.toString();
+        public static Spannable displayEmoji(Resources res, Spannable spannable) {
+            String str = spannable.toString();
 
-        if (!str.contains(":") && !str.contains("[")) {
-            return spannable;
+            if (!str.contains(":") && !str.contains("[")) {
+                return spannable;
         }
 
         Pattern pattern = Pattern.compile("(\\[[^\\[\\]:\\s\\n]+\\])|(:[^:\\[\\]\\s\\n]+:)");

@@ -23,6 +23,7 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.scan.zxing.camera.CameraManager;
 import com.saberrr.openchina.scan.zxing.view.ViewfinderView;
 import com.saberrr.openchina.ui.activity.UserCenterActivity;
+import com.saberrr.openchina.ui.activity.WebViewActivity;
 import com.saberrr.openchina.utils.Constant;
 
 import java.io.IOException;
@@ -196,9 +197,17 @@ public final class CaptureActivity extends Activity implements
             intent.putExtra("codedBitmap", barcode1);
             setResult(RESULT_OK, intent);
 
-            Intent resultVeiw = new Intent(this, UserCenterActivity.class);
-            resultVeiw.putExtra(Constant.Url, text);
-            startActivity(resultVeiw);
+            String prefix = "http://my.oschina.net/u/";
+            if (text.startsWith(prefix)) {
+                String uid = text.substring(prefix.length());
+                Intent userCenterVeiw = new Intent(this, UserCenterActivity.class);
+                userCenterVeiw.putExtra(Constant.USERID, uid);
+                startActivity(userCenterVeiw);
+            } else {
+                Intent resultVeiw = new Intent(this, WebViewActivity.class);
+                resultVeiw.putExtra(Constant.Url, text);
+                startActivity(resultVeiw);
+            }
             finish();
         }
 

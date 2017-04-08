@@ -42,12 +42,15 @@
         </activity>
         <activity android:name=".scan.ericssonlabs.BarCodeTestActivity">
         </activity>
-        <activity android:name=".ui.activity.UserCenterActivity">
+        <activity android:name=".ui.activity.WebViewActivity">
         </activity>
-        <activity android:name=".scan.zxing.android.CaptureActivity"
-                  android:screenOrientation="portrait"
-                  android:theme="@android:style/Theme.NoTitleBar">
-
+        <activity
+            android:name=".scan.zxing.android.CaptureActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar">
+        </activity>
+        <activity android:name=".ui.activity.UserCenterActivity"
+            android:theme="@style/FullScreen">
         </activity>
         <activity android:name=".ui.activity.SearchActivity"
             android:theme="@style/SearchFullScreen">

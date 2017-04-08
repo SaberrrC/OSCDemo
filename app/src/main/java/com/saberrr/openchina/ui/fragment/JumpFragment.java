@@ -173,7 +173,6 @@ public class JumpFragment extends BaseFragment {
                 Spannable msp = new SpannableString(faceBean.emojiStr);
                 msp.setSpan(new ImageSpan(drawable), 0, faceBean.emojiStr.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 editable.insert(index, msp);
-                ToastUtils.showToast(faceBean.toString());
             }
         });
         mEtContent.addTextChangedListener(new TextWatcher() {

@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment.mymsgfragment;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -30,9 +31,11 @@ import com.saberrr.openchina.bean.mymsgcenter.TweetLikeBean;
 import com.saberrr.openchina.net.HttpServiceApi;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
+import com.saberrr.openchina.ui.activity.UserCenterActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.ui.fragment.BaseFragment;
 import com.saberrr.openchina.ui.fragment.LoginFragment;
+import com.saberrr.openchina.utils.AssimilateUtils;
 import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.SpUtil;
 import com.saberrr.openchina.utils.StringUtils;
@@ -106,7 +109,7 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
                     ShowActivity.startFragment(LoginFragment.class, null);
 
                 } else {
-                    ThreadUtils.runSub(new Runnable() {
+                    ThreadUtils.runBigSub(new Runnable() {
                         @Override
                         public void run() {
                             getNetData(true);
@@ -135,6 +138,24 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
         });
         mSrl.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
 
+        mRvTweet.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                if (lastVisibleItemPosition == mItemList.size() - 1 && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    ThreadUtils.runBigSub(new Runnable() {
+                        @Override
+                        public void run() {
+                            getNetData(false);
+                            ToastUtils.showToast("加载更多数据");
+                        }
+                    });
+                }
+            }
+        });
+
     }
 
     @Override
@@ -162,7 +183,7 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
         } else {
             HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
             try {
-                Response<ResponseBody> response = httpServiceApi.getComment(mCookie, mCatalog, mItemList.size() / Constant.PAGESIZE, mUserid, Constant.PAGESIZE).execute();
+                Response<ResponseBody> response = httpServiceApi.getComment(mCookie, mCatalog, mItemList.size() / (Constant.PAGESIZE+2), mUserid, Constant.PAGESIZE).execute();
                 String result = response.body().string();
 //                System.out.println(result);
                 CommentBean commentBean = XmlUtils.toBean(CommentBean.class, result.getBytes());
@@ -175,6 +196,17 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
                     @Override
                     public void run() {
 
+                     /*   if (isRefresh) {
+                            mItemList.clear();
+
+
+                        } else {
+
+                        }
+
+                        mItemList.addAll(activies);
+*/
+
                         if (isRefresh && activies.size() != 0) {
                             mItemList.clear();
                         }
@@ -184,14 +216,15 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
                             mLyerror.setVisibility(View.VISIBLE);
                             mSrl.setVisibility(View.GONE);
                             mTvResult.setText("当前无数据");
-                            mSrl.setRefreshing(false);
+
                         } else {
 
                             mLyerror.setVisibility(View.GONE);
                             mSrl.setVisibility(View.VISIBLE);
                             mRecycleAdapter.notifyDataSetChanged();
-                            mSrl.setRefreshing(false);
+                            ToastUtils.showToast("加载数据完成");
                         }
+                        mSrl.setRefreshing(false);
                     }
 
                 });
@@ -200,15 +233,13 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
             } catch (IOException e) {
                 e.printStackTrace();
                 if (mItemList.size() == 0) {
-                    ThreadUtils.runMain(new Runnable() {
-                        @Override
-                        public void run() {
+
                             mLyerror.setVisibility(View.VISIBLE);
                             mSrl.setVisibility(View.GONE);
                             mTvResult.setText("网络错误");
                             mSrl.setRefreshing(false);
-                        }
-                    });
+
+
 
                 }
 
@@ -228,6 +259,9 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
             @Override
             public void onClick(View v) {
                 ToastUtils.showToast("点击了条目，跳转到动弹详情" + mItemList.get(position).getId());
+                Intent userCenterVeiw = new Intent(getContext(), UserCenterActivity.class);
+                userCenterVeiw.putExtra(Constant.USERID, mItemList.get(position).getId());
+                startActivity(userCenterVeiw);
 
             }
         });
@@ -276,7 +310,6 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
         String body = mItemList.get(position).getMessage();
         if (body == null) {
             content.setVisibility(View.GONE);
-
         } else {
             content.setVisibility(View.VISIBLE);
             /*Spanned span = Html.fromHtml(body.trim());
@@ -285,8 +318,10 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
 
            /* SpannableStringBuilder spannableStringBuilder = Utils.parseActiveReply("", body.trim());
             Spannable spannable = Utils.displayEmoji(getContext().getResources(),spannableStringBuilder);*/
+            Spannable spannable = AssimilateUtils.highlightAtUser(getContext(), body.trim());
+            Spannable spannable1 = Utils.displayEmoji(getContext().getResources(), spannable);
 
-            content.setText(body.trim());
+            content.setText(spannable1);
         }
 
 

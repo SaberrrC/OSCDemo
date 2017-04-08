@@ -31,6 +31,7 @@ import com.saberrr.openchina.bean.comprehensivebean.CommentHead;
 import com.saberrr.openchina.bean.comprehensivebean.InfomationDetailBean;
 import com.saberrr.openchina.bean.comprehensivebean.TitleBean;
 import com.saberrr.openchina.manager.cacheManager.JsonCacheManager;
+import com.saberrr.openchina.manager.netmanager.JsonCacheManager2;
 import com.saberrr.openchina.net.HttpServiceApi;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
@@ -60,7 +61,7 @@ import retrofit2.Retrofit;
  * Created by 丁银晨 on 2017/4/2.
  */
 
-public class InfomationDetailsFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener, ShowActivity.OnClickListener, TextView.OnEditorActionListener {
+public class InfomationDetailsFragment3 extends BaseFragment2 implements FinalRecycleAdapter.OnViewAttachListener, ShowActivity.OnClickListener, TextView.OnEditorActionListener {
 
     @BindView(R.id.recyclerView_informationDetail)
     RecyclerView mRecyclerViewInformationDetail;
@@ -93,12 +94,6 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
     private int size = 0;
 
     @Override
-    protected boolean needRefresh() {
-        return false;
-
-    }
-
-    @Override
     public View createView() {
         Bundle bundle = getArguments();
         mUrl = bundle.getString(Constant.BLOGDETAILSFRAGMENT.HREF);
@@ -110,6 +105,72 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
         ButterKnife.bind(this, view);
         init();
         return view;
+    }
+
+    @Override
+    public Object getCacheDataOnSub() {
+        InfomationDetailBean infomationDetailBean = JsonCacheManager2.getInstance().getCacheDataBean(Urls.CONTENT + mId, InfomationDetailBean.class);
+        CommentBean commentBean = JsonCacheManager2.getInstance().getCacheDataBean(Urls.COMMENT1 + mId + Urls.COMMENTTYEP + mType, CommentBean.class);
+        if (infomationDetailBean == null || commentBean == null) {
+            return null;
+        } else {
+            if (infomationDetailBean != null) {
+                return infomationDetailBean;
+            }
+            if (commentBean != null) {
+                return commentBean;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Object getNewDataOnSub() {
+        InfomationDetailBean infomationDetailBean = JsonCacheManager2.getInstance().getDataBean(Urls.CONTENT + mId, InfomationDetailBean.class);
+        CommentBean commentBean = JsonCacheManager2.getInstance().getDataBean(Urls.COMMENT1 + mId + Urls.COMMENTTYEP + mType, CommentBean.class);
+        if (infomationDetailBean == null || commentBean == null) {
+            return null;
+        } else {
+            if (infomationDetailBean != null) {
+                return infomationDetailBean;
+            }
+            if (commentBean != null) {
+                return commentBean;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void showViewOnMain(Object cacheObject, Object newObject) {
+        if (cacheObject != null) {
+            InfomationDetailBean infomationDetailBean = (InfomationDetailBean) cacheObject;
+            mDatas.clear();
+            bean.clear();
+            List<InfomationDetailBean.ResultBean.AboutsBean> aboutsBeen = infomationDetailBean.getResult().getAbouts();
+            final int commentCount = infomationDetailBean.getResult().getCommentCount();
+            bean.add(infomationDetailBean);
+
+            // mDatas.add(infomationDetailBean);
+            if (aboutsBeen != null && aboutsBeen.size() > 0) {
+                mDatas.add(new TitleBean());
+                mDatas.addAll(aboutsBeen);
+                size = mDatas.size() - 1;
+            }
+            if (newObject != null) {
+                CommentBean commentBean = (CommentBean) newObject;
+                if (commentBean != null && commentBean.getCode() != 404) {
+                    List<CommentBean.ResultBean.ItemsBean> itemsBeen = commentBean.getResult().getItems();
+                    if (itemsBeen != null && itemsBeen.size() > 0) {
+                        mDatas.add(new CommentHead());
+                        mDatas.addAll(itemsBeen);
+                    }
+                }
+            }
+            initData();
+            setCommentCount(commentCount + "");
+            mFinalRecycleAdapter.notifyDataSetChanged();
+        }
     }
 
     private void init() {
@@ -196,7 +257,6 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
     }
 
 
-    @Override
     public Object getData() {
 
 
@@ -204,7 +264,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
         CommentBean commentBean = JsonCacheManager.getInstance().getDataBean(Urls.COMMENT1 + mId + Urls.COMMENTTYEP + mType, CommentBean.class);
         mDatas.clear();
         bean.clear();
-        if (infomationDetailBean == null||infomationDetailBean.getCode()==404) {
+        if (infomationDetailBean == null || infomationDetailBean.getCode() == 404) {
             return null;
         }
         List<InfomationDetailBean.ResultBean.AboutsBean> aboutsBeen = infomationDetailBean.getResult().getAbouts();
@@ -215,9 +275,9 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
         if (aboutsBeen != null && aboutsBeen.size() > 0) {
             mDatas.add(new TitleBean());
             mDatas.addAll(aboutsBeen);
-            size = mDatas.size()-1;
+            size = mDatas.size() - 1;
         }
-        if (commentBean != null&&commentBean.getCode() != 404) {
+        if (commentBean != null && commentBean.getCode() != 404) {
             List<CommentBean.ResultBean.ItemsBean> itemsBeen = commentBean.getResult().getItems();
 
             if (itemsBeen != null && itemsBeen.size() > 0) {
@@ -230,7 +290,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
             @Override
             public void run() {
                 initData();
-                setCommentCount(commentCount+"");
+                setCommentCount(commentCount + "");
                 mFinalRecycleAdapter.notifyDataSetChanged();
             }
         });
@@ -252,7 +312,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
             TextView tvTitelInforecommend = (TextView) holder.getViewById(R.id.tv_titel_inforecommend);
             ImageView ivInforecommend = (ImageView) holder.getViewById(R.id.iv_inforecommend);
             TextView tvCountInforecommend = (TextView) holder.getViewById(R.id.tv_count_inforecommend);
-            if (position == size){
+            if (position == size) {
                 tvUnderline.setVisibility(View.INVISIBLE);
             }
             tvTitelInforecommend.setText(bean.getTitle());
@@ -272,8 +332,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
             Glide.with(getContext()).load(bean.getAuthorPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(ivComment) {
                 @Override
                 protected void setResource(Bitmap resource) {
-                    RoundedBitmapDrawable circularBitmapDrawable =
-                            RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+                    RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
                     circularBitmapDrawable.setCircular(true);
                     ivComment.setImageDrawable(circularBitmapDrawable);
                 }
@@ -320,7 +379,7 @@ public class InfomationDetailsFragment extends BaseFragment implements FinalRecy
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             ToastUtils.showToast("发送成功");
                             mEtBottomComment.setText("");
-                            mLoadingPager.showViewDely(1000);
+                            mLoadingPager.showViewDelay(1000);
                         }
 
                         @Override

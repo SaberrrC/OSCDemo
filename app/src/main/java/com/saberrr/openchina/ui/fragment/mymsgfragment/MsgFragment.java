@@ -135,7 +135,23 @@ public class MsgFragment extends BaseFragment implements FinalRecycleAdapter.OnV
             }
         });
         mSrl.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
-
+        mRvTweet.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                if (lastVisibleItemPosition == mItemList.size() - 1 && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    ThreadUtils.runBigSub(new Runnable() {
+                        @Override
+                        public void run() {
+                            getNetData(false);
+                            ToastUtils.showToast("加载更多数据");
+                        }
+                    });
+                }
+            }
+        });
 
     }
 
@@ -185,14 +201,14 @@ public class MsgFragment extends BaseFragment implements FinalRecycleAdapter.OnV
                             mLyerror.setVisibility(View.VISIBLE);
                             mSrl.setVisibility(View.GONE);
                             mTvResult.setText("当前无数据");
-                            mSrl.setRefreshing(false);
                         } else {
 
                             mLyerror.setVisibility(View.GONE);
                             mSrl.setVisibility(View.VISIBLE);
                             mRecycleAdapter.notifyDataSetChanged();
-                            mSrl.setRefreshing(false);
+                            ToastUtils.showToast("数据加载完成");
                         }
+                        mSrl.setRefreshing(false);
                     }
 
                 });
