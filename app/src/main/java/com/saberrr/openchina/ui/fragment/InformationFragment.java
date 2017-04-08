@@ -138,6 +138,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
                 return null;
             } else {
                 ToastUtils.showToast("没有更多数据");
+
                 isLast = true;
             }
         } else {
@@ -152,7 +153,7 @@ public class InformationFragment extends BaseFragment implements FinalRecycleAda
             } else {
        //         mDatas.remove(mDatas.size()-1);
 
-                mDatas.addAll(mDatas.size()-2,badyBeanList);
+                mDatas.addAll(mDatas.size()-1,badyBeanList);
 //                mDatas.add(new FootBean());
                 isLast = false;
             }

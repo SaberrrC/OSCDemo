@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
+import com.saberrr.openchina.bean.FootBean;
 import com.saberrr.openchina.bean.comprehensivebean.BlogBodyBean;
 import com.saberrr.openchina.bean.comprehensivebean.BlogHradBean;
 import com.saberrr.openchina.manager.cacheManager.JsonCacheManager;
@@ -69,7 +70,7 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
         HashMap<Class, Integer> map = new HashMap<>();
         map.put(BlogHradBean.class, R.layout.blog_head);
         map.put(BlogBodyBean.ResultBean.ItemsBean.class, R.layout.item_blog_body);
-
+        map.put(FootBean.class,R.layout.foot_item);
         mFinalRecycleAdapter = new FinalRecycleAdapter(mDatas, map, this);
         mRecyclerViewBlog.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerViewBlog.setAdapter(mFinalRecycleAdapter);
@@ -79,7 +80,7 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
                 super.onScrollStateChanged(recyclerView, newState);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (lastVisibleItemPosition == mDatas.size() - 1 && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                if (lastVisibleItemPosition == mDatas.size() - 1 ) {
                     mLoadingPager.showViewDely(1000);
                 }
             }
@@ -118,6 +119,7 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
                 return null;
             } else {
                 ToastUtils.showToast("没有更多数据");
+                isLast = true;
             }
         } else {
             List<BlogBodyBean.ResultBean.ItemsBean> bodyItem = blogBodyBean.getResult().getItems();
@@ -126,8 +128,11 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
 
                 mDatas.add(new BlogHradBean());
                 mDatas.addAll(bodyItem);
+                mDatas.add(new FootBean());
+                isLast = false;
             } else {
-                mDatas.addAll(bodyItem);
+                mDatas.addAll(mDatas.size()-1,bodyItem);
+                isLast = false;
             }
         }
 
@@ -200,6 +205,12 @@ public class BlogFragment extends BaseFragment implements FinalRecycleAdapter.On
             tvVisitBlog.setText(bean.getViewCount() + "");
             tvCommentBlog.setText(bean.getCommentCount() + "");
 
+        }
+        if (itemData instanceof FootBean){
+            TextView tvFoot = (TextView) holder.getViewById(R.id.tv_foot);
+            if (isLast){
+                tvFoot.setText("没有更多数据");
+            }
         }
 
     }
