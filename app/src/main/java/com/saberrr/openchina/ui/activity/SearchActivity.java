@@ -17,6 +17,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,11 +26,7 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.FragmentInfo;
 import com.saberrr.openchina.ui.adapter.KeywordAdapter;
 import com.saberrr.openchina.ui.adapter.OswViewPagerAdapter;
-import com.saberrr.openchina.ui.fragment.BestNewFragment;
-import com.saberrr.openchina.ui.fragment.DomesticFragment;
 import com.saberrr.openchina.ui.fragment.FindUserFragment;
-import com.saberrr.openchina.ui.fragment.HotFragment;
-import com.saberrr.openchina.ui.fragment.RecommendFragment;
 import com.saberrr.openchina.ui.fragment.SearchBlogFragment;
 import com.saberrr.openchina.ui.fragment.SearchNewsFragment;
 import com.saberrr.openchina.ui.fragment.SearchPostFragment;
@@ -61,6 +58,8 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ke
     ListView mLvSearchLayout;
     @BindView(R.id.ll_search_history)
     LinearLayout mLlSearchHistory;
+    @BindView(R.id.iv_search_delete)
+    ImageView mIvSearchDelete;
     private List<FragmentInfo> datas = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
     private KeywordAdapter mKeywordAdapter;
@@ -70,13 +69,11 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ke
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         // 这个属性4.4算是全透明（有的机子是过渡形式的透明），5.0就是半透明了 我的模拟器、真机都是半透明，
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-        {// 4.4 全透明状态栏
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {// 4.4 全透明状态栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {// 5.0 全透明实现
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {// 5.0 全透明实现
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.getDecorView()
@@ -109,20 +106,20 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ke
                     //处理事件
 
                     final String keyword = v.getText().toString().trim();
-                    ToastUtils.showToast("搜索啦" + keyword);
+                    //ToastUtils.showToast("搜索啦" + keyword);
                     EventBus.getDefault().postSticky(keyword);
 
                     if (!TextUtils.isEmpty(keyword)) {
                         ThreadUtils.runMain(new Runnable() {
                             @Override
                             public void run() {
-                                if(keywords == null || keywords.size() == 0) {
+                                if (keywords == null || keywords.size() == 0) {
                                     keywords.add(keyword);
-                                }else{
-                                    if(keywords.contains(keyword)) {
+                                } else {
+                                    if (keywords.contains(keyword)) {
                                         keywords.remove(keyword);
                                     }
-                                    keywords.add(0,keyword);
+                                    keywords.add(0, keyword);
                                 }
 
                                 mKeywordAdapter.notifyDataSetChanged();
@@ -145,17 +142,23 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ke
         }
         mLvSearchLayout.setAdapter(mKeywordAdapter);
         mKeywordAdapter.setOnKeywordItemClickListener(this);
+        mIvSearchDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEtSearch.setText("");
+            }
+        });
     }
 
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        ToastUtils.showToast("beforeTextChanged=" + s.toString());
+        //ToastUtils.showToast("beforeTextChanged=" + s.toString());
     }
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        ToastUtils.showToast("onTextChanged=" + s.toString());
+        //ToastUtils.showToast("onTextChanged=" + s.toString());
     }
 
     @Override
@@ -166,11 +169,14 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ke
             ThreadUtils.runMain(new Runnable() {
                 @Override
                 public void run() {
+                    mIvSearchDelete.setVisibility(View.GONE);
                     mLlSearchViewpager.setVisibility(View.GONE);
                     mKeywordAdapter.notifyDataSetChanged();
                     mLlSearchHistory.setVisibility(View.VISIBLE);
                 }
             });
+        }else {
+            mIvSearchDelete.setVisibility(View.VISIBLE);
         }
     }
 

@@ -48,10 +48,7 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
     private FinalRecycleAdapter mFinalRecycleAdapter;
 
 
-    @Override
-    public Fragment getCurrentFragment() {
-        return new CategoryFragment();
-    }
+
 
     @Override
     protected boolean needRefresh() {

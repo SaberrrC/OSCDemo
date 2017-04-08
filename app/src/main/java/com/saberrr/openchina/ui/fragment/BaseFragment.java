@@ -194,7 +194,4 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
         mParentActivity = null;
     }
 
-    public Fragment getCurrentFragment() {
-        return mCurrentFragment;
-    }
 }

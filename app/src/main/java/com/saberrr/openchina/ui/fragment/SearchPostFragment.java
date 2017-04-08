@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,8 +41,7 @@ import okhttp3.Response;
 public class SearchPostFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
     @BindView(R.id.rv_search_software)
     RecyclerView mRvSearchSoftware;
-    @BindView(R.id.srl_search_software)
-    SwipeRefreshLayout mSrlSearchSoftware;
+
     private String mKeyword;
     private List<SearchSoftwareBean> datas = new ArrayList<>();
     private HashMap<Class, Integer> mHashMap = new HashMap<>();
@@ -52,9 +52,14 @@ public class SearchPostFragment extends BaseFragment implements FinalRecycleAdap
         return false;
     }
 
-    @Override
+    /*@Override
     public void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
+    }*/
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         EventBus.getDefault().register(this);
     }
 
