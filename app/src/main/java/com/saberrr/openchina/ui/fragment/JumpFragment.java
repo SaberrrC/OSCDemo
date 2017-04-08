@@ -30,6 +30,7 @@ import com.saberrr.openchina.bean.FriendInfoBean;
 import com.saberrr.openchina.bean.jumponejump.SendJumpFirstImgBean;
 import com.saberrr.openchina.event.SelectedFriendsEvent;
 import com.saberrr.openchina.faces.DisplayRules;
+import com.saberrr.openchina.faces.FaceBackBean;
 import com.saberrr.openchina.faces.FaceBean;
 import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.net.Urls;
@@ -56,8 +57,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -129,12 +128,17 @@ public class JumpFragment extends BaseFragment {
         EventBus.getDefault().unregister(this);
     }
 
-    /**获取EditText光标所在的位置*/
-    private int getEditTextCursorIndex(EditText mEditText){
+    /**
+     * 获取EditText光标所在的位置
+     */
+    private int getEditTextCursorIndex(EditText mEditText) {
         return mEditText.getSelectionStart();
     }
-    /**向EditText指定光标位置插入字符串*/
-    private void insertText(EditText mEditText, String mText){
+
+    /**
+     * 向EditText指定光标位置插入字符串
+     */
+    private void insertText(EditText mEditText, String mText) {
         mEditText.getText().insert(getEditTextCursorIndex(mEditText), mText);
     }
 
@@ -237,13 +241,49 @@ public class JumpFragment extends BaseFragment {
     private void initText() {
         String text = SpUtil.getString(getContext(), Constant.JUMP_TEXT, "");
         // TODO: 2017-04-07 文字转表情
-        String reg_charset = "(?:[\uD83C\uDF00-\uD83D\uDDFF]|[\uD83E\uDD00-\uD83E\uDDFF]|[\uD83D\uDE00-\uD83D\uDE4F]|[\uD83D\uDE80-\uD83D\uDEFF]|[\u2600-\u26FF]\uFE0F?|[\u2700-\u27BF]\uFE0F?|\u24C2\uFE0F?|[\uD83C\uDDE6-\uD83C\uDDFF]{1,2}|[\uD83C\uDD70\uD83C\uDD71\uD83C\uDD7E\uD83C\uDD7F\uD83C\uDD8E\uD83C\uDD91-\uD83C\uDD9A]\uFE0F?|[\u0023\u002A\u0030-\u0039]\uFE0F?\u20E3|[\u2194-\u2199\u21A9-\u21AA]\uFE0F?|[\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55]\uFE0F?|[\u2934\u2935]\uFE0F?|[\u3030\u303D]\uFE0F?|[\u3297\u3299]\uFE0F?|[\uD83C\uDE01\uD83C\uDE02\uD83C\uDE1A\uD83C\uDE2F\uD83C\uDE32-\uD83C\uDE3A\uD83C\uDE50\uD83C\uDE51]\uFE0F?|[\u203C\u2049]\uFE0F?|[\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE]\uFE0F?|[\u00A9\u00AE]\uFE0F?|[\u2122\u2139]\uFE0F?|\uD83C\uDC04\uFE0F?|\uD83C\uDCCF\uFE0F?|[\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA]\uFE0F?)";
+      /*  String reg_charset = "[\\ud83c\\udc00-\\ud83c\\udfff]|[\\ud83d\\udc00-\\ud83d\\udfff]|[\\u2600-\\u27ff]";
         Log.d(TAG, "initText:======= " + text);
         Pattern pattern = Pattern.compile(reg_charset);
         Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
             String group = matcher.group();
             Log.d(TAG, "initText: find ==== " + group);
+        }*/
+        List<FaceBackBean> list = new ArrayList<>();
+        int fount = 0;
+        int tail = 0;
+        char[] chars = text.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '[') {
+                fount = i;
+            }
+            if (chars[i] == ']') {
+                tail = i;
+                String substring = text.substring(fount, tail + 1);
+                list.add(new FaceBackBean(substring, fount, tail + 1));
+            }
+        }
+        // TODO: 2017-04-08  
+        for (int i = 0; i < list.size(); i++) {
+            FaceBackBean faceBackBean = list.get(i);
+            String value = faceBackBean.value;
+            Log.d(TAG, "initText: " + value);
+            //设置图片
+            for (int i1 = 0; i1 < FaceBackBean.allByType.size(); i1++) {
+                FaceBean faceBean = FaceBackBean.allByType.get(i1);
+                Log.d(TAG, "initText: faceBean.emojiStr============" + faceBean.toString());
+                if (faceBean.remote == value) {
+                    Editable editable = mEtContent.getText();
+                    Log.d(TAG, "initText: emojiStr" + "===========" + FaceBackBean.allByType.get(i1).remote);
+                    Drawable drawable = getResources().getDrawable(faceBean.resId);
+                    drawable.setBounds(0, 0, DensityUtil.dip2px(25), DensityUtil.dip2px(25));
+                    Spannable msp = new SpannableString(faceBean.emojiStr);
+                    msp.setSpan(new ImageSpan(drawable), faceBackBean.fount, faceBackBean.tail + faceBackBean.value.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    editable.replace(faceBackBean.fount, faceBackBean.tail + faceBackBean.value.length(), msp);
+                }
+            }
+
+
         }
         /**
          * 1 获取表情的字符串
@@ -300,6 +340,14 @@ public class JumpFragment extends BaseFragment {
                         Response response = okHttpClient.newCall(request).execute();
                         String string = response.body().string();
                         System.out.println(string);
+                        ToastUtils.showToast("发送成功");
+                        ThreadUtils.runMain(new Runnable() {
+                            @Override
+                            public void run() {
+                                mEtContent.getEditableText().clear();
+                                getActivity().finish();
+                            }
+                        });
                     } catch (IOException e) {
                         e.printStackTrace();
                         ToastUtils.showToast("发送失败");
@@ -331,8 +379,7 @@ public class JumpFragment extends BaseFragment {
                                 OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
                                 //
                                 RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)//传送的类型
-                                        .addFormDataPart(RESOURCE, file.getName(), MultipartBody.create(MediaType.parse("application/octet-stream"), file))
-                                        .addFormDataPart(TOKEN, token).build();
+                                        .addFormDataPart(RESOURCE, file.getName(), MultipartBody.create(MediaType.parse("application/octet-stream"), file)).addFormDataPart(TOKEN, token).build();
                                 Request request = new Request.Builder().addHeader(COOKIE, mCookie).post(body).url(Urls.SEND_JUMP_IMAGE).build();
                                 Response response = okHttpClient.newCall(request).execute();
                                 String json = response.body().string();
@@ -357,10 +404,16 @@ public class JumpFragment extends BaseFragment {
                         ToastUtils.showToast("发送失败");
                     }
                     ToastUtils.showToast("发送成功");
-                    mEtContent.getEditableText().clear();
-                    mFlImg.removeAllViews();
-                    images.clear();
-                    getActivity().finish();
+                    ThreadUtils.runMain(new Runnable() {
+                        @Override
+                        public void run() {
+                            mEtContent.getEditableText().clear();
+                            mFlImg.removeAllViews();
+                            images.clear();
+                            getActivity().finish();
+                        }
+                    });
+
                 }
             }
         });
