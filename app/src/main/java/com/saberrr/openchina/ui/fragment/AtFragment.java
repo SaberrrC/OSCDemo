@@ -3,6 +3,7 @@ package com.saberrr.openchina.ui.fragment;
 import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -110,6 +111,26 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
         layoutManager.setInitialPrefetchItemCount(15);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mFinalRecycleAdapter);
+        mClAt.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mInfos.clear();
+                names.clear();
+                ThreadUtils.runSub(new Runnable() {
+                    @Override
+                    public void run() {
+                        getData();
+                        ThreadUtils.runMain(new Runnable() {
+                            @Override
+                            public void run() {
+                                mClAt.setRefreshing(false);
+                            }
+                        });
+                    }
+                });
+
+            }
+        });
         return view;
     }
 
