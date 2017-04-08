@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.showColoredBars(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initToolBar();
@@ -118,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
                                 builder.show();
                             }
                         });
-
                     }
                 }
             });

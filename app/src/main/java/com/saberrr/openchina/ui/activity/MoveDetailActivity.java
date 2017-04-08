@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.saberrr.openchina.R;
 import com.saberrr.openchina.bean.MoveNewBean;
+import com.saberrr.openchina.utils.Utils;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -59,6 +60,7 @@ public class MoveDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.showColoredBars(this);
         setContentView(R.layout.activity_move_detail);
         ButterKnife.bind(this);
 

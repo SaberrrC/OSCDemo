@@ -24,6 +24,7 @@ import com.saberrr.openchina.R;
 import com.saberrr.openchina.contact.Fiels;
 import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.ui.fragment.BaseFragment;
+import com.saberrr.openchina.utils.Utils;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -62,6 +63,12 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+      /*  StatusBarCompat.compat(this, Color.parseColor("#24cf5f"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }*/
+        Utils.showColoredBars(this);
         setContentView(R.layout.activity_show);
         ButterKnife.bind(this);
         Intent intent = getIntent();
