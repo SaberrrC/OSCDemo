@@ -1,4 +1,4 @@
-package com.saberrr.openchina.ui.fragment.mymsgfragment;
+package com.saberrr.openchina.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -6,20 +6,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.saberrr.openchina.R;
-import com.saberrr.openchina.bean.recommendbean.RecommendBean;
-import com.saberrr.openchina.bean.recommendbean.RecommendItemBean;
-import com.saberrr.openchina.bean.recommendbean.Software;
 import com.saberrr.openchina.bean.searchbean.Result;
 import com.saberrr.openchina.bean.searchbean.SearchSoftwareBean;
 import com.saberrr.openchina.bean.searchbean.XmlSearchSoftwareBean;
-import com.saberrr.openchina.net.Urls;
+import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
-import com.saberrr.openchina.ui.fragment.BaseFragment;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.XmlUtils;
 
@@ -42,7 +37,7 @@ import okhttp3.Response;
  * Created by liuqi on 2017/4/7.
  */
 
-public class SearchSoftwareFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
+public class SearchBlogFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
     @BindView(R.id.rv_search_software)
     RecyclerView mRvSearchSoftware;
     @BindView(R.id.srl_search_software)
@@ -74,6 +69,13 @@ public class SearchSoftwareFragment extends BaseFragment implements FinalRecycle
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void OnEvent(String keyword) {
         mKeyword = keyword;
+        ThreadUtils.runSub(new Runnable() {
+            @Override
+            public void run() {
+                getData();
+            }
+        });
+
         EventBus.getDefault().removeAllStickyEvents();
     }
 
@@ -86,9 +88,10 @@ public class SearchSoftwareFragment extends BaseFragment implements FinalRecycle
 
     @Override
     public Object getData() {
-        System.out.println(mKeyword);
+        //System.out.println(mKeyword);
+        datas.clear();
         OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder().url("http://www.oschina.net/action/api/search_list?catalog=software&pageIndex=0&content="+mKeyword+"&pageSize=20").build();
+        Request request = new Request.Builder().url("http://www.oschina.net/action/api/search_list?catalog=blog&pageIndex=0&content="+mKeyword+"&pageSize=20").build();
         try {
             Response response = okHttpClient.newCall(request).execute();
             String xml = response.body().string();
@@ -101,6 +104,7 @@ public class SearchSoftwareFragment extends BaseFragment implements FinalRecycle
                 SearchSoftwareBean searchSoftwareBean = new SearchSoftwareBean();
                 searchSoftwareBean.title = result.getTitle();
                 searchSoftwareBean.desc = result.getDescription();
+                searchSoftwareBean.url = result.getUrl();
                 datas.add(searchSoftwareBean);
             }
 
@@ -120,10 +124,20 @@ public class SearchSoftwareFragment extends BaseFragment implements FinalRecycle
     public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
         TextView tv_title = (TextView) holder.getViewById(R.id.tv_search_software_item_title);
         TextView tv_desc = (TextView) holder.getViewById(R.id.tv_search_software_item_desc);
+        LinearLayout ll_search_software_item = (LinearLayout) holder.getViewById(R.id.ll_search_software_item);
         if (itemData instanceof SearchSoftwareBean) {
-            SearchSoftwareBean searchSoftwareBean = (SearchSoftwareBean) itemData;
+            final SearchSoftwareBean searchSoftwareBean = (SearchSoftwareBean) itemData;
             tv_title.setText(searchSoftwareBean.title);
             tv_desc.setText(searchSoftwareBean.desc);
+            ll_search_software_item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("url",searchSoftwareBean.url);
+                    ShowActivity.startFragmentWithTitle(RockSoftwareDetailFragment.class,bundle,"软件详情");
+                }
+            });
         }
+
     }
 }
