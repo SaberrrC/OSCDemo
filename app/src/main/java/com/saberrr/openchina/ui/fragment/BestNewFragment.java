@@ -21,6 +21,7 @@ import com.saberrr.openchina.bean.recommendbean.Software;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
+import com.saberrr.openchina.ui.fragment.mymsgfragment.CategoryItemFragment;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.XmlUtils;
 
@@ -68,6 +69,7 @@ public class BestNewFragment extends BaseFragment implements FinalRecycleAdapter
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_bestnew, null);
         ButterKnife.bind(this, view);
         init();
+        mCurrentFragment = new BestNewFragment();
         return view;
     }
 

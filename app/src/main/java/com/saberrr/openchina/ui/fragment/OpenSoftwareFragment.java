@@ -2,6 +2,7 @@ package com.saberrr.openchina.ui.fragment;
 
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -62,16 +63,52 @@ public class OpenSoftwareFragment extends BaseFragment {
         showActivity.setOnBackIconClickListener(new ShowActivity.OnBackIconClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCurrentFragment instanceof CategoryThreeItemFragment) {
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                if (!(mCurrentFragment instanceof CategoryThreeItemFragment||mCurrentFragment instanceof CategoryItemFragment)) {
+                    showActivity.finish();
+                }else {
+                    FragmentManager fragmentManager = getFragmentManager();
+                    int backStackEntryCount = fragmentManager.getBackStackEntryCount();
+                    if(backStackEntryCount==0) {
+                        showActivity.finish();
+                    }else {
+                        fragmentManager.popBackStackImmediate(null,0);
+                    }
+                }
+                    //CategoryThreeItemFragment categoryThreeItemFragment = (CategoryThreeItemFragment) BaseFragment.mCurrentFragment;
+                    //getFragmentManager().popBackStackImmediate(null,0);
+                    /*FragmentTransaction transaction = getFragmentManager().beginTransaction();
                     transaction.setCustomAnimations(R.anim.slide_left_in,R.anim.slide_right_out);
-                    transaction.replace(R.id.fl_categoryThree, new CategoryItemFragment()).addToBackStack(null).commit();
+                    transaction.replace(R.id.fl_categoryThree, new CategoryItemFragment()).commit();*//*
                 } else if (mCurrentFragment instanceof CategoryItemFragment) {
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    *//*FragmentTransaction transaction = getFragmentManager().beginTransaction();
                     transaction.setCustomAnimations(R.anim.slide_left_in,R.anim.slide_right_out);
-                    transaction.replace(R.id.fl_categorySecond, new CategoryFragment()).addToBackStack(null).commit();
+                    transaction.replace(R.id.fl_categorySecond, new CategoryFragment()).commit();*//*
+                    getFragmentManager().popBackStackImmediate(null,0);
                 } else {
                     showActivity.finish();
+                }*/
+
+                /*int backStackEntryCount = fragmentManager.getBackStackEntryCount();
+                if(backStackEntryCount==0) {
+                    showActivity.finish();
+                }else {
+                    fragmentManager.popBackStackImmediate(null,0);
+                }*/
+            }
+        });
+        showActivity.setOnMyBackPressed(new ShowActivity.OnMyBackPressed() {
+            @Override
+            public void onBackPressed() {
+                if (!(mCurrentFragment instanceof CategoryThreeItemFragment||mCurrentFragment instanceof CategoryItemFragment)) {
+                    showActivity.finish();
+                }else {
+                    FragmentManager fragmentManager = getFragmentManager();
+                    int backStackEntryCount = fragmentManager.getBackStackEntryCount();
+                    if(backStackEntryCount==0) {
+                        showActivity.finish();
+                    }else {
+                        fragmentManager.popBackStackImmediate(null,0);
+                    }
                 }
             }
         });
