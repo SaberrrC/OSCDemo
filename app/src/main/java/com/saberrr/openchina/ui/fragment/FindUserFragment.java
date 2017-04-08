@@ -54,10 +54,16 @@ public class FindUserFragment extends BaseFragment implements FinalRecycleAdapte
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public View createView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_finduser, null);
         ButterKnife.bind(this,view);
-        EventBus.getDefault().register(this);
+
         init();
 
         return view;
@@ -78,7 +84,7 @@ public class FindUserFragment extends BaseFragment implements FinalRecycleAdapte
             }
         });
 
-        EventBus.getDefault().removeAllStickyEvents();
+        EventBus.getDefault().removeStickyEvent(keyword);
     }
 
     private void init() {
@@ -90,7 +96,7 @@ public class FindUserFragment extends BaseFragment implements FinalRecycleAdapte
 
     @Override
     public Object getData() {
-        datas.clear();
+
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder().url("http://www.oschina.net/action/api/find_user?name="+mKeyword).build();
         try {
@@ -99,6 +105,7 @@ public class FindUserFragment extends BaseFragment implements FinalRecycleAdapte
             //System.out.println(xml);
             XmlSearchFindBean xmlSearchFindBean = XmlUtils.toBean(XmlSearchFindBean.class, xml.getBytes());
             List<FindUser> findUsers = xmlSearchFindBean.getUsers();
+            datas.clear();
             for (int i = 0; i < findUsers.size(); i++) {
                 FindUser findUser = findUsers.get(i);
                 SearchFindBean searchFindBean = new SearchFindBean();

@@ -53,11 +53,17 @@ public class SearchPostFragment extends BaseFragment implements FinalRecycleAdap
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public View createView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_search_software, null);
         ButterKnife.bind(this,view);
         init();
-        EventBus.getDefault().register(this);
+
         return view;
     }
 
@@ -76,7 +82,7 @@ public class SearchPostFragment extends BaseFragment implements FinalRecycleAdap
             }
         });
 
-        EventBus.getDefault().removeAllStickyEvents();
+        EventBus.getDefault().removeStickyEvent(keyword);
     }
 
     private void init() {
@@ -89,7 +95,7 @@ public class SearchPostFragment extends BaseFragment implements FinalRecycleAdap
     @Override
     public Object getData() {
         //System.out.println(mKeyword);
-        datas.clear();
+
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder().url("http://www.oschina.net/action/api/search_list?catalog=post&pageIndex=0&content="+mKeyword+"&pageSize=20").build();
         try {
@@ -98,6 +104,7 @@ public class SearchPostFragment extends BaseFragment implements FinalRecycleAdap
             //System.out.println(xml);
             XmlSearchSoftwareBean xmlSearchSoftwareBean = XmlUtils.toBean(XmlSearchSoftwareBean.class, xml.getBytes());
             List<Result> results = xmlSearchSoftwareBean.getResults();
+            datas.clear();
             for (int i = 0; i < results.size(); i++) {
                 Result result = results.get(i);
                 //System.out.println(result.getTitle());
