@@ -112,6 +112,8 @@ public abstract class LoadPager extends FrameLayout {
 
         addView(mErrorView);
         addView(mLoadingView);
+        changView();
+        showViewDely(0);
     }
 
     protected abstract boolean addRefresh();

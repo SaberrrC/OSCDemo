@@ -396,10 +396,16 @@ public class JumpFragment extends BaseFragment {
                         ToastUtils.showToast("发送失败");
                     }
                     ToastUtils.showToast("发送成功");
-                    mEtContent.getEditableText().clear();
-                    mFlImg.removeAllViews();
-                    images.clear();
-                    getActivity().finish();
+                    ThreadUtils.runMain(new Runnable() {
+                        @Override
+                        public void run() {
+                            mEtContent.getEditableText().clear();
+                            mFlImg.removeAllViews();
+                            images.clear();
+                            getActivity().finish();
+                        }
+                    });
+
                 }
             }
         });
