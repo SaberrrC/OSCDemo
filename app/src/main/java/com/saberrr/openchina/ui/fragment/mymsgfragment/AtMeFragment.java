@@ -109,7 +109,7 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
                     ShowActivity.startFragment(LoginFragment.class, null);
 
                 } else {
-                    ThreadUtils.runBigSub(new Runnable() {
+                    ThreadUtils.runSub(new Runnable() {
                         @Override
                         public void run() {
                             getNetData(true);
@@ -162,6 +162,7 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
     public Object getData() {
 
         getNetData(true);
+        System.out.println("加载数据");
 
         return "";
     }
@@ -183,7 +184,14 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
         } else {
             HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
             try {
-                Response<ResponseBody> response = httpServiceApi.getComment(mCookie, mCatalog, mItemList.size() / (Constant.PAGESIZE+2), mUserid, Constant.PAGESIZE).execute();
+                int pageIndex = 0;
+                if (!isRefresh) {
+                    pageIndex =mItemList.size() / (Constant.PAGESIZE);
+                }
+
+
+
+                Response<ResponseBody> response = httpServiceApi.getComment(mCookie, mCatalog, pageIndex, mUserid, Constant.PAGESIZE).execute();
                 String result = response.body().string();
 //                System.out.println(result);
                 CommentBean commentBean = XmlUtils.toBean(CommentBean.class, result.getBytes());
@@ -259,9 +267,7 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
             @Override
             public void onClick(View v) {
                 ToastUtils.showToast("点击了条目，跳转到动弹详情" + mItemList.get(position).getId());
-                Intent userCenterVeiw = new Intent(getContext(), UserCenterActivity.class);
-                userCenterVeiw.putExtra(Constant.USERID, mItemList.get(position).getId());
-                startActivity(userCenterVeiw);
+
 
             }
         });
@@ -275,6 +281,9 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
             public void onClick(View v) {
 
                 ToastUtils.showToast("点击了头像，跳转进账户中心" + mItemList.get(position).getAuthorid());
+                Intent userCenterVeiw = new Intent(getContext(), UserCenterActivity.class);
+                userCenterVeiw.putExtra(Constant.USERID, mItemList.get(position).getAuthorid());
+                startActivity(userCenterVeiw);
             }
         });
 

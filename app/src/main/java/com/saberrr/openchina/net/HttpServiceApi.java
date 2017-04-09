@@ -42,6 +42,9 @@ public interface HttpServiceApi {
     @GET(Urls.COMMENT)
     Call<ResponseBody> getComment(@Header("cookie") String cookie, @Query("catalog") String catalog , @Query("pageIndex") int pageIndex,@Query("uid") String uid , @Query("pageSize") int pageSize);
 
+    @GET(Urls.USERCENTER)
+    Call<ResponseBody> getUserCenter(@Query("pageIndex") int pageIndex, @Query("hisname") String hisname, @Query("uid") String uid, @Query("pageSize") int pageSize, @Query("hisuid") String hisuid);
+
 
 
 }

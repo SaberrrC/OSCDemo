@@ -60,4 +60,7 @@ public class Urls {
 
     //@好友
     public static final String ATFRIENDS = BASE_URL + "action/api/friends_list?";
+    //个人中心
+    public static final String USERCENTER ="/action/api/user_information";
+
 }

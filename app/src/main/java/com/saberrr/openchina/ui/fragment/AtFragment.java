@@ -3,6 +3,7 @@ package com.saberrr.openchina.ui.fragment;
 import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +32,7 @@ import com.saberrr.openchina.gloab.AppApplication;
 import com.saberrr.openchina.manager.netmanager.JsonCacheManager;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
+import com.saberrr.openchina.ui.adapter.LoadMutiItemRecyclerView;
 import com.saberrr.openchina.ui.view.ContactLayout;
 import com.saberrr.openchina.utils.Constant;
 import com.saberrr.openchina.utils.DensityUtil;
@@ -59,7 +61,7 @@ import butterknife.Unbinder;
  * Created by Saberrr on 2017-04-06.
  */
 
-public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnViewAttachListener {
+public class AtFragment extends BaseFragment implements LoadMutiItemRecyclerView.FinalRecycleAdapter.OnViewAttachListener {
     @BindView(R.id.et_at)
     EditText      mEtAt;
     @BindView(R.id.cl_at)
@@ -67,11 +69,14 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
     @BindView(R.id.iv_no)
     ImageView     mIvNo;
     Unbinder unbinder;
-    private List<Object> mInfos = new ArrayList<>();
-    private FinalRecycleAdapter mFinalRecycleAdapter;
-    private String                       TAG   = "AtFragment";
-    private List<FriendInfoBean.Friends> names = new ArrayList<>();
-    private TextView mRightTextView;
+    private List<Object>                 mInfos = new ArrayList<>();
+    private String                       TAG    = "AtFragment";
+    private List<FriendInfoBean.Friends> names  = new ArrayList<>();
+    private TextView                                     mRightTextView;
+    private LoadMutiItemRecyclerView                     mLoadMutiItemRecyclerView;
+    private LoadMutiItemRecyclerView.FinalRecycleAdapter mFinalRecycleAdapter;
+    private int     i        = 0;
+    private Handler mHandler = new Handler();
 
     @Override
     protected boolean needRefresh() {
@@ -105,12 +110,42 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
         });
         Map<Class, Integer> map = FinalRecycleAdapter.getMap();
         map.put(FriendInfoBean.Friends.class, R.layout.list_item_contact);
-        mFinalRecycleAdapter = new FinalRecycleAdapter(mInfos, map, this);
+        mFinalRecycleAdapter = new LoadMutiItemRecyclerView.FinalRecycleAdapter(mInfos, map, this);
         RecyclerView recyclerView = mClAt.getRecyclerView();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setInitialPrefetchItemCount(15);
+//        layoutManager.setInitialPrefetchItemCount(15);
+        mFinalRecycleAdapter = new LoadMutiItemRecyclerView.FinalRecycleAdapter(mInfos, map, this);
+        mLoadMutiItemRecyclerView = new LoadMutiItemRecyclerView(mFinalRecycleAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(mLoadMutiItemRecyclerView);
+        mLoadMutiItemRecyclerView.setOnLoadListener(new LoadMutiItemRecyclerView.OnLoadListener() {
+            @Override
+            public void onRetry() {
+            }
+
+            @Override
+            public void onLoadMore() {
+                if (i < 5) {
+                    //加载更多
+                    i++;
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mInfos.addAll(mInfos);
+                            names.addAll(names);
+                            mFinalRecycleAdapter.notifyDataSetChanged();
+                            mLoadMutiItemRecyclerView.showLoadMore();
+                            mLoadMutiItemRecyclerView.notifyDataSetChanged();
+                        }
+                    },1000);
+
+                } else {
+                    mLoadMutiItemRecyclerView.showLoadComplete();
+                }
+            }
+        });
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mFinalRecycleAdapter);
+        recyclerView.setAdapter(mLoadMutiItemRecyclerView);
         mClAt.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -119,10 +154,16 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
                 ThreadUtils.runSub(new Runnable() {
                     @Override
                     public void run() {
+                        isRefresh = true;
                         getData();
                         ThreadUtils.runMain(new Runnable() {
                             @Override
                             public void run() {
+
+                                mFinalRecycleAdapter.notifyDataSetChanged();
+                                mLoadMutiItemRecyclerView.showLoadMore();
+                                mLoadMutiItemRecyclerView.notifyDataSetChanged();
+
                                 mClAt.setRefreshing(false);
                             }
                         });
@@ -134,8 +175,14 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
         return view;
     }
 
+    private boolean isRefresh = true;
+
     @Override
     public Object getData() {
+        if (isRefresh) {
+            mInfos.clear();
+            names.clear();
+        }
         String xml = JsonCacheManager.getInstance().getXML(Urls.ATFRIENDS + "uid=" + SpUtil.getString(getContext(), Constant.USERID, "") + "&relation=1&all=1");
         FriendInfoBean friendInfoBean = XmlUtils.toBean(FriendInfoBean.class, xml.getBytes());
         final List<FriendInfoBean.Friends> friends = friendInfoBean.getFriends();
@@ -178,57 +225,6 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
             }
         });
         return friendInfoBean;
-    }
-
-    @Override
-    public void onBindViewHolder(FinalRecycleAdapter.ViewHolder holder, int position, Object itemData) {
-        final FriendInfoBean.Friends friend = (FriendInfoBean.Friends) itemData;
-        TextView tvSection = (TextView) holder.getViewById(R.id.tv_section);
-        String now = friend.first;
-        if (position == 0) {
-            tvSection.setVisibility(View.VISIBLE);
-            tvSection.setText(now.toUpperCase());
-        } else {
-            FriendInfoBean.Friends lastFriend = (FriendInfoBean.Friends) mInfos.get(position - 1);
-            String lastFirst = lastFriend.first;
-            if (TextUtils.equals(now, lastFirst)) {
-                tvSection.setVisibility(View.GONE);
-            } else {
-                tvSection.setVisibility(View.VISIBLE);
-                tvSection.setText(now.toUpperCase());
-            }
-        }
-        TextView tvUsername = (TextView) holder.getViewById(R.id.tv_username);
-        final CheckBox cbCheck = (CheckBox) holder.getViewById(R.id.cb_check);
-        ImageView ivIcon = (ImageView) holder.getViewById(R.id.iv_icon);
-        LinearLayout llItem = (LinearLayout) holder.getViewById(R.id.ll_item);
-        tvUsername.setText(friend.getName());
-        Glide.with(AppApplication.appContext).load(friend.getPortrait()).placeholder(R.mipmap.ic_noicon).into(ivIcon);
-        if (names.size() >= 14) {
-            llItem.setOnClickListener(null);
-            cbCheck.setEnabled(false);
-        } else {
-            llItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    cbCheck.setChecked(!friend.checked);
-                    friend.checked = !friend.checked;
-                    if (names.contains(friend)) {
-                        names.remove(friend);
-                        delIcon();
-                    } else {
-                        names.add(friend);
-                        //点击添加头像到输入框
-                        addIcon(friend);
-                    }
-                    if (names.size() != 0) {
-                        mRightTextView.setText("确定(" + names.size() + "/14)");
-                    } else {
-                        mRightTextView.setText("确定");
-                    }
-                }
-            });
-        }
     }
 
     private void delIcon() {
@@ -362,9 +358,60 @@ public class AtFragment extends BaseFragment implements FinalRecycleAdapter.OnVi
                     public void run() {
                         progressDialog.dismiss();
                     }
-                },1000);
+                }, 1000);
             }
         });
 
+    }
+
+    @Override
+    public void onBindViewHolder(LoadMutiItemRecyclerView.ViewHolder holder, int position, Object itemData) {
+        final FriendInfoBean.Friends friend = (FriendInfoBean.Friends) itemData;
+        TextView tvSection = (TextView) holder.getViewById(R.id.tv_section);
+        String now = friend.first;
+        if (position == 0) {
+            tvSection.setVisibility(View.VISIBLE);
+            tvSection.setText(now.toUpperCase());
+        } else {
+            FriendInfoBean.Friends lastFriend = (FriendInfoBean.Friends) mInfos.get(position - 1);
+            String lastFirst = lastFriend.first;
+            if (TextUtils.equals(now, lastFirst)) {
+                tvSection.setVisibility(View.GONE);
+            } else {
+                tvSection.setVisibility(View.VISIBLE);
+                tvSection.setText(now.toUpperCase());
+            }
+        }
+        TextView tvUsername = (TextView) holder.getViewById(R.id.tv_username);
+        final CheckBox cbCheck = (CheckBox) holder.getViewById(R.id.cb_check);
+        ImageView ivIcon = (ImageView) holder.getViewById(R.id.iv_icon);
+        LinearLayout llItem = (LinearLayout) holder.getViewById(R.id.ll_item);
+        tvUsername.setText(friend.getName());
+        Glide.with(AppApplication.appContext).load(friend.getPortrait()).placeholder(R.mipmap.ic_noicon).into(ivIcon);
+        if (names.size() >= 14) {
+            llItem.setOnClickListener(null);
+            cbCheck.setEnabled(false);
+        } else {
+            llItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    cbCheck.setChecked(!friend.checked);
+                    friend.checked = !friend.checked;
+                    if (names.contains(friend)) {
+                        names.remove(friend);
+                        delIcon();
+                    } else {
+                        names.add(friend);
+                        //点击添加头像到输入框
+                        addIcon(friend);
+                    }
+                    if (names.size() != 0) {
+                        mRightTextView.setText("确定(" + names.size() + "/14)");
+                    } else {
+                        mRightTextView.setText("确定");
+                    }
+                }
+            });
+        }
     }
 }

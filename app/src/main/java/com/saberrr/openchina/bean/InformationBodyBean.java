@@ -20,6 +20,8 @@ public class InformationBodyBean {
     private ResultBean result;
     private String     time;
 
+
+
     public int getCode() {
         return code;
     }
@@ -68,6 +70,7 @@ public class InformationBodyBean {
         private int             responseCount;
         private int             totalResults;
         private List<ItemsBean> items;
+
 
         public String getNextPageToken() {
             return nextPageToken;
@@ -141,6 +144,7 @@ public class InformationBodyBean {
             private String  title;
             private int     type;
             private int     viewCount;
+            public boolean isClick = false;
 
             public String getAuthor() {
                 return author;

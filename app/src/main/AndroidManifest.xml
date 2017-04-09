@@ -50,7 +50,7 @@
             android:theme="@android:style/Theme.NoTitleBar">
         </activity>
         <activity android:name=".ui.activity.UserCenterActivity"
-            android:theme="@style/FullScreen">
+            android:theme="@style/UserCenter">
         </activity>
         <activity android:name=".ui.activity.SearchActivity"
             android:theme="@style/SearchFullScreen">

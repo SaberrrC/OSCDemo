@@ -67,6 +67,9 @@ public class LoginFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         mUsername = SpUtil.getString(getContext(), Constant.USERNAME, "");
         mEtUername.setText(mUsername);
+        mEtUername.setFocusable(true);
+        mEtUername.setFocusableInTouchMode(true);
+        mEtUername.requestFocus();
         return view;
     }
 
