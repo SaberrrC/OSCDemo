@@ -64,7 +64,7 @@ public class MoveHotFragment extends BaseFragment implements FinalRecycleAdapter
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         setRecyclerView();
-
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
         return view;
     }
 
