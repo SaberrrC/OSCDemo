@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +21,7 @@ import com.saberrr.openchina.bean.recommendbean.Software;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
+import com.saberrr.openchina.ui.fragment.mymsgfragment.CategoryItemFragment;
 import com.saberrr.openchina.utils.ThreadUtils;
 import com.saberrr.openchina.utils.XmlUtils;
 
@@ -66,6 +68,7 @@ public class HotFragment extends BaseFragment implements FinalRecycleAdapter.OnV
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_hot, null);
         ButterKnife.bind(this, view);
         init();
+        mCurrentFragment = new HotFragment();
         return view;
     }
 
@@ -74,15 +77,16 @@ public class HotFragment extends BaseFragment implements FinalRecycleAdapter.OnV
         mFinalRecycleAdapter = new FinalRecycleAdapter(datas, mHashMap, this);
         mHotRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mHotRecyclerview.setAdapter(mFinalRecycleAdapter);
-
+        mSrlHot.setColorSchemeColors(Color.GREEN);
         mSrlHot.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        SystemClock.sleep(3000);
+                        SystemClock.sleep(2000);
                         mHandler.sendEmptyMessage(0);
+                        getData();
                     }
                 }).start();
 

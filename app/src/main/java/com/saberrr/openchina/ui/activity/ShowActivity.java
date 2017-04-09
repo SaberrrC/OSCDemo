@@ -273,7 +273,20 @@ public class ShowActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if(mOnMyBackPressed != null) {
+            mOnMyBackPressed.onBackPressed();
+        }else {
+            super.onBackPressed();
+        }
+    }
+
+    public interface OnMyBackPressed {
+        void onBackPressed();
+    }
+    private OnMyBackPressed mOnMyBackPressed;
+
+    public void setOnMyBackPressed(OnMyBackPressed onMyBackPressed) {
+        mOnMyBackPressed = onMyBackPressed;
     }
 
     public interface onOptionsItemSelected {

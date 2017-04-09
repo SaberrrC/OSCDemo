@@ -50,6 +50,7 @@ public class CategoryFragment extends BaseFragment implements FinalRecycleAdapte
 
 
 
+
     @Override
     protected boolean needRefresh() {
         return false;

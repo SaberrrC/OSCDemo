@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import butterknife.ButterKnife;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -75,10 +76,11 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
     public View createView() {
 
         View view = View.inflate(getContext(), R.layout.fragment_move_new, null);
+        ButterKnife.bind(this, view);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
-
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
         setRecyclerView();
 
         EventBus.getDefault().register(this);
@@ -100,9 +102,17 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
             if (response.code() == 200) {
                 String string = response.body().string();
 
-                System.out.println("string" + string);
-                MoveNewBean moveNewBean = GsonTools.parseJsonToBean(string, MoveNewBean.class);
-                items = moveNewBean.getResult().getItems();
+                try {
+                    System.out.println("string" + string);
+                    MoveNewBean moveNewBean = GsonTools.parseJsonToBean(string, MoveNewBean.class);
+                    if (moveNewBean != null) {
+                        items = moveNewBean.getResult().getItems();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ToastUtils.showToast("网络错误");
+                    return;
+                }
             } else {
                 ToastUtils.showToast("网络请求失败");
             }
@@ -155,7 +165,13 @@ public class MyMoveFragment extends BaseFragment implements FinalRecycleAdapter.
                     }
                 }
         );
-        data.addAll(items);
+
+        try {
+            data.addAll(items);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.showToast("网络错误");
+        }
     }
 
     @Override

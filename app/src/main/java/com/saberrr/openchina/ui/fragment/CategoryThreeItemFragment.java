@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -94,14 +95,17 @@ public class CategoryThreeItemFragment extends BaseFragment implements FinalRecy
         mFinalRecycleAdapter = new FinalRecycleAdapter(datas, mHashMap, this);
         mRecommendRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecommendRecyclerview.setAdapter(mFinalRecycleAdapter);
+        mSrlRecommend.setColorSchemeColors(Color.GREEN);
         mSrlRecommend.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        SystemClock.sleep(3000);
+                        SystemClock.sleep(2000);
                         mHandler.sendEmptyMessage(0);
+                        datas.clear();
+                        getData();
                     }
                 }).start();
 
