@@ -1,5 +1,6 @@
 package com.saberrr.openchina.ui.fragment.mymsgfragment;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -27,6 +28,7 @@ import com.saberrr.openchina.bean.mymsgcenter.TweetLikeBean;
 import com.saberrr.openchina.net.HttpServiceApi;
 import com.saberrr.openchina.net.Urls;
 import com.saberrr.openchina.ui.activity.ShowActivity;
+import com.saberrr.openchina.ui.activity.UserCenterActivity;
 import com.saberrr.openchina.ui.adapter.FinalRecycleAdapter;
 import com.saberrr.openchina.ui.fragment.BaseFragment;
 import com.saberrr.openchina.ui.fragment.LoginFragment;
@@ -130,7 +132,7 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
                 super.onScrollStateChanged(recyclerView, newState);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (lastVisibleItemPosition == mItemList.size() - 1 && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                if (lastVisibleItemPosition == mItemList.size() - 1 && newState == RecyclerView.SCROLL_STATE_DRAGGING&&mItemList.size()%Constant.PAGESIZE==0) {
                     ThreadUtils.runBigSub(new Runnable() {
                         @Override
                         public void run() {
@@ -168,7 +170,11 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
         } else {
             HttpServiceApi httpServiceApi = new Retrofit.Builder().baseUrl(Urls.BASE_URL).build().create(HttpServiceApi.class);
             try {
-                Response<ResponseBody> response = httpServiceApi.getTweetlike(mCookie, mItemList.size()/Constant.PAGESIZE, Constant.PAGESIZE).execute();
+                int pageIndex = 0;
+                if (!isRefresh) {
+                    pageIndex =mItemList.size() / (Constant.PAGESIZE);
+                }
+                Response<ResponseBody> response = httpServiceApi.getTweetlike(mCookie, pageIndex, Constant.PAGESIZE).execute();
                 String result = response.body().string();
 //                System.out.println(result);
 
@@ -247,6 +253,9 @@ public class TweetlikeFragment extends BaseFragment implements FinalRecycleAdapt
             public void onClick(View v) {
 
                 ToastUtils.showToast("点击了头像，跳转进账户中心" + mItemList.get(position).getUser().getUid());
+                Intent userCenterVeiw = new Intent(getContext(), UserCenterActivity.class);
+                userCenterVeiw.putExtra(Constant.USERID, mItemList.get(position).getUser().getUid());
+                startActivity(userCenterVeiw);
             }
         });
 

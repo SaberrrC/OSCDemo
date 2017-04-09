@@ -9,11 +9,11 @@ import java.util.List;
  */
 @XStreamAlias("oschina")
 public class UserCenterBean {
-    public String getPagesize() {
+    public int getPagesize() {
         return pagesize;
     }
 
-    public void setPagesize(String pagesize) {
+    public void setPagesize(int pagesize) {
         this.pagesize = pagesize;
     }
 
@@ -34,7 +34,7 @@ public class UserCenterBean {
     }
 
     @XStreamAlias("pagesize")
-    private String pagesize;
+    private int pagesize;
 
 
     @XStreamAlias("user")

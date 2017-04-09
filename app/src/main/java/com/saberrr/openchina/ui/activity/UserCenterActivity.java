@@ -61,7 +61,7 @@ public class UserCenterActivity extends AppCompatActivity implements FinalRecycl
     @BindView(R.id.view_solar_system)
     SolarSystemView mViewSolarSystem;
     @BindView(R.id.iv_portrait)
-    CircleImageView mIvPortrait;
+    ImageView mIvPortrait;
     @BindView(R.id.iv_gender)
     ImageView mIvGender;
     @BindView(R.id.tv_nick)
@@ -75,7 +75,7 @@ public class UserCenterActivity extends AppCompatActivity implements FinalRecycl
     @BindView(R.id.tv_count_fans)
     TextView mTvCountFans;
     @BindView(R.id.iv_logo_portrait)
-    CircleImageView mIvLogoPortrait;
+    ImageView mIvLogoPortrait;
     @BindView(R.id.tv_logo_nick)
     TextView mTvLogoNick;
     @BindView(R.id.toolbar)
@@ -93,6 +93,7 @@ public class UserCenterActivity extends AppCompatActivity implements FinalRecycl
 
     private List<UserCenterBean.Active> mItemList = new ArrayList<>();
     private FinalRecycleAdapter mRecycleAdapter;
+    private UserCenterBean mUserCenterBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,7 +202,7 @@ public class UserCenterActivity extends AppCompatActivity implements FinalRecycl
                 super.onScrollStateChanged(recyclerView, newState);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (lastVisibleItemPosition == mItemList.size() - 1 && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                if (lastVisibleItemPosition == mItemList.size() - 1 && newState == RecyclerView.SCROLL_STATE_DRAGGING&&mItemList.size()%Constant.PAGESIZE==Constant.PAGESIZE) {
                     initData(false);
                 }
             }
@@ -227,12 +228,12 @@ public class UserCenterActivity extends AppCompatActivity implements FinalRecycl
                     Response<ResponseBody> response = httpServiceApi.getUserCenter(pageIndex, "", "", Constant.PAGESIZE, mUserid).execute();
                     String result = response.body().string();
                     System.out.println(result);
-                    final UserCenterBean userCenterBean = XmlUtils.toBean(UserCenterBean.class, result.getBytes());
+                    mUserCenterBean = XmlUtils.toBean(UserCenterBean.class, result.getBytes());
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             //设置头像
-                            if (TextUtils.isEmpty(userCenterBean.getUser().getPortrait())) {
+                            if (TextUtils.isEmpty(mUserCenterBean.getUser().getPortrait())) {
                                 Glide.with(UserCenterActivity.this).load(R.mipmap.widget_dface).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvPortrait) {
                                     @Override
                                     protected void setResource(Bitmap resource) {
@@ -254,7 +255,7 @@ public class UserCenterActivity extends AppCompatActivity implements FinalRecycl
 
                                 });
                             } else {
-                                Glide.with(UserCenterActivity.this).load(TextUtils.isEmpty(userCenterBean.getUser().getPortrait())).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvPortrait) {
+                                Glide.with(UserCenterActivity.this).load(mUserCenterBean.getUser().getPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvPortrait) {
                                     @Override
                                     protected void setResource(Bitmap resource) {
                                         RoundedBitmapDrawable circularBitmapDrawable =
@@ -264,7 +265,7 @@ public class UserCenterActivity extends AppCompatActivity implements FinalRecycl
                                     }
 
                                 });
-                                Glide.with(UserCenterActivity.this).load(TextUtils.isEmpty(userCenterBean.getUser().getPortrait())).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvLogoPortrait) {
+                                Glide.with(UserCenterActivity.this).load(mUserCenterBean.getUser().getPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(mIvLogoPortrait) {
                                     @Override
                                     protected void setResource(Bitmap resource) {
                                         RoundedBitmapDrawable circularBitmapDrawable =
@@ -278,10 +279,10 @@ public class UserCenterActivity extends AppCompatActivity implements FinalRecycl
 
 
                             //设置性别
-                            if (userCenterBean.getUser().getGender().equals("男")) {
+                            if (mUserCenterBean.getUser().getGender().equals("男")) {
                                 mIvGender.setImageResource(genderRid[1]);
 
-                            } else if (userCenterBean.getUser().getGender().equals("女")) {
+                            } else if (mUserCenterBean.getUser().getGender().equals("女")) {
                                 mIvGender.setImageResource(genderRid[2]);
                             } else {
                                 mIvGender.setVisibility(View.VISIBLE);
@@ -290,15 +291,15 @@ public class UserCenterActivity extends AppCompatActivity implements FinalRecycl
 
                             //设置名字
 
-                            mTvLogoNick.setText(userCenterBean.getUser().getName());
-                            mTvNick.setText(userCenterBean.getUser().getName());
+                            mTvLogoNick.setText(mUserCenterBean.getUser().getName());
+                            mTvNick.setText(mUserCenterBean.getUser().getName());
 
                             //设置积分
-                            mTvScore.setText("积分 " + userCenterBean.getUser().getScore());
-                            mTvCountFans.setText("关注 " + userCenterBean.getUser().getFollowers());
-                            mTvCountFollow.setText("粉丝 " + userCenterBean.getUser().getFollowers());
+                            mTvScore.setText("积分 " + mUserCenterBean.getUser().getScore());
+                            mTvCountFans.setText("关注 " + mUserCenterBean.getUser().getFollowers());
+                            mTvCountFollow.setText("粉丝 " + mUserCenterBean.getUser().getFollowers());
 
-                            final List<UserCenterBean.Active> activies = userCenterBean.getActives();
+                            final List<UserCenterBean.Active> activies = mUserCenterBean.getActives();
                             setData(isRefresh ,activies);
 
 
@@ -409,7 +410,7 @@ public class UserCenterActivity extends AppCompatActivity implements FinalRecycl
 
             });
         } else {
-            Glide.with(UserCenterActivity.this).load(mItemList.get(position).getPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(ivheader) {
+            Glide.with(UserCenterActivity.this).load(mUserCenterBean.getUser().getPortrait()).asBitmap().centerCrop().into(new BitmapImageViewTarget(ivheader) {
                 @Override
                 protected void setResource(Bitmap resource) {
                     RoundedBitmapDrawable circularBitmapDrawable =

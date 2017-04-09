@@ -144,7 +144,7 @@ public class AtMeFragment extends BaseFragment implements FinalRecycleAdapter.On
                 super.onScrollStateChanged(recyclerView, newState);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (lastVisibleItemPosition == mItemList.size() - 1 && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                if (lastVisibleItemPosition == mItemList.size() - 1 && newState == RecyclerView.SCROLL_STATE_DRAGGING&&mItemList.size()%Constant.PAGESIZE==0) {
                     ThreadUtils.runBigSub(new Runnable() {
                         @Override
                         public void run() {
