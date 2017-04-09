@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.saberrr.openchina.bean.IContactAdapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class FinalRecycleAdapter extends RecyclerView.Adapter<FinalRecycleAdapte
     private static final int LOADMORE = 0;
     private boolean needLoadMore = false;
     private int loadLayout = -1;
-    private List<String> strings;
+    private List<String> strings = new ArrayList<>();
 
     /**
      * 获取map

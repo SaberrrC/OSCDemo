@@ -74,54 +74,65 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         //版本比对
-        if (isFirstEnter) {
-            isFirstEnter = false;
-            ThreadUtils.runSub(new Runnable() {
-                @Override
-                public void run() {
-                    String xml = JsonCacheManager.getInstance().getXML(Urls.MOBILEAPPVERSION);
-                    final UpdateInfo updateInfo = XmlUtils.toBean(UpdateInfo.class, xml.getBytes());
-                    System.out.println(updateInfo.toString());
-                    String vcode = updateInfo.getUpdate().getAAndroid().getVersionCode();
-                    int netCode = Integer.valueOf(vcode);
-                    int locolCode = Utils.getVersionCode(getPackageName());
-                    if (locolCode < netCode) {
-                        ThreadUtils.runMain(new Runnable() {
-                            @Override
-                            public void run() {
-                                // 普通
-                                String updateLog = updateInfo.getUpdate().getAAndroid().getUpdateLog();
-                                String replace = updateLog.replace("<br/>", "\n");
-                                String log = replace.replace("<br>", "\n");
-                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                // 设置图标
-                                // builder.setIcon(R.drawable.iv3);
-                                // 设置标题
-                                builder.setTitle("发现新版本");
-                                // 设置消息内容
-                                builder.setMessage(log);
-                                // 点击旁边区域不会消失
-                                builder.setCancelable(true);
-                                builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+        try {
+            if (isFirstEnter) {
+                isFirstEnter = false;
+                ThreadUtils.runSub(new Runnable() {
+                    @Override
+                    public void run() {
+                        String xml = JsonCacheManager.getInstance().getXML(Urls.MOBILEAPPVERSION);
+                        if (TextUtils.isEmpty(xml)) {
+                            return;
+                        }
+                        final UpdateInfo updateInfo = XmlUtils.toBean(UpdateInfo.class, xml.getBytes());
+                        if ( updateInfo == null) {
+                            return;
+                        }
+                        System.out.println(updateInfo.toString());
+                        String vcode = updateInfo.getUpdate().getAAndroid().getVersionCode();
+                        int netCode = Integer.valueOf(vcode);
+                        int locolCode = Utils.getVersionCode(getPackageName());
+                        if (locolCode < netCode) {
+                            ThreadUtils.runMain(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // 普通
+                                    String updateLog = updateInfo.getUpdate().getAAndroid().getUpdateLog();
+                                    String replace = updateLog.replace("<br/>", "\n");
+                                    String log = replace.replace("<br>", "\n");
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                    // 设置图标
+                                    // builder.setIcon(R.drawable.iv3);
+                                    // 设置标题
+                                    builder.setTitle("发现新版本");
+                                    // 设置消息内容
+                                    builder.setMessage(log);
+                                    // 点击旁边区域不会消失
+                                    builder.setCancelable(true);
+                                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
 
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Toast.makeText(getApplication(), "您保存了您的菊花！", Toast.LENGTH_SHORT).show();
-                                        dialog.dismiss();
-                                    }
-                                });
-                                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                                builder.show();
-                            }
-                        });
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Toast.makeText(getApplication(), "您保存了您的菊花！", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    builder.show();
+                                }
+                            });
+                        }
                     }
-                }
-            });
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.showToast("您已进入没有网的异次元");
         }
     }
 
