@@ -14,8 +14,9 @@ import java.util.List;
  */
 
 public class ComprehensiveAdapter extends FragmentStatePagerAdapter {
-    private List<FragmentInfo>mDatas = new ArrayList<>();
-    public ComprehensiveAdapter(FragmentManager fm,List<FragmentInfo>datas) {
+    private List<FragmentInfo> mDatas = new ArrayList<>();
+
+    public ComprehensiveAdapter(FragmentManager fm, List<FragmentInfo> datas) {
         super(fm);
         mDatas = datas;
     }

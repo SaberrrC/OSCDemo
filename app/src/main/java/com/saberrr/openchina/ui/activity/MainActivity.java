@@ -53,9 +53,17 @@ public class MainActivity extends AppCompatActivity {
     FragmentTabHost mTabhost;
     @BindView(R.id.iv_add)
     ImageView       mIvAdd;
-    private Class   mFragmentArray[] = {ComprehensiveFragment.class, MoveFragment.class, TestFragment2.class, FindFragment.class, MyFragment.class};
+    private Class   mFragmentArray[] = {ComprehensiveFragment.class,
+            MoveFragment.class,
+            TestFragment2.class,
+            FindFragment.class,
+            MyFragment.class};
     private String  mTextArray[]     = {"综合", "动弹", "", "发现", "我的"};
-    private int     mImageArray[]    = {R.drawable.selector_all_bg, R.drawable.selector_dongtan_bg, R.drawable.selector_add_bg, R.drawable.selector_find_bg, R.drawable.selector_mine_bg};
+    private int     mImageArray[]    = {R.drawable.selector_all_bg,
+            R.drawable.selector_dongtan_bg,
+            R.drawable.selector_add_bg,
+            R.drawable.selector_find_bg,
+            R.drawable.selector_mine_bg};
     private long    laatTime         = 0;
     private String  currentId        = null;
     private boolean isFirstEnter     = true;
@@ -155,7 +163,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         for (int i = 0; i < 5; i++) {
+            //底部页签与fragment进行绑定
             mTabhost.setup(this, getSupportFragmentManager(), R.id.fl_content_main);
+            //初始化单个页签,参数是tag 可复用
             TabHost.TabSpec tabSpec = mTabhost.newTabSpec("" + i);
             View view = LayoutInflater.from(this).inflate(R.layout.tab_item_view, null, false);
             mImageview = (ImageView) view.findViewById(R.id.imageview);
@@ -168,9 +178,12 @@ public class MainActivity extends AppCompatActivity {
             mTextview.setText(mTextArray[i]);
 
             tabSpec.setIndicator(view);
+            //初始化底部的数据(页签)
             mTabhost.addTab(tabSpec, mFragmentArray[i], null);
         }
+        //取消中间分割线
         mTabhost.getTabWidget().setDividerDrawable(null);
+        //中间图片添加点击监听
         mIvAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        //FragmentTabHost添加监听
         mTabhost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
